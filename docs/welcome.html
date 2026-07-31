@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Decant - Getting Started</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #8b5cf6;
+      --radius: 12px;
+      --max-w: 800px;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+
+    p.subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: #a78bfa;
+    }
+
+    .step-list {
+      list-style: none;
+      counter-reset: step-counter;
+    }
+
+    .step-list li {
+      counter-increment: step-counter;
+      position: relative;
+      padding-left: 48px;
+      margin-bottom: 20px;
+    }
+
+    .step-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    kbd {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo">🍷 Decant</div>
+      <h1>Welcome to Decant!</h1>
+      <p class="subtitle">Thank you for installing Decant. You are now ready to decant web content into clean Markdown.</p>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2>🚀 Quick Start Guide</h2>
+        <ul class="step-list">
+          <li>
+            <strong>Clip Any Webpage:</strong> Click the <strong>Decant</strong> icon in your browser extension toolbar, or press <kbd>Alt+Shift+M</kbd>.
+          </li>
+          <li>
+            <strong>Copy or Handoff to Obsidian:</strong> Use 1-click buttons in the popup to copy Markdown to your clipboard or hand off directly to <strong>Obsidian</strong> / <strong>Logseq</strong>.
+          </li>
+          <li>
+            <strong>Send to AI Chat:</strong> Click <strong>🤖 Send to AI</strong> to transfer the decanted article directly to ChatGPT, Claude, or Gemini for automated summaries.
+          </li>
+          <li>
+            <strong>Customize Preferences:</strong> Open <strong>Options</strong> to customize YAML frontmatter templates, heading styles, and PKM vault names.
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>🔒 Privacy Guarantee</h2>
+        <p>Decant operates <strong>100% locally in your browser</strong>. Your browsing history, clipped articles, and settings never leave your device.</p>
+      </div>
+    </main>
+
+    <footer>
+      <p><a href="index.html">← Back to Decant Home</a> • <a href="https://github.com/Rat-S/decant" target="_blank">GitHub Repository</a></p>
+    </footer>
+  </div>
+
+</body>
+</html>

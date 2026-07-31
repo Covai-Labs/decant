@@ -1,11 +1,23 @@
 import { DEFAULT_OPTIONS, getOptions } from '../shared/storage.js';
 import { logger } from '../shared/logger.js';
 
+const UNINSTALL_URL = 'https://decant.covai.org/uninstall-feedback.html';
+const WELCOME_URL = 'https://decant.covai.org/welcome.html';
+
 logger.info('Background', 'Decant Background Service Worker initialized.');
 
-// Setup Context Menus
-chrome.runtime.onInstalled.addListener(() => {
-  logger.info('Background', 'Extension installed/updated. Creating context menus...');
+if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.setUninstallURL) {
+  chrome.runtime.setUninstallURL(UNINSTALL_URL);
+}
+
+// Setup Context Menus & Onboarding
+chrome.runtime.onInstalled.addListener((details) => {
+  logger.info('Background', 'Extension event details:', details.reason);
+
+  if (details.reason === 'install') {
+    chrome.tabs.create({ url: WELCOME_URL });
+  }
+
   chrome.contextMenus.create({
     id: 'decant-page',
     title: 'Decant page to Markdown',

@@ -3,6 +3,7 @@
   "name": "Decant - Web to Markdown Clipper",
   "version": "1.0.0",
   "description": "Fast, privacy-first web clipper that decants articles and webpages into clean Markdown.",
+  "homepage_url": "https://decant.covai.org/",
   "permissions": [
     "activeTab",
     "scripting",

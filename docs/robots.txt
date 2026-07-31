@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://decant.covai.org/sitemap.xml

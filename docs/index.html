@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decant - Fast, Privacy-First Web to Markdown Clipper</title>
+  <meta name="description" content="Decant web articles and pages into clean, structured Markdown. 100% private, open source, with 1-click export to Obsidian, Logseq, ChatGPT, Claude, and Gemini.">
+  <meta property="og:title" content="Decant - Web to Markdown Clipper">
+  <meta property="og:description" content="Fast, privacy-first Manifest V3 web clipper that decants articles into clean Markdown for Obsidian, Logseq, and AI tools.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://decant.covai.org/">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent-purple: #8b5cf6;
+      --accent-purple-glow: rgba(139, 92, 246, 0.35);
+      --accent-teal: #0d9488;
+      --accent-teal-glow: rgba(13, 148, 136, 0.35);
+      --radius: 12px;
+      --max-w: 1140px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Background Glows */
+    .glow-bg {
+      position: absolute;
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 450px;
+      background: radial-gradient(circle, var(--accent-purple-glow) 0%, rgba(13, 148, 136, 0.15) 50%, transparent 70%);
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Header Navigation */
+    header {
+      width: 100%;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 15, 25, 0.8);
+    }
+
+    .nav-container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+    }
+
+    .brand span {
+      background: linear-gradient(135deg, #a78bfa, #2dd4bf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text) !important;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-github:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: var(--max-w);
+      margin: 80px auto 60px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 50px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c084fc;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 0 auto 36px;
+      font-size: 1.2rem;
+      color: var(--muted);
+    }
+
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 10px 25px var(--accent-purple-glow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px var(--accent-purple-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.8);
+    }
+
+    /* Code Preview Box */
+    .preview-container {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 24px;
+    }
+
+    .window-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .window-header {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .window-title {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-left: 8px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .window-body {
+      padding: 24px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      text-align: left;
+      overflow-x: auto;
+    }
+
+    .code-keyword { color: #f472b6; }
+    .code-string { color: #a78bfa; }
+    .code-comment { color: #64748b; }
+    .code-heading { color: #38bdf8; font-weight: bold; }
+
+    /* Features Grid */
+    .features {
+      max-width: var(--max-w);
+      margin: 100px auto;
+      padding: 0 24px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      margin-bottom: 48px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 40px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-links {
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-bg"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand">
+        🍷 <span>Decant</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pkm">Obsidian & PKM</a></li>
+        <li><a href="#ai">AI Handoff</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="license.html">License</a></li>
+        <li><a href="https://covai.org" target="_blank">covai.org ←</a></li>
+        <li>
+          <a href="https://github.com/Rat-S/decant" target="_blank" class="btn-github">
+            GitHub
+          </a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="badge">✨ Manifest V3 • 100% Private & Open Source</div>
+    <h1>Decant Any Webpage into Clean Markdown</h1>
+    <p>Fast, privacy-first web clipper that decants articles and web pages into beautifully structured Markdown for Obsidian, Logseq, ChatGPT, Claude, and Gemini.</p>
+    
+    <div class="cta-group">
+      <a href="https://github.com/Rat-S/decant/releases" class="btn-primary">Download Extension</a>
+      <a href="https://github.com/Rat-S/decant" class="btn-secondary">View Source Code</a>
+    </div>
+  </section>
+
+  <!-- Code Preview -->
+  <section class="preview-container">
+    <div class="window-card">
+      <div class="window-header">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <span class="window-title">clipped-article.md</span>
+      </div>
+      <div class="window-body">
+<span class="code-keyword">---</span>
+<span class="code-keyword">title:</span> <span class="code-string">"Understanding Web Clippers & Markdown"</span>
+<span class="code-keyword">source:</span> <span class="code-string">"https://example.com/article"</span>
+<span class="code-keyword">author:</span> <span class="code-string">"Jane Doe"</span>
+<span class="code-keyword">clipped:</span> <span class="code-string">2026-08-01</span>
+<span class="code-keyword">tags:</span>
+  <span class="code-keyword">-</span> <span class="code-string">web-clip</span>
+<span class="code-keyword">---</span>
+
+<span class="code-heading"># Understanding Web Clippers</span>
+
+Web clipping is essential for building a second brain. <span class="code-keyword">**Decant**</span> extracts main article bodies using Mozilla Readability and formats clean Markdown automatically...
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="features">
+    <h2 class="section-title">Why Use Decant?</h2>
+    
+    <div class="grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>100% Private & Client-Side</h3>
+        <p>All DOM parsing, HTML extraction, and Markdown formatting happen 100% locally in your browser. Zero tracking, zero telemetry.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Manifest V3 Native</h3>
+        <p>Built with background service workers, content script dynamic loaders, and side panels for maximum speed and browser compatibility.</p>
+      </div>
+
+      <div class="feature-card" id="pkm">
+        <div class="feature-icon">🟣</div>
+        <h3>1-Click PKM Handoff</h3>
+        <p>Export directly to Obsidian, Logseq, Bear, NotePlan, or Drafts using native URI protocol schemes with customizable vaults.</p>
+      </div>
+
+      <div class="feature-card" id="ai">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Handoff Integration</h3>
+        <p>Send decanted articles directly to ChatGPT, Claude, Gemini, DeepSeek, or Perplexity with pre-formatted summary prompts.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <h3>Custom YAML Templates</h3>
+        <p>Tailor your frontmatter variables (title, author, source URL, date, tags) and configure Turndown Markdown rules.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⌨️</div>
+        <h3>Keyboard & Context Menus</h3>
+        <p>Use hotkeys (<kbd>Alt+Shift+D</kbd> or <kbd>Alt+Shift+C</kbd>) or right-click context menu options to clip tabs or selections instantly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy Policy</a> •
+      <a href="license.html">License (AGPL-3.0)</a> •
+      <a href="https://github.com/Rat-S/decant" target="_blank">GitHub Repository</a> •
+      <a href="https://covai.org" target="_blank">Covai Labs</a>
+    </div>
+    <p>&copy; 2026 Decant Project. Licensed under GNU Affero General Public License v3.0 (AGPL-3.0).</p>
+  </footer>
+
+</body>
+</html>
