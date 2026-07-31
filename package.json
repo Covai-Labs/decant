@@ -1,0 +1,32 @@
+{
+  "name": "decant",
+  "version": "1.0.0",
+  "description": "Fast, privacy-first Manifest V3 web clipper that decants articles and web pages into clean Markdown.",
+  "main": "dist/background.js",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "build:firefox": "node build.js --target=firefox",
+    "watch": "node build.js --watch",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "markdown",
+    "web-clipper",
+    "readability",
+    "turndown",
+    "extension",
+    "manifest-v3",
+    "obsidian"
+  ],
+  "author": "Rat-S",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "@mozilla/readability": "^0.5.0",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

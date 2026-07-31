@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decant Side Panel</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sp-container">
+    <header class="sp-header">
+      <div class="sp-brand">
+        <span class="sp-icon">🍷</span>
+        <span class="sp-title">Decant</span>
+      </div>
+      <div class="sp-header-actions">
+        <button id="sp-refresh-btn" class="sp-icon-btn" title="Refresh Panel">↻</button>
+      </div>
+    </header>
+
+    <nav class="sp-tabs">
+      <button class="sp-tab-btn active" data-tab="clip-tab">Clipper</button>
+      <button class="sp-tab-btn" data-tab="settings-tab">Settings</button>
+    </nav>
+
+    <main class="sp-content">
+      <!-- TAB 1: CLIPPER (REUSES POPUP) -->
+      <section id="clip-tab" class="sp-tab-content active">
+        <iframe id="sp-clip-iframe" class="sp-tab-iframe" src="../popup/popup.html"></iframe>
+      </section>
+
+      <!-- TAB 2: SETTINGS (REUSES OPTIONS) -->
+      <section id="settings-tab" class="sp-tab-content">
+        <iframe id="sp-settings-iframe" class="sp-tab-iframe" src="../options/options.html"></iframe>
+      </section>
+    </main>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
