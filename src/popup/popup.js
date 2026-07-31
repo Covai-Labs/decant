@@ -1,6 +1,7 @@
 import { getOptions } from '../shared/storage.js';
 import { buildAppUri } from '../shared/uri-transfer.js';
 import { buildAiPrompt, getAiPlatformUrl, AI_PLATFORMS } from '../shared/ai-transfer.js';
+import { isAiChatUrl } from '../shared/ai-detect.js';
 import { logger } from '../shared/logger.js';
 
 let currentMarkdown = '';
@@ -20,6 +21,7 @@ const obsidianBtn = document.getElementById('obsidian-btn');
 const aiBtn = document.getElementById('ai-btn');
 const downloadBtn = document.getElementById('download-btn');
 const optionsBtn = document.getElementById('options-btn');
+const aiTipBanner = document.getElementById('ai-tip-banner');
 
 async function initPopup() {
   logger.info('Popup', 'Initializing Decant popup UI...');
@@ -27,7 +29,7 @@ async function initPopup() {
     savedOptions = await getOptions();
     logger.log('Popup', 'Loaded user options:', savedOptions);
 
-    // PKM Button visibility and label
+    // PKM Button visibility
     if (savedOptions.defaultAppTarget === 'none') {
       obsidianBtn.style.display = 'none';
     } else if (savedOptions.defaultAppTarget) {
@@ -36,7 +38,7 @@ async function initPopup() {
       obsidianBtn.textContent = `Open in ${appName}`;
     }
 
-    // AI Button visibility and label
+    // AI Button visibility
     if (savedOptions.defaultAiTarget === 'none') {
       aiBtn.style.display = 'none';
     } else if (savedOptions.defaultAiTarget && AI_PLATFORMS[savedOptions.defaultAiTarget]) {
@@ -53,6 +55,12 @@ async function initPopup() {
     }
 
     currentUrl = tab.url || '';
+
+    // Detect if current page is an AI Chat platform -> display AI Chat Exporter tip
+    if (isAiChatUrl(currentUrl)) {
+      logger.info('Popup', 'AI Chat page detected. Displaying AI Chat Exporter recommendation banner.');
+      if (aiTipBanner) aiTipBanner.classList.remove('hidden');
+    }
 
     if (currentUrl && (currentUrl.startsWith('chrome://') || currentUrl.startsWith('edge://') || currentUrl.startsWith('about:'))) {
       showError('Decant cannot clip browser system pages (chrome://). Open a normal website (e.g. news, article, docs) to clip.');
