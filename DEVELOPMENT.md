@@ -40,6 +40,7 @@ npm run package
 ```
 
 This runs both browser builds then calls `package.py` to create:
+
 - `releases/decant-chrome-v{version}.zip` — Chrome / Edge
 - `releases/decant-firefox-v{version}.zip` — Firefox AMO
 - `releases/decant-source-v{version}.zip` — Source code (required by AMO)
@@ -68,11 +69,13 @@ All three checks run in CI on every push and pull request.
 ## Loading Locally in Your Browser
 
 **Chrome / Edge:**
+
 1. Run `npm run build`
 2. Go to `chrome://extensions` → Enable Developer Mode
 3. Click **Load unpacked** → select the `dist/` folder
 
 **Firefox:**
+
 1. Run `npm run build:firefox`
 2. Go to `about:debugging` → This Firefox → Load Temporary Add-on
 3. Select `dist-firefox/manifest.json`
