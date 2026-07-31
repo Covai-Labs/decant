@@ -27,12 +27,20 @@ async function initPopup() {
     savedOptions = await getOptions();
     logger.log('Popup', 'Loaded user options:', savedOptions);
 
-    if (savedOptions.defaultAppTarget) {
+    // PKM Button visibility and label
+    if (savedOptions.defaultAppTarget === 'none') {
+      obsidianBtn.style.display = 'none';
+    } else if (savedOptions.defaultAppTarget) {
+      obsidianBtn.style.display = '';
       const appName = savedOptions.defaultAppTarget.charAt(0).toUpperCase() + savedOptions.defaultAppTarget.slice(1);
       obsidianBtn.textContent = `Open in ${appName}`;
     }
 
-    if (savedOptions.defaultAiTarget && AI_PLATFORMS[savedOptions.defaultAiTarget]) {
+    // AI Button visibility and label
+    if (savedOptions.defaultAiTarget === 'none') {
+      aiBtn.style.display = 'none';
+    } else if (savedOptions.defaultAiTarget && AI_PLATFORMS[savedOptions.defaultAiTarget]) {
+      aiBtn.style.display = '';
       const aiName = AI_PLATFORMS[savedOptions.defaultAiTarget].name;
       aiBtn.textContent = `🤖 ${aiName}`;
     }
@@ -120,6 +128,7 @@ copyBtn.addEventListener('click', async () => {
 obsidianBtn.addEventListener('click', () => {
   if (!currentMarkdown) return;
   const target = savedOptions.defaultAppTarget || 'obsidian';
+  if (target === 'none') return;
   const uri = buildAppUri(target, {
     title: currentTitle,
     content: currentMarkdown,
@@ -133,6 +142,8 @@ obsidianBtn.addEventListener('click', () => {
 aiBtn.addEventListener('click', async () => {
   if (!currentMarkdown) return;
   const target = savedOptions.defaultAiTarget || 'chatgpt';
+  if (target === 'none') return;
+
   const prompt = buildAiPrompt({
     title: currentTitle,
     url: currentUrl,

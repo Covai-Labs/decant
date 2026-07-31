@@ -15,46 +15,7 @@
 
     <main>
       <form id="options-form">
-        <section class="card">
-          <h2>🤖 AI Chat Handoff Settings</h2>
-          <div class="form-group">
-            <label for="defaultAiTarget">Target AI Platform</label>
-            <select id="defaultAiTarget">
-              <option value="chatgpt">ChatGPT (chatgpt.com)</option>
-              <option value="claude">Claude (claude.ai)</option>
-              <option value="gemini">Gemini (gemini.google.com)</option>
-              <option value="deepseek">DeepSeek (chat.deepseek.com)</option>
-              <option value="perplexity">Perplexity (perplexity.ai)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="aiPromptTemplate">AI Handoff Prompt Template</label>
-            <textarea id="aiPromptTemplate" rows="4"></textarea>
-            <small>Available variables: <code>{{title}}</code>, <code>{{url}}</code>, <code>{{content}}</code></small>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>PKM & Note-Taking App Integration</h2>
-          <div class="form-group">
-            <label for="defaultAppTarget">Target Application</label>
-            <select id="defaultAppTarget">
-              <option value="obsidian">Obsidian (obsidian://)</option>
-              <option value="logseq">Logseq (logseq://)</option>
-              <option value="bear">Bear (bear://)</option>
-              <option value="noteplan">NotePlan (noteplan://)</option>
-              <option value="drafts">Drafts (drafts://)</option>
-            </select>
-          </div>
-
-          <div class="form-group" id="vault-group">
-            <label for="obsidianVault">Obsidian Vault Name (Optional)</label>
-            <input type="text" id="obsidianVault" placeholder="e.g. PersonalVault">
-            <small>Leave blank to open note in the currently active Obsidian vault.</small>
-          </div>
-        </section>
-
+        <!-- 1. Frontmatter Settings -->
         <section class="card">
           <h2>Frontmatter Settings</h2>
           <div class="form-group row">
@@ -69,6 +30,7 @@
           </div>
         </section>
 
+        <!-- 2. Markdown Formatting -->
         <section class="card">
           <h2>Markdown Formatting</h2>
           <div class="form-group">
@@ -94,6 +56,50 @@
               <option value="fenced">Fenced (```)</option>
               <option value="indented">Indented (4 spaces)</option>
             </select>
+          </div>
+        </section>
+
+        <!-- 3. PKM & Note-Taking App Integration -->
+        <section class="card">
+          <h2>PKM & Note-Taking App Integration</h2>
+          <div class="form-group">
+            <label for="defaultAppTarget">Target Application</label>
+            <select id="defaultAppTarget">
+              <option value="obsidian">Obsidian (obsidian://)</option>
+              <option value="logseq">Logseq (logseq://)</option>
+              <option value="bear">Bear (bear://)</option>
+              <option value="noteplan">NotePlan (noteplan://)</option>
+              <option value="drafts">Drafts (drafts://)</option>
+              <option value="none">None (Disabled)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="vault-group">
+            <label for="obsidianVault">Obsidian Vault Name (Optional)</label>
+            <input type="text" id="obsidianVault" placeholder="e.g. PersonalVault">
+            <small>Leave blank to open note in the currently active Obsidian vault.</small>
+          </div>
+        </section>
+
+        <!-- 4. AI Chat Handoff Settings -->
+        <section class="card">
+          <h2>🤖 AI Chat Handoff Settings</h2>
+          <div class="form-group">
+            <label for="defaultAiTarget">Target AI Platform</label>
+            <select id="defaultAiTarget">
+              <option value="chatgpt">ChatGPT (chatgpt.com)</option>
+              <option value="claude">Claude (claude.ai)</option>
+              <option value="gemini">Gemini (gemini.google.com)</option>
+              <option value="deepseek">DeepSeek (chat.deepseek.com)</option>
+              <option value="perplexity">Perplexity (perplexity.ai)</option>
+              <option value="none">None (Disabled)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="aiPromptTemplate">AI Handoff Prompt Template</label>
+            <textarea id="aiPromptTemplate" rows="4"></textarea>
+            <small>Available variables: <code>{{title}}</code>, <code>{{url}}</code>, <code>{{content}}</code></small>
           </div>
         </section>
 

@@ -6,3 +6,4 @@ dist-firefox/
 # Private local agent workspace & scratchpad
 Scratch/
 .agents/
+

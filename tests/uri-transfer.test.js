@@ -34,4 +34,7 @@ test('buildAppUri selects appropriate URI generator', () => {
 
   const bearUri = buildAppUri('bear', { title: 'Test', content: 'Body' });
   assert.match(bearUri, /^bear:\/\//);
+
+  const noneUri = buildAppUri('none', { title: 'Test', content: 'Body' });
+  assert.equal(noneUri, null);
 });

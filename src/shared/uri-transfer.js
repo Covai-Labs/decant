@@ -72,6 +72,8 @@ export function buildDraftsUri({ title, content }) {
 
 export function buildAppUri(target, { title, content, vault }) {
   switch (target) {
+    case 'none':
+      return null;
     case 'obsidian':
       return buildObsidianUri({ title, content, vault });
     case 'logseq':
