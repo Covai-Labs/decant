@@ -10,6 +10,12 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://decant.covai.org/">
   
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -97,7 +103,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
       list-style: none;
     }
 
@@ -113,6 +119,30 @@
       color: var(--text);
     }
 
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-covai {
+      opacity: 0.85;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    .btn-covai:hover {
+      opacity: 1;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
     .btn-github {
       display: inline-flex;
       align-items: center;
@@ -120,9 +150,10 @@
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--card-border);
       color: var(--text) !important;
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 6px 14px;
+      border-radius: 6px;
       font-weight: 600;
+      font-size: 0.9rem;
       text-decoration: none;
       transition: all 0.2s ease;
     }
@@ -355,19 +386,18 @@
       <a href="#" class="brand">
         🍷 <span>Decant</span>
       </a>
-      <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#pkm">Obsidian & PKM</a></li>
-        <li><a href="#ai">AI Handoff</a></li>
-        <li><a href="privacy.html">Privacy Policy</a></li>
-        <li><a href="license.html">License</a></li>
-        <li><a href="https://covai.org" target="_blank">covai.org ←</a></li>
-        <li>
-          <a href="https://github.com/Rat-S/decant" target="_blank" class="btn-github">
-            GitHub
-          </a>
-        </li>
-      </ul>
+      
+      <div class="nav-actions">
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pkm">Obsidian & PKM</a></li>
+          <li><a href="#ai">AI Handoff</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="license.html">License</a></li>
+        </ul>
+        <a href="https://covai.org" class="btn-covai">← covai.org</a>
+        <a href="https://github.com/Rat-S/decant" target="_blank" class="btn-github">GitHub</a>
+      </div>
     </div>
   </header>
 
