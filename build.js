@@ -43,8 +43,8 @@ function processManifest() {
   if (target === 'firefox') {
     manifest.browser_specific_settings = {
       gecko: {
-        id: 'decant@rats.dev',
-        strict_min_version: '140.0',
+        id: 'decant@covai.org',
+        strict_min_version: '142.0',
         data_collection_permissions: {
           required: ['none'],
         },
