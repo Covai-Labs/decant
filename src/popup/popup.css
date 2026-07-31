@@ -7,13 +7,15 @@
   --accent-hover: #7c3aed;
   --obsidian-purple: #7c3aed;
   --obsidian-hover: #6d28d9;
+  --ai-teal: #0d9488;
+  --ai-hover: #0f766e;
   --border-color: #334155;
   --radius: 8px;
 }
 
 body {
   width: 380px;
-  height: 490px;
+  height: 510px;
   margin: 0;
   padding: 12px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -94,7 +96,11 @@ body.in-iframe {
 .actions {
   display: flex;
   gap: 6px;
-  margin-top: 12px;
+  margin-top: 8px;
+}
+
+.actions.primary-row {
+  margin-top: 10px;
 }
 
 .btn {
@@ -125,6 +131,15 @@ body.in-iframe {
 
 .btn.accent:hover {
   background-color: var(--obsidian-hover);
+}
+
+.btn.ai-btn {
+  background-color: var(--ai-teal);
+  color: #ffffff;
+}
+
+.btn.ai-btn:hover {
+  background-color: var(--ai-hover);
 }
 
 .btn.secondary {

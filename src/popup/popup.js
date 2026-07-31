@@ -1,9 +1,11 @@
 import { getOptions } from '../shared/storage.js';
 import { buildAppUri } from '../shared/uri-transfer.js';
+import { buildAiPrompt, getAiPlatformUrl, AI_PLATFORMS } from '../shared/ai-transfer.js';
 import { logger } from '../shared/logger.js';
 
 let currentMarkdown = '';
 let currentTitle = 'Clipped Note';
+let currentUrl = '';
 let currentFilename = 'clipped-page.md';
 let savedOptions = {};
 
@@ -15,6 +17,7 @@ const markdownPreview = document.getElementById('markdown-preview');
 
 const copyBtn = document.getElementById('copy-btn');
 const obsidianBtn = document.getElementById('obsidian-btn');
+const aiBtn = document.getElementById('ai-btn');
 const downloadBtn = document.getElementById('download-btn');
 const optionsBtn = document.getElementById('options-btn');
 
@@ -29,6 +32,11 @@ async function initPopup() {
       obsidianBtn.textContent = `Open in ${appName}`;
     }
 
+    if (savedOptions.defaultAiTarget && AI_PLATFORMS[savedOptions.defaultAiTarget]) {
+      const aiName = AI_PLATFORMS[savedOptions.defaultAiTarget].name;
+      aiBtn.textContent = `🤖 ${aiName}`;
+    }
+
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     if (!tab || !tab.id) {
@@ -36,7 +44,9 @@ async function initPopup() {
       return;
     }
 
-    if (tab.url && (tab.url.startsWith('chrome://') || tab.url.startsWith('edge://') || tab.url.startsWith('about:'))) {
+    currentUrl = tab.url || '';
+
+    if (currentUrl && (currentUrl.startsWith('chrome://') || currentUrl.startsWith('edge://') || currentUrl.startsWith('about:'))) {
       showError('Decant cannot clip browser system pages (chrome://). Open a normal website (e.g. news, article, docs) to clip.');
       return;
     }
@@ -59,6 +69,7 @@ async function initPopup() {
     if (response && response.status === 'success') {
       currentMarkdown = response.data.markdown;
       currentTitle = response.data.title || 'Clipped Note';
+      currentUrl = response.data.url || currentUrl;
       currentFilename = response.data.filename;
       showPreview(currentMarkdown);
     } else {
@@ -117,6 +128,23 @@ obsidianBtn.addEventListener('click', () => {
 
   logger.info('Popup', 'Opening PKM app URI:', uri);
   window.open(uri, '_self');
+});
+
+aiBtn.addEventListener('click', async () => {
+  if (!currentMarkdown) return;
+  const target = savedOptions.defaultAiTarget || 'chatgpt';
+  const prompt = buildAiPrompt({
+    title: currentTitle,
+    url: currentUrl,
+    content: currentMarkdown,
+    template: savedOptions.aiPromptTemplate
+  });
+
+  await navigator.clipboard.writeText(prompt);
+  logger.info('Popup', 'Copied AI prompt to clipboard and opening:', target);
+
+  const targetUrl = getAiPlatformUrl(target);
+  chrome.tabs.create({ url: targetUrl });
 });
 
 downloadBtn.addEventListener('click', () => {
