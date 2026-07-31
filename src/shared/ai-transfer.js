@@ -8,7 +8,7 @@ export const AI_PLATFORMS = {
   claude: { name: 'Claude', url: 'https://claude.ai/new' },
   gemini: { name: 'Gemini', url: 'https://gemini.google.com/app' },
   deepseek: { name: 'DeepSeek', url: 'https://chat.deepseek.com/' },
-  perplexity: { name: 'Perplexity', url: 'https://www.perplexity.ai/' }
+  perplexity: { name: 'Perplexity', url: 'https://www.perplexity.ai/' },
 };
 
 export function buildAiPrompt({ title, url, content, template }) {

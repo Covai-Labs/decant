@@ -27,7 +27,7 @@ async function loadSettings() {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
+
   const options = {
     defaultAiTarget: defaultAiTarget.value,
     aiPromptTemplate: aiPromptTemplate.value,
@@ -37,7 +37,7 @@ form.addEventListener('submit', async (e) => {
     frontmatterTemplate: frontmatterTemplate.value,
     headingStyle: headingStyle.value,
     bulletListMarker: bulletListMarker.value,
-    codeBlockStyle: codeBlockStyle.value
+    codeBlockStyle: codeBlockStyle.value,
   };
 
   await saveOptions(options);

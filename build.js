@@ -22,7 +22,7 @@ const dirs = [
   `${distDir}/content`,
   `${distDir}/popup`,
   `${distDir}/options`,
-  `${distDir}/icons`
+  `${distDir}/icons`,
 ];
 
 if (target !== 'firefox') {
@@ -44,35 +44,37 @@ function processManifest() {
     manifest.browser_specific_settings = {
       gecko: {
         id: 'decant@rats.dev',
-        strict_min_version: '109.0'
-      }
+        strict_min_version: '140.0',
+        data_collection_permissions: {
+          required: ['none'],
+        },
+      },
     };
     manifest.permissions = manifest.permissions.filter((p) => p !== 'sidePanel');
     delete manifest.side_panel;
     manifest.background = {
-      scripts: ['background/background.js']
+      scripts: ['background/background.js'],
     };
   }
 
   fs.writeFileSync(`${distDir}/manifest.json`, JSON.stringify(manifest, null, 2));
 }
 
-// Copy static assets (HTML, CSS, loader.js, icons)
+// Copy static assets (HTML, CSS, icons)
 function copyStaticFiles() {
   processManifest();
 
   const staticFiles = [
-    { src: 'src/content/loader.js', dest: `${distDir}/content/loader.js` },
     { src: 'src/popup/popup.html', dest: `${distDir}/popup/popup.html` },
     { src: 'src/popup/popup.css', dest: `${distDir}/popup/popup.css` },
     { src: 'src/options/options.html', dest: `${distDir}/options/options.html` },
-    { src: 'src/options/options.css', dest: `${distDir}/options/options.css` }
+    { src: 'src/options/options.css', dest: `${distDir}/options/options.css` },
   ];
 
   if (target !== 'firefox') {
     staticFiles.push(
       { src: 'src/sidepanel/sidepanel.html', dest: `${distDir}/sidepanel/sidepanel.html` },
-      { src: 'src/sidepanel/sidepanel.css', dest: `${distDir}/sidepanel/sidepanel.css` }
+      { src: 'src/sidepanel/sidepanel.css', dest: `${distDir}/sidepanel/sidepanel.css` },
     );
   }
 
@@ -97,7 +99,7 @@ const entryPoints = [
   { in: 'src/background/background.js', out: 'background/background' },
   { in: 'src/content/content.js', out: 'content/content' },
   { in: 'src/popup/popup.js', out: 'popup/popup' },
-  { in: 'src/options/options.js', out: 'options/options' }
+  { in: 'src/options/options.js', out: 'options/options' },
 ];
 
 if (target !== 'firefox') {
@@ -112,7 +114,7 @@ const buildOptions = {
   target: ['chrome100', 'firefox109', 'edge100'],
   platform: 'browser',
   sourcemap: true,
-  logLevel: 'info'
+  logLevel: 'info',
 };
 
 async function runBuild() {

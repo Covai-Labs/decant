@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   refreshBtn.addEventListener('click', () => {
     if (clipIframe) {
-      clipIframe.src = clipIframe.src;
+      clipIframe.src = clipIframe.src; // eslint-disable-line no-self-assign
     }
   });
 });

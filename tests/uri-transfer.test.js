@@ -5,7 +5,7 @@ import {
   buildObsidianUri,
   buildLogseqUri,
   buildBearUri,
-  buildAppUri
+  buildAppUri,
 } from '../src/shared/uri-transfer.js';
 
 test('cleanUriTitle removes reserved characters', () => {
@@ -17,7 +17,7 @@ test('buildObsidianUri formats obsidian scheme correctly', () => {
   const uri = buildObsidianUri({
     title: 'My Article',
     content: '# Hello',
-    vault: 'MyVault'
+    vault: 'MyVault',
   });
   assert.match(uri, /^obsidian:\/\/new\?/);
   assert.match(uri, /name=My\+Article/);
@@ -30,10 +30,10 @@ test('buildAppUri selects appropriate URI generator', () => {
   assert.match(obsidianUri, /^obsidian:\/\//);
 
   const logseqUri = buildAppUri('logseq', { title: 'Test', content: 'Body' });
-  assert.match(logseqUri, /^logseq:\/\//);
+  assert.equal(logseqUri, buildLogseqUri({ title: 'Test', content: 'Body' }));
 
   const bearUri = buildAppUri('bear', { title: 'Test', content: 'Body' });
-  assert.match(bearUri, /^bear:\/\//);
+  assert.equal(bearUri, buildBearUri({ title: 'Test', content: 'Body' }));
 
   const noneUri = buildAppUri('none', { title: 'Test', content: 'Body' });
   assert.equal(noneUri, null);

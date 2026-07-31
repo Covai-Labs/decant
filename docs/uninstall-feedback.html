@@ -1,112 +1,120 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Uninstall Feedback - Decant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --bg: #0b0f19;
-      --card-bg: rgba(30, 41, 59, 0.7);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #8b5cf6;
-      --radius: 12px;
-      --max-w: 600px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uninstall Feedback - Decant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      line-height: 1.6;
-      padding: 40px 20px;
-    }
+    <style>
+      :root {
+        --bg: #0b0f19;
+        --card-bg: rgba(30, 41, 59, 0.7);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --text: #f8fafc;
+        --muted: #94a3b8;
+        --accent: #8b5cf6;
+        --radius: 12px;
+        --max-w: 600px;
+      }
 
-    .container {
-      max-width: var(--max-w);
-      margin: 0 auto;
-      text-align: center;
-    }
+      body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+        line-height: 1.6;
+        padding: 40px 20px;
+      }
 
-    header {
-      margin-bottom: 30px;
-    }
+      .container {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        text-align: center;
+      }
 
-    .logo {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
+      header {
+        margin-bottom: 30px;
+      }
 
-    h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
-      margin-bottom: 12px;
-    }
+      .logo {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
 
-    p.subtitle {
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
+      h1 {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 28px;
-      text-align: left;
-    }
+      p.subtitle {
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
 
-    .btn-github {
-      display: inline-block;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      margin-top: 16px;
-    }
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius);
+        padding: 28px;
+        text-align: left;
+      }
 
-    footer {
-      margin-top: 40px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
+      .btn-github {
+        display: inline-block;
+        background: var(--accent);
+        color: white;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 16px;
+      }
 
-    footer a {
-      color: var(--text);
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
+      footer {
+        margin-top: 40px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
 
-  <div class="container">
-    <header>
-      <div class="logo">🍷 Decant</div>
-      <h1>We're sorry to see you go!</h1>
-      <p class="subtitle">Decant has been uninstalled. We'd love to know how we can make it better.</p>
-    </header>
+      footer a {
+        color: var(--text);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">🍷 Decant</div>
+        <h1>We're sorry to see you go!</h1>
+        <p class="subtitle">
+          Decant has been uninstalled. We'd love to know how we can make it better.
+        </p>
+      </header>
 
-    <main>
-      <div class="card">
-        <p>If you ran into a bug or have suggestions for improvement, please let us know on GitHub by opening an issue:</p>
-        <a href="https://github.com/Rat-S/decant/issues" target="_blank" class="btn-github">Submit Feedback on GitHub</a>
-      </div>
-    </main>
+      <main>
+        <div class="card">
+          <p>
+            If you ran into a bug or have suggestions for improvement, please let us know on GitHub
+            by opening an issue:
+          </p>
+          <a href="https://github.com/Rat-S/decant/issues" target="_blank" class="btn-github"
+            >Submit Feedback on GitHub</a
+          >
+        </div>
+      </main>
 
-    <footer>
-      <p><a href="index.html">← Back to Decant Home</a></p>
-    </footer>
-  </div>
-
-</body>
+      <footer>
+        <p><a href="index.html">← Back to Decant Home</a></p>
+      </footer>
+    </div>
+  </body>
 </html>

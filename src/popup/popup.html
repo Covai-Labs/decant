@@ -1,48 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Decant Markdown Clipper</title>
-  <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-  <div class="header">
-    <div class="logo">🍷 <span>Decant</span></div>
-    <div class="header-actions">
-      <button id="options-btn" title="Settings">⚙️</button>
-    </div>
-  </div>
-
-  <div id="ai-tip-banner" class="ai-tip-banner hidden">
-    <span>💡 Exporting AI chat? For multi-turn chats & code blocks, try <a href="https://ai-chat-exporter.covai.org/" target="_blank" id="ai-exporter-link">AI Chat Exporter →</a></span>
-  </div>
-
-  <div class="content-container">
-    <div id="loading" class="state-view">
-      <div class="spinner"></div>
-      <p>Decanting page to Markdown...</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Decant Markdown Clipper</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo">🍷 <span>Decant</span></div>
+      <div class="header-actions">
+        <button id="options-btn" title="Settings">⚙️</button>
+      </div>
     </div>
 
-    <div id="error-view" class="state-view hidden">
-      <p class="error-msg" id="error-text">Could not extract content from this page.</p>
+    <div id="ai-tip-banner" class="ai-tip-banner hidden">
+      <span
+        >💡 Exporting AI chat? For multi-turn chats & code blocks, try
+        <a href="https://ai-chat-exporter.covai.org/" target="_blank" id="ai-exporter-link"
+          >AI Chat Exporter →</a
+        ></span
+      >
     </div>
 
-    <div id="preview-view" class="state-view hidden">
-      <textarea id="markdown-preview" readonly></textarea>
+    <div class="content-container">
+      <div id="loading" class="state-view">
+        <div class="spinner"></div>
+        <p>Decanting page to Markdown...</p>
+      </div>
+
+      <div id="error-view" class="state-view hidden">
+        <p class="error-msg" id="error-text">Could not extract content from this page.</p>
+      </div>
+
+      <div id="preview-view" class="state-view hidden">
+        <textarea id="markdown-preview" readonly></textarea>
+      </div>
     </div>
-  </div>
 
-  <div class="actions primary-row">
-    <button id="copy-btn" class="btn primary">Copy</button>
-    <button id="obsidian-btn" class="btn accent" title="Open clip in Obsidian or PKM app">Open in Obsidian</button>
-    <button id="ai-btn" class="btn ai-btn" title="Send article to AI Chat">🤖 Send to AI</button>
-  </div>
+    <div class="actions primary-row">
+      <button id="copy-btn" class="btn primary">Copy</button>
+      <button id="obsidian-btn" class="btn accent" title="Open clip in Obsidian or PKM app">
+        Open in Obsidian
+      </button>
+      <button id="ai-btn" class="btn ai-btn" title="Send article to AI Chat">🤖 Send to AI</button>
+    </div>
 
-  <div class="actions secondary-row">
-    <button id="download-btn" class="btn secondary">Download .md</button>
-  </div>
+    <div class="actions secondary-row">
+      <button id="download-btn" class="btn secondary">Download .md</button>
+    </div>
 
-  <script src="popup.js"></script>
-</body>
+    <script src="popup.js"></script>
+  </body>
 </html>

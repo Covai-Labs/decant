@@ -1,4 +1,4 @@
-import { DEFAULT_OPTIONS, getOptions } from '../shared/storage.js';
+import { getOptions } from '../shared/storage.js';
 import { logger } from '../shared/logger.js';
 
 const UNINSTALL_URL = 'https://decant.covai.org/uninstall-feedback.html';
@@ -21,13 +21,13 @@ chrome.runtime.onInstalled.addListener((details) => {
   chrome.contextMenus.create({
     id: 'decant-page',
     title: 'Decant page to Markdown',
-    contexts: ['page']
+    contexts: ['page'],
   });
 
   chrome.contextMenus.create({
     id: 'decant-selection',
     title: 'Decant selection to Markdown',
-    contexts: ['selection']
+    contexts: ['selection'],
   });
 });
 
@@ -65,7 +65,7 @@ async function clipTab(tabId, options) {
       logger.info('Background', 'Injecting content script dynamically into tab:', tabId);
       await chrome.scripting.executeScript({
         target: { tabId },
-        files: ['content/content.js']
+        files: ['content/content.js'],
       });
       response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options });
     }
@@ -88,7 +88,7 @@ async function copyTabToClipboard(tabId, options) {
     if (!response) {
       await chrome.scripting.executeScript({
         target: { tabId },
-        files: ['content/content.js']
+        files: ['content/content.js'],
       });
       response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options });
     }
@@ -97,7 +97,7 @@ async function copyTabToClipboard(tabId, options) {
       logger.info('Background', 'Copying markdown to clipboard...');
       chrome.tabs.sendMessage(tabId, {
         action: 'COPY_TO_CLIPBOARD',
-        text: response.data.markdown
+        text: response.data.markdown,
       });
     }
   } catch (err) {
@@ -123,6 +123,6 @@ function downloadMarkdown(filename, content) {
   chrome.downloads.download({
     url: blobUrl,
     filename: filename,
-    saveAs: false
+    saveAs: false,
   });
 }

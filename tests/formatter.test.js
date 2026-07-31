@@ -15,13 +15,13 @@ test('formatMarkdown includes YAML frontmatter when enabled', () => {
     url: 'https://example.com/hello',
     siteName: 'Example Blog',
     excerpt: 'An example article',
-    content: 'This is the main body.'
+    content: 'This is the main body.',
   };
 
   const options = {
     ...DEFAULT_OPTIONS,
     includeFrontmatter: true,
-    frontmatterTemplate: '---\ntitle: "{{title}}"\nauthor: "{{author}}"\n---'
+    frontmatterTemplate: '---\ntitle: "{{title}}"\nauthor: "{{author}}"\n---',
   };
 
   const formatted = formatMarkdown(article, options);
@@ -35,12 +35,12 @@ test('formatMarkdown omits frontmatter when disabled', () => {
     title: 'No Frontmatter Test',
     byline: '',
     url: 'https://example.com',
-    content: 'Content only.'
+    content: 'Content only.',
   };
 
   const options = {
     ...DEFAULT_OPTIONS,
-    includeFrontmatter: false
+    includeFrontmatter: false,
   };
 
   const formatted = formatMarkdown(article, options);

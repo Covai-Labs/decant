@@ -12,7 +12,7 @@ function createTurndownService(options = DEFAULT_OPTIONS) {
     headingStyle: options.headingStyle || 'atx',
     bulletListMarker: options.bulletListMarker || '-',
     codeBlockStyle: options.codeBlockStyle || 'fenced',
-    fence: options.fenceSymbol || '```'
+    fence: options.fenceSymbol || '```',
   });
 
   turndownService.use(gfm);
@@ -21,14 +21,14 @@ function createTurndownService(options = DEFAULT_OPTIONS) {
 
 export function extractArticle(options = DEFAULT_OPTIONS) {
   logger.log('ContentScript', 'Starting article extraction with options:', options);
-  
+
   const documentClone = document.cloneNode(true);
   const reader = new Readability(documentClone);
   const article = reader.parse();
 
   const title = article?.title || document.title || 'Untitled';
   const htmlContent = article?.content || document.body.innerHTML;
-  
+
   logger.log('ContentScript', 'Extracted title:', title, '| HTML length:', htmlContent?.length);
 
   const turndownService = createTurndownService(options);
@@ -43,7 +43,7 @@ export function extractArticle(options = DEFAULT_OPTIONS) {
     excerpt: article?.excerpt || '',
     siteName: article?.siteName || '',
     url: window.location.href,
-    content: markdownBody
+    content: markdownBody,
   };
 
   const formattedMarkdown = formatMarkdown(parsedArticle, options);
@@ -52,7 +52,7 @@ export function extractArticle(options = DEFAULT_OPTIONS) {
   return {
     ...parsedArticle,
     markdown: formattedMarkdown,
-    filename
+    filename,
   };
 }
 

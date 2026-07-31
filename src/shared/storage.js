@@ -8,8 +8,9 @@ export const DEFAULT_OPTIONS = {
   defaultAppTarget: 'obsidian', // 'obsidian', 'logseq', 'bear', 'noteplan', 'drafts'
   obsidianVault: '',
   defaultAiTarget: 'chatgpt', // 'chatgpt', 'claude', 'gemini', 'deepseek', 'perplexity'
-  aiPromptTemplate: 'Please analyze and summarize the key takeaways from this web article:\n\nTitle: {{title}}\nSource: {{url}}\n\n{{content}}',
-  downloadImages: false
+  aiPromptTemplate:
+    'Please analyze and summarize the key takeaways from this web article:\n\nTitle: {{title}}\nSource: {{url}}\n\n{{content}}',
+  downloadImages: false,
 };
 
 export async function getOptions() {

@@ -12,9 +12,7 @@
     "sidePanel",
     "clipboardWrite"
   ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "Decant to Markdown",
@@ -34,14 +32,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content/loader.js"],
+      "js": ["content/content.js"],
       "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["content/content.js"],
-      "matches": ["<all_urls>"]
     }
   ],
   "options_ui": {

@@ -34,7 +34,9 @@ async function initPopup() {
       obsidianBtn.style.display = 'none';
     } else if (savedOptions.defaultAppTarget) {
       obsidianBtn.style.display = '';
-      const appName = savedOptions.defaultAppTarget.charAt(0).toUpperCase() + savedOptions.defaultAppTarget.slice(1);
+      const appName =
+        savedOptions.defaultAppTarget.charAt(0).toUpperCase() +
+        savedOptions.defaultAppTarget.slice(1);
       obsidianBtn.textContent = `Open in ${appName}`;
     }
 
@@ -58,25 +60,41 @@ async function initPopup() {
 
     // Detect if current page is an AI Chat platform -> display AI Chat Exporter tip
     if (isAiChatUrl(currentUrl)) {
-      logger.info('Popup', 'AI Chat page detected. Displaying AI Chat Exporter recommendation banner.');
+      logger.info(
+        'Popup',
+        'AI Chat page detected. Displaying AI Chat Exporter recommendation banner.',
+      );
       if (aiTipBanner) aiTipBanner.classList.remove('hidden');
     }
 
-    if (currentUrl && (currentUrl.startsWith('chrome://') || currentUrl.startsWith('edge://') || currentUrl.startsWith('about:'))) {
-      showError('Decant cannot clip browser system pages (chrome://). Open a normal website (e.g. news, article, docs) to clip.');
+    if (
+      currentUrl &&
+      (currentUrl.startsWith('chrome://') ||
+        currentUrl.startsWith('edge://') ||
+        currentUrl.startsWith('about:'))
+    ) {
+      showError(
+        'Decant cannot clip browser system pages (chrome://). Open a normal website (e.g. news, article, docs) to clip.',
+      );
       return;
     }
 
-    let response = await sendMessageToTab(tab.id, { action: 'EXTRACT_MARKDOWN', options: savedOptions });
+    let response = await sendMessageToTab(tab.id, {
+      action: 'EXTRACT_MARKDOWN',
+      options: savedOptions,
+    });
 
     if (!response) {
       logger.info('Popup', 'Content script not responding. Attempting dynamic script injection...');
       try {
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
-          files: ['content/content.js']
+          files: ['content/content.js'],
         });
-        response = await sendMessageToTab(tab.id, { action: 'EXTRACT_MARKDOWN', options: savedOptions });
+        response = await sendMessageToTab(tab.id, {
+          action: 'EXTRACT_MARKDOWN',
+          options: savedOptions,
+        });
       } catch (injectErr) {
         logger.error('Popup', 'Dynamic script injection failed:', injectErr);
       }
@@ -140,7 +158,7 @@ obsidianBtn.addEventListener('click', () => {
   const uri = buildAppUri(target, {
     title: currentTitle,
     content: currentMarkdown,
-    vault: savedOptions.obsidianVault
+    vault: savedOptions.obsidianVault,
   });
 
   logger.info('Popup', 'Opening PKM app URI:', uri);
@@ -156,7 +174,7 @@ aiBtn.addEventListener('click', async () => {
     title: currentTitle,
     url: currentUrl,
     content: currentMarkdown,
-    template: savedOptions.aiPromptTemplate
+    template: savedOptions.aiPromptTemplate,
   });
 
   await navigator.clipboard.writeText(prompt);
@@ -172,7 +190,7 @@ downloadBtn.addEventListener('click', () => {
   chrome.downloads.download({
     url: blobUrl,
     filename: currentFilename,
-    saveAs: true
+    saveAs: true,
   });
 });
 

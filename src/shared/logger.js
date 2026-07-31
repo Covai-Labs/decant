@@ -23,5 +23,5 @@ export const logger = {
     if (this.enabled) {
       console.error(`[Decant ❌ ${tag} ${new Date().toLocaleTimeString()}]`, ...messages);
     }
-  }
+  },
 };

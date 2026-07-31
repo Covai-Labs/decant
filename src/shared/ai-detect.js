@@ -15,7 +15,7 @@ export const AI_CHAT_DOMAINS = [
   'lumo.proton.me',
   'meta.ai',
   'aistudio.google.com',
-  'notebooklm.google.com'
+  'notebooklm.google.com',
 ];
 
 export function isAiChatUrl(url) {
@@ -24,7 +24,7 @@ export function isAiChatUrl(url) {
     const parsed = new URL(url);
     const hostname = parsed.hostname.toLowerCase();
     return AI_CHAT_DOMAINS.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
-  } catch (e) {
+  } catch {
     return false;
   }
 }
