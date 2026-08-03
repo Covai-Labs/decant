@@ -35,9 +35,6 @@ let activeContent   = '';
 let activeExtension = 'md';
 let activeTab       = 'markdown';
 
-// PNG caching
-let cachedPngBlob = null;
-
 // Blob URL management
 let currentBlobUrl = null;
 
@@ -53,12 +50,13 @@ function blobToText(blob) {
 
 function injectLibsAndTheme(html, theme) {
   const base = chrome.runtime.getURL('preview/lib/');
+  const scriptClose = '<' + '/script>';
   const inject = `
 <link rel="stylesheet" href="${base}katex/katex.min.css">
 <link rel="stylesheet" href="${base}prismjs/prism-tomorrow.min.css">
-<script src="${base}katex/katex.min.js"><\/script>
-<script src="${base}katex/auto-render.min.js"><\/script>
-<script src="${base}prismjs/prism-bundle.js"><\/script>
+<script src="${base}katex/katex.min.js">${scriptClose}
+<script src="${base}katex/auto-render.min.js">${scriptClose}
+<script src="${base}prismjs/prism-bundle.js">${scriptClose}
 <script>
   // Theme sync via postMessage
   window.addEventListener('message', (event) => {
@@ -73,7 +71,7 @@ function injectLibsAndTheme(html, theme) {
       }
     }
   });
-<\/script>`;
+${scriptClose}`;
 
   const colorOverride = `<style>:root,html{color-scheme:${theme};}</style>`;
 
@@ -190,7 +188,7 @@ function switchTab(tab) {
       activeExtension     = 'doc';
     }
 
-    if (window.Prism) Prism.highlightElement(codeEl);
+    if (window.Prism) window.Prism.highlightElement(codeEl);
   }
 
 }
@@ -298,9 +296,6 @@ async function downloadPng() {
       }, 'image/png');
     });
 
-    // Cache the blob
-    cachedPngBlob = blob;
-
     const url = URL.createObjectURL(blob);
     const a = Object.assign(document.createElement('a'), {
       href: url,
@@ -382,21 +377,9 @@ function syncThemeToIframe(theme) {
         doc.documentElement.removeAttribute('data-theme');
       }
     }
-  } catch (err) {
+  } catch {
     // Ignore iframe DOM access errors (cross-origin restrictions)
   }
-}
-
-// ── PNG options event listeners ─────────────────────────────────────
-if (pngQualityCheckbox) {
-  pngQualityCheckbox.addEventListener('change', () => {
-    cachedPngBlob = null;
-  });
-}
-if (includeImagesCheckbox) {
-  includeImagesCheckbox.addEventListener('change', () => {
-    cachedPngBlob = null;
-  });
 }
 
 // ── Iframe content management ────────────────────────────────────────
@@ -474,10 +457,10 @@ async function init() {
     switchTab(tabToSwitch);
 
     // Execute auto-actions if needed
-    if (window.autoPrint && tabToSwitch === 'pdf') {
+    if (autoPrint && tabToSwitch === 'pdf') {
       setTimeout(() => triggerPrint(), 500);
     }
-    if (window.autoDownloadPng && tabToSwitch === 'png') {
+    if (autoDownloadPng && tabToSwitch === 'png') {
       setTimeout(() => downloadPng(), 500);
     }
 

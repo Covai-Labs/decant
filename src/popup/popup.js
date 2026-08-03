@@ -1,6 +1,6 @@
 import { getOptions } from '../shared/storage.js';
 import { buildAppUri } from '../shared/uri-transfer.js';
-import { buildAiPrompt, getAiPlatformUrl, AI_PLATFORMS } from '../shared/ai-transfer.js';
+import { buildAiPrompt, getAiPlatformUrl } from '../shared/ai-transfer.js';
 import { isAiChatUrl } from '../shared/ai-detect.js';
 import { logger } from '../shared/logger.js';
 
