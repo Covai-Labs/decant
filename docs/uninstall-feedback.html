@@ -1,6 +1,7 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
@@ -8,10 +9,13 @@
     <title>Sorry to see you go.</title>
     <script async src="https://tally.so/widgets/embed.js"></script>
     <style type="text/css">
-      html {
+      html,
+      body {
         margin: 0;
+        padding: 0;
         height: 100%;
         overflow: hidden;
+        background-color: #0b111e;
       }
       iframe {
         position: absolute;
@@ -20,12 +24,15 @@
         bottom: 0;
         left: 0;
         border: 0;
+        width: 100%;
+        height: 100%;
       }
     </style>
   </head>
   <body>
     <iframe
-      data-tally-src="https://tally.so/r/rjRMxN?transparentBackground=1"
+      src="https://tally.so/r/rjRMxN?transparentBackground=1&formEventsForwarding=1"
+      data-tally-src="https://tally.so/r/rjRMxN?transparentBackground=1&formEventsForwarding=1"
       width="100%"
       height="100%"
       frameborder="0"
