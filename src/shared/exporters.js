@@ -140,7 +140,11 @@ export function toJson(data) {
 
 export function toDoc(data) {
   // Word/LibreOffice opens HTML files saved with a .doc extension + UTF-8 BOM.
-  // Same technique used in ai-chat-exporter.
+  // Remove interactive/SVG elements that can break LibreOffice's HTML import filter.
+  const docContent = (data.htmlContent || '')
+    .replace(/<button[^>]*>[\s\S]*?<\/button>/gi, '')
+    .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, '');
+
   const wordHtml = `<html
   xmlns:o="urn:schemas-microsoft-com:office:office"
   xmlns:w="urn:schemas-microsoft-com:office:word"
@@ -174,7 +178,7 @@ export function toDoc(data) {
   ${data.siteName ? `<p class="meta">${esc(data.siteName)}</p>` : ''}
   ${data.url ? `<p class="meta">Source: ${esc(data.url)}</p>` : ''}
   <hr />
-  ${data.htmlContent}
+  ${docContent}
   <div class="footer">
     <p>Clipped with Decant &mdash; https://decant.covai.org</p>
   </div>
