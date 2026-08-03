@@ -71,7 +71,7 @@
 
     <hr class="popup-divider" />
 
-    <!-- Row 3: Format Selection & Actions -->
+    <!-- Row 3: Format Selection & Markdown Actions -->
     <div class="actions row-format">
       <select id="format-select" class="select-dropdown format-select" title="Export Format">
         <option value="md" selected>Markdown (.md)</option>
@@ -86,10 +86,11 @@
         <button id="copy-btn" class="btn primary" title="Copy Markdown to clipboard">📋 Copy</button>
         <button id="download-md-btn" class="btn primary" title="Download Markdown file">⬇ Save</button>
       </div>
+    </div>
 
-      <div id="preview-actions" class="format-action-group hidden">
-        <button id="export-btn" class="btn export-btn" title="Preview and save in selected format">🔍 Preview &amp; Save</button>
-      </div>
+    <!-- Row 4: Preview -->
+    <div id="preview-actions" class="actions row-preview">
+      <button id="export-btn" class="btn export-btn" title="Open the selected format preview in a new tab">🔍 Preview in new tab</button>
     </div>
 
     <div id="png-warning-banner" class="png-warning-banner hidden">

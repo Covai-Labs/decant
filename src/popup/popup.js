@@ -26,7 +26,6 @@ const aiSelect      = document.getElementById('ai-select');
 const aiBtn         = document.getElementById('ai-btn');
 const formatSelect  = document.getElementById('format-select');
 const mdActions     = document.getElementById('md-actions');
-const previewActions= document.getElementById('preview-actions');
 const exportBtn     = document.getElementById('export-btn');
 const optionsBtn    = document.getElementById('options-btn');
 const aiTipBanner   = document.getElementById('ai-tip-banner');
@@ -192,7 +191,7 @@ async function openExportPreview() {
     exportBtn.textContent = '✓ Preview Opened';
   } catch (err) {
     logger.error('Popup', 'Failed to open preview tab:', err);
-    exportBtn.textContent = '🔍 Preview & Save';
+    exportBtn.textContent = '🔍 Preview in new tab';
     exportBtn.disabled = false;
   }
 }
@@ -254,12 +253,10 @@ if (formatSelect) {
     const val = formatSelect.value;
     if (val === 'md') {
       mdActions.classList.remove('hidden');
-      previewActions.classList.add('hidden');
     } else {
       mdActions.classList.add('hidden');
-      previewActions.classList.remove('hidden');
-      exportBtn.textContent = '🔍 Preview & Save';
     }
+    exportBtn.textContent = '🔍 Preview in new tab';
     if (pngWarningBanner) {
       pngWarningBanner.classList.toggle('hidden', val !== 'png');
     }
