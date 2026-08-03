@@ -80,6 +80,13 @@ function injectLibsAndTheme(html, theme) {
   return html.replace('</head>', inject + colorOverride + '</head>');
 }
 
+function updateActionButtons(tab) {
+  if (copyBtn) copyBtn.classList.toggle('hidden', !['markdown', 'html-live', 'html-code', 'json'].includes(tab));
+  if (downloadBtn) downloadBtn.classList.toggle('hidden', !['markdown', 'html-live', 'html-code', 'json', 'doc'].includes(tab));
+  if (printBtn) printBtn.classList.toggle('hidden', tab !== 'pdf');
+  if (pngBtn) pngBtn.classList.toggle('hidden', tab !== 'png');
+}
+
 // ── Tab switching ─────────────────────────────────────────────────
 function switchTab(tab) {
   activeTab = tab;
@@ -95,11 +102,8 @@ function switchTab(tab) {
   renderWrapper.classList.add('hidden');
   codeWrapper.classList.add('hidden');
 
-  // Reset dynamic button visibilities & banner
-  if (copyBtn)     copyBtn.classList.add('hidden');
-  if (printBtn)    printBtn.classList.add('hidden');
-  if (pngBtn)      pngBtn.classList.add('hidden');
-  if (downloadBtn) downloadBtn.classList.add('hidden');
+  // Refresh dynamic button visibilities & banners
+  updateActionButtons(tab);
   if (pngWarningBanner) pngWarningBanner.classList.toggle('hidden', tab !== 'png');
   if (pngOptionsBar) pngOptionsBar.classList.toggle('hidden', tab !== 'png');
 
@@ -159,16 +163,6 @@ function switchTab(tab) {
       activeExtension = 'png';
     }
 
-    // Show appropriate buttons for render panes
-    if (tab === 'html-live') {
-      if (copyBtn) copyBtn.classList.remove('hidden');
-      if (downloadBtn) downloadBtn.classList.remove('hidden');
-    } else if (tab === 'pdf') {
-      if (printBtn) printBtn.classList.remove('hidden');
-    } else if (tab === 'png') {
-      if (pngBtn) pngBtn.classList.remove('hidden');
-    }
-
   } else {
     codeWrapper.classList.remove('hidden');
 
@@ -193,14 +187,6 @@ function switchTab(tab) {
       codeEl.className    = 'language-html';
       activeContent       = docStr;
       activeExtension     = 'doc';
-    }
-
-    // Show appropriate buttons for code panes
-    if (tab === 'markdown' || tab === 'html-code' || tab === 'json') {
-      if (copyBtn) copyBtn.classList.remove('hidden');
-      if (downloadBtn) downloadBtn.classList.remove('hidden');
-    } else if (tab === 'doc') {
-      if (downloadBtn) downloadBtn.classList.remove('hidden');
     }
 
     if (window.Prism) Prism.highlightElement(codeEl);
