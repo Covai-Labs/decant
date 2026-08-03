@@ -31,11 +31,26 @@
         <div class="header-toolbar">
           <nav id="format-tabs" class="tab-strip" role="tablist">
             <button class="tab-btn active" data-tab="markdown"   role="tab" aria-selected="true">📝 Markdown</button>
-            <button class="tab-btn"        data-tab="html-live"  role="tab">🎨 HTML / PDF / PNG</button>
+            <button class="tab-btn"        data-tab="html-live"  role="tab">🎨 HTML</button>
+            <button class="tab-btn"        data-tab="pdf"        role="tab">🖨️ PDF</button>
+            <button class="tab-btn"        data-tab="png"        role="tab">🖼️ PNG</button>
             <button class="tab-btn"        data-tab="html-code"  role="tab">⌨ HTML Code</button>
             <button class="tab-btn"        data-tab="json"       role="tab">{ } JSON</button>
             <button class="tab-btn"        data-tab="doc"        role="tab">📄 Word (.doc)</button>
           </nav>
+        </div>
+        <div id="png-warning-banner" class="png-warning-banner hidden">
+          ⚠️ PNG export on long articles may take a few moments. Consider PDF or Markdown for instant export.
+        </div>
+        <div id="png-options-bar" class="png-options-bar hidden">
+          <label class="checkbox-label">
+            <input type="checkbox" id="png-quality-checkbox" checked />
+            High Quality PNG (2x)
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="include-images-checkbox" checked />
+            Include Images
+          </label>
         </div>
       </header>
 
@@ -51,7 +66,7 @@
         <!-- HTML render pane -->
         <div id="render-wrapper" class="pane hidden">
           <iframe id="html-iframe" class="html-iframe"
-            sandbox="allow-scripts"
+            sandbox="allow-scripts allow-modals allow-same-origin"
             title="Rendered article preview"></iframe>
         </div>
 

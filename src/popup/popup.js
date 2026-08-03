@@ -30,6 +30,7 @@ const previewActions= document.getElementById('preview-actions');
 const exportBtn     = document.getElementById('export-btn');
 const optionsBtn    = document.getElementById('options-btn');
 const aiTipBanner   = document.getElementById('ai-tip-banner');
+const pngWarningBanner = document.getElementById('png-warning-banner');
 
 // ── Init ──────────────────────────────────────────────────────────
 async function initPopup() {
@@ -248,6 +249,9 @@ if (formatSelect) {
       mdActions.classList.add('hidden');
       previewActions.classList.remove('hidden');
       exportBtn.textContent = '🔍 Preview & Save';
+    }
+    if (pngWarningBanner) {
+      pngWarningBanner.classList.toggle('hidden', val !== 'png');
     }
   });
 }

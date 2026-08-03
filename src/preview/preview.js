@@ -14,6 +14,10 @@ const copyBtn        = document.getElementById('copy-btn');
 const printBtn       = document.getElementById('print-btn');
 const pngBtn         = document.getElementById('png-btn');
 const downloadBtn    = document.getElementById('download-btn');
+const pngWarningBanner = document.getElementById('png-warning-banner');
+const pngOptionsBar  = document.getElementById('png-options-bar');
+const pngQualityCheckbox = document.getElementById('png-quality-checkbox');
+const includeImagesCheckbox = document.getElementById('include-images-checkbox');
 
 // ── State ─────────────────────────────────────────────────────────
 let articleData    = null;
@@ -30,6 +34,12 @@ let docStr       = '';
 let activeContent   = '';
 let activeExtension = 'md';
 let activeTab       = 'markdown';
+
+// PNG caching
+let cachedPngBlob = null;
+
+// Blob URL management
+let currentBlobUrl = null;
 
 // ── Helpers ───────────────────────────────────────────────────────
 function blobToText(blob) {
@@ -50,16 +60,18 @@ function injectLibsAndTheme(html, theme) {
 <script src="${base}katex/auto-render.min.js"><\/script>
 <script src="${base}prismjs/prism-bundle.js"><\/script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    if (window.renderMathInElement) {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '$',  right: '$',  display: false}
-        ]
-      });
+  // Theme sync via postMessage
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.action === 'setTheme') {
+      const theme = event.data.theme;
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
     }
-    if (window.Prism) Prism.highlightAll();
   });
 <\/script>`;
 
@@ -79,27 +91,88 @@ function switchTab(tab) {
     btn.setAttribute('aria-selected', selected ? 'true' : 'false');
   });
 
-  // Hide all panes
+  // Hide all panes initially
   renderWrapper.classList.add('hidden');
   codeWrapper.classList.add('hidden');
 
-  if (tab === 'html-live') {
+  // Reset dynamic button visibilities & banner
+  if (copyBtn)     copyBtn.classList.add('hidden');
+  if (printBtn)    printBtn.classList.add('hidden');
+  if (pngBtn)      pngBtn.classList.add('hidden');
+  if (downloadBtn) downloadBtn.classList.add('hidden');
+  if (pngWarningBanner) pngWarningBanner.classList.toggle('hidden', tab !== 'png');
+  if (pngOptionsBar) pngOptionsBar.classList.toggle('hidden', tab !== 'png');
+
+  const isRenderPane = tab === 'html-live' || tab === 'pdf' || tab === 'png';
+
+  if (isRenderPane) {
     renderWrapper.classList.remove('hidden');
-    if (!iframeLoaded) {
+
+    // Check if content has changed before reloading iframe
+    const currentContent = htmlIframe.getAttribute('data-content');
+    const contentChanged = !currentContent || currentContent !== htmlStr;
+
+    if (!iframeLoaded || contentChanged) {
       const theme = isDark ? 'dark' : 'light';
-      htmlIframe.srcdoc = injectLibsAndTheme(htmlStr, theme);
+      htmlIframe.onload = () => {
+        // Sync theme after iframe loads
+        syncThemeToIframe(theme);
+
+        try {
+          const win = htmlIframe.contentWindow;
+          const doc = htmlIframe.contentDocument;
+          if (win && doc) {
+            if (win.renderMathInElement) {
+              win.renderMathInElement(doc.body, {
+                delimiters: [
+                  {left: '$$', right: '$$', display: true},
+                  {left: '$',  right: '$',  display: false}
+                ]
+              });
+            }
+            if (win.Prism) win.Prism.highlightAll();
+          }
+        } catch (err) {
+          console.warn('Iframe post-load rendering failed:', err);
+        }
+      };
+
+      htmlIframe.onerror = () => {
+        console.error('Iframe loading failed');
+        loadingEl.innerHTML = '<p style="color:#f87171">Failed to load preview. Please try again.</p>';
+      };
+
+      htmlIframe.setAttribute('data-content', htmlStr);
+      setIframeContent(injectLibsAndTheme(htmlStr, theme));
       iframeLoaded = true;
     }
-    activeContent   = htmlStr;
-    activeExtension = 'html';
-    if (printBtn) printBtn.classList.remove('hidden');
-    if (pngBtn)   pngBtn.classList.remove('hidden');
+
+    // Set content and extension based on tab
+    if (tab === 'html-live') {
+      activeContent   = htmlStr;
+      activeExtension = 'html';
+    } else if (tab === 'pdf') {
+      activeContent   = htmlStr;
+      activeExtension = 'pdf';
+    } else if (tab === 'png') {
+      activeContent   = htmlStr;
+      activeExtension = 'png';
+    }
+
+    // Show appropriate buttons for render panes
+    if (tab === 'html-live') {
+      if (copyBtn) copyBtn.classList.remove('hidden');
+      if (downloadBtn) downloadBtn.classList.remove('hidden');
+    } else if (tab === 'pdf') {
+      if (printBtn) printBtn.classList.remove('hidden');
+    } else if (tab === 'png') {
+      if (pngBtn) pngBtn.classList.remove('hidden');
+    }
 
   } else {
     codeWrapper.classList.remove('hidden');
-    if (printBtn) printBtn.classList.add('hidden');
-    if (pngBtn)   pngBtn.classList.add('hidden');
 
+    // Set content and extension based on tab
     if (tab === 'markdown') {
       codeEl.textContent  = markdownStr;
       codeEl.className    = 'language-markdown';
@@ -120,6 +193,14 @@ function switchTab(tab) {
       codeEl.className    = 'language-html';
       activeContent       = docStr;
       activeExtension     = 'doc';
+    }
+
+    // Show appropriate buttons for code panes
+    if (tab === 'markdown' || tab === 'html-code' || tab === 'json') {
+      if (copyBtn) copyBtn.classList.remove('hidden');
+      if (downloadBtn) downloadBtn.classList.remove('hidden');
+    } else if (tab === 'doc') {
+      if (downloadBtn) downloadBtn.classList.remove('hidden');
     }
 
     if (window.Prism) Prism.highlightElement(codeEl);
@@ -178,37 +259,70 @@ async function downloadPng() {
   btnToDisable.textContent = 'Generating PNG…';
 
   try {
+    // Get PNG options
+    const highQuality = pngQualityCheckbox ? pngQualityCheckbox.checked : true;
+    const includeImages = includeImagesCheckbox ? includeImagesCheckbox.checked : true;
+
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlStr, 'text/html');
     const articleEl = doc.querySelector('article') || doc.body;
 
+    if (!articleEl || !articleEl.innerHTML) {
+      throw new Error('No content found to render as PNG');
+    }
+
     const container = document.createElement('div');
     container.style.cssText = [
-      'position:fixed', 'top:-9999px', 'left:0', 'width:900px',
+      'position:absolute', 'left:-9999px', 'top:0', 'width:900px',
       'background:#ffffff', 'color:#1a202c', 'padding:48px 64px',
       'font-family:-apple-system,BlinkMacSystemFont,sans-serif',
-      'font-size:18px', 'line-height:1.7'
+      'font-size:18px', 'line-height:1.7', 'box-sizing:border-box'
     ].join(';');
-    container.innerHTML = articleEl.innerHTML;
+
+    // Clone content and optionally remove images
+    let contentHtml = articleEl.innerHTML;
+    if (!includeImages) {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = contentHtml;
+      const images = tempDiv.querySelectorAll('img');
+      images.forEach(img => img.remove());
+      contentHtml = tempDiv.innerHTML;
+    }
+
+    container.innerHTML = contentHtml;
     document.body.appendChild(container);
 
     const canvas = await window.html2canvas(container, {
-      scale: 2,
+      scale: highQuality ? 2 : 1,
       useCORS: true,
       allowTaint: false,
       backgroundColor: '#ffffff',
       logging: false,
+      windowWidth: 900,
+      scrollX: 0,
+      scrollY: 0,
     });
     document.body.removeChild(container);
 
-    const dataUrl = canvas.toDataURL('image/png');
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((b) => {
+        if (b) resolve(b);
+        else reject(new Error('Failed to generate PNG blob from canvas'));
+      }, 'image/png');
+    });
+
+    // Cache the blob
+    cachedPngBlob = blob;
+
+    const url = URL.createObjectURL(blob);
     const a = Object.assign(document.createElement('a'), {
-      href: dataUrl,
+      href: url,
       download: `${articleData.baseFilename || 'article'}.png`,
     });
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
   } catch (err) {
     alert('PNG generation failed: ' + err.message);
   } finally {
@@ -249,10 +363,65 @@ function setTheme(theme) {
   themeBtn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
   chrome.storage.local.set({ previewTheme: theme });
 
-  if (activeTab === 'html-live' && htmlStr) {
+  // Sync theme to iframe via postMessage
+  syncThemeToIframe(theme);
+
+  // Reload iframe with new theme if in render pane
+  if (activeTab === 'html-live' || activeTab === 'pdf' || activeTab === 'png') {
     iframeLoaded = false;
-    switchTab('html-live');
+    switchTab(activeTab);
   }
+}
+
+function syncThemeToIframe(theme) {
+  try {
+    if (htmlIframe && htmlIframe.contentWindow) {
+      htmlIframe.contentWindow.postMessage({ action: 'setTheme', theme }, '*');
+    }
+  } catch (err) {
+    console.warn('Failed to sync theme to iframe:', err);
+  }
+
+  // Also try direct DOM manipulation
+  try {
+    const doc = htmlIframe.contentDocument ||
+                (htmlIframe.contentWindow && htmlIframe.contentWindow.document);
+    if (doc && doc.documentElement) {
+      if (theme === 'dark') {
+        doc.documentElement.setAttribute('data-theme', 'dark');
+      } else if (theme === 'light') {
+        doc.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        doc.documentElement.removeAttribute('data-theme');
+      }
+    }
+  } catch (err) {
+    // Ignore iframe DOM access errors (cross-origin restrictions)
+  }
+}
+
+// ── PNG options event listeners ─────────────────────────────────────
+if (pngQualityCheckbox) {
+  pngQualityCheckbox.addEventListener('change', () => {
+    cachedPngBlob = null;
+  });
+}
+if (includeImagesCheckbox) {
+  includeImagesCheckbox.addEventListener('change', () => {
+    cachedPngBlob = null;
+  });
+}
+
+// ── Iframe content management ────────────────────────────────────────
+function setIframeContent(content) {
+  if (currentBlobUrl) {
+    URL.revokeObjectURL(currentBlobUrl);
+    currentBlobUrl = null;
+  }
+
+  const blob = new Blob([content], { type: 'text/html' });
+  currentBlobUrl = URL.createObjectURL(blob);
+  htmlIframe.src = currentBlobUrl;
 }
 
 // ── Init ──────────────────────────────────────────────────────────
@@ -297,8 +466,12 @@ async function init() {
     loadingEl.style.display = 'none';
     const requestedTab = params.get('tab');
     let initialTab = 'markdown';
-    if (requestedTab === 'html' || requestedTab === 'pdf' || requestedTab === 'png' || requestedTab === 'html-live') {
+    if (requestedTab === 'html' || requestedTab === 'html-live') {
       initialTab = 'html-live';
+    } else if (requestedTab === 'pdf') {
+      initialTab = 'pdf';
+    } else if (requestedTab === 'png') {
+      initialTab = 'png';
     } else if (requestedTab === 'json') {
       initialTab = 'json';
     } else if (requestedTab === 'doc') {
@@ -324,6 +497,13 @@ downloadBtn.addEventListener('click', triggerDownload);
 copyBtn.addEventListener('click',     triggerCopy);
 if (printBtn) printBtn.addEventListener('click', triggerPrint);
 if (pngBtn)   pngBtn.addEventListener('click',   downloadPng);
+
+// Cleanup blob URL on page unload
+window.addEventListener('beforeunload', () => {
+  if (currentBlobUrl) {
+    URL.revokeObjectURL(currentBlobUrl);
+  }
+});
 
 // ── Boot ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', init);

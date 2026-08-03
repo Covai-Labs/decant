@@ -7,6 +7,8 @@
   --accent-hover: #7c3aed;
   --obsidian-purple: #7c3aed;
   --obsidian-hover: #6d28d9;
+  --green-color: #059669;
+  --green-hover: #047857;
   --ai-teal: #0d9488;
   --ai-hover: #0f766e;
   --border-color: #334155;
@@ -150,12 +152,12 @@ body.in-iframe {
 }
 
 .btn.primary {
-  background-color: var(--accent-color);
+  background-color: var(--green-color);
   color: #ffffff;
 }
 
 .btn.primary:hover {
-  background-color: var(--accent-hover);
+  background-color: var(--green-hover);
 }
 
 .btn.accent {
@@ -170,12 +172,17 @@ body.in-iframe {
 
 .btn.ai-btn {
   flex: 1;
-  background-color: var(--ai-teal);
-  color: #ffffff;
+  background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(109,40,217,0.18));
+  color: #c4b5fd;
+  border: 1px solid rgba(139,92,246,0.35);
+  font-size: 0.83rem;
+  transition: all 0.2s ease;
 }
 
 .btn.ai-btn:hover {
-  background-color: var(--ai-hover);
+  background: linear-gradient(135deg, rgba(139,92,246,0.28), rgba(109,40,217,0.28));
+  border-color: rgba(139,92,246,0.55);
+  color: #e9d5ff;
 }
 
 .btn.secondary {
@@ -265,21 +272,30 @@ body.in-iframe {
 /* ── Export button ──────────────────────────────────────────────── */
 
 .export-btn {
-  flex: 1;
-  background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(109,40,217,0.18));
-  color: #c4b5fd;
-  border: 1px solid rgba(139,92,246,0.35);
+  width: 100%;
+  background-color: var(--green-color);
+  color: #ffffff;
   font-size: 0.83rem;
-  transition: all 0.2s ease;
+  border: none;
+  transition: background-color 0.2s ease;
 }
 
 .export-btn:hover {
-  background: linear-gradient(135deg, rgba(139,92,246,0.28), rgba(109,40,217,0.28));
-  border-color: rgba(139,92,246,0.55);
-  color: #e9d5ff;
+  background-color: var(--green-hover);
 }
 
 .export-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.png-warning-banner {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+  font-size: 0.76rem;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  margin-top: 8px;
+  line-height: 1.35;
 }
