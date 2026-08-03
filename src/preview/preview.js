@@ -81,10 +81,11 @@ function injectLibsAndTheme(html, theme) {
 }
 
 function updateActionButtons(tab) {
-  if (copyBtn) copyBtn.classList.toggle('hidden', !['markdown', 'html-live', 'html-code', 'json'].includes(tab));
-  if (downloadBtn) downloadBtn.classList.toggle('hidden', !['markdown', 'html-live', 'html-code', 'json', 'doc'].includes(tab));
-  if (printBtn) printBtn.classList.toggle('hidden', tab !== 'pdf');
-  if (pngBtn) pngBtn.classList.toggle('hidden', tab !== 'png');
+  if (copyBtn) copyBtn.hidden = !['markdown', 'html-live', 'html-code', 'json'].includes(tab);
+  if (downloadBtn) downloadBtn.hidden = !['markdown', 'html-live', 'html-code', 'json', 'doc'].includes(tab);
+  if (printBtn) printBtn.hidden = tab !== 'pdf';
+  if (pngBtn) pngBtn.hidden = tab !== 'png';
+  updateDownloadLabel(tab);
 }
 
 // ── Tab switching ─────────────────────────────────────────────────
@@ -192,7 +193,6 @@ function switchTab(tab) {
     if (window.Prism) Prism.highlightElement(codeEl);
   }
 
-  updateDownloadLabel(tab);
 }
 
 // ── Download label ────────────────────────────────────────────────
