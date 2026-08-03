@@ -11,25 +11,24 @@
   <body>
     <div class="shell">
 
-      <!-- ── Header ─────────────────────────────────────────── -->
+      <!-- ── Header ───────────────────────────────────────── -->
       <header class="preview-header">
         <div class="header-top">
           <div class="header-brand">
-            <a class="logo" href="#" id="source-link" target="_blank" rel="noopener noreferrer" title="View original">
-              🍷 <span>Decant</span>
-            </a>
+            <a class="logo" id="source-link" href="#" target="_blank"
+               rel="noopener noreferrer" title="View original source">🍷 Decant</a>
             <h1 id="article-title" class="article-title">Loading…</h1>
           </div>
           <div class="header-actions">
-            <button id="theme-btn" class="btn btn-ghost" title="Toggle dark / light mode">🌙</button>
-            <button id="copy-btn" class="btn btn-secondary">Copy</button>
-            <button id="print-btn" class="btn btn-secondary">🖨 Print / PDF</button>
-            <button id="download-btn" class="btn btn-primary">⬇ Download</button>
+            <button id="theme-btn"    class="btn btn-ghost"      title="Toggle dark / light">🌙</button>
+            <button id="copy-btn"     class="btn btn-secondary">Copy</button>
+            <button id="print-btn"    class="btn btn-secondary hidden">🖨 Print / PDF</button>
+            <button id="download-btn" class="btn btn-primary">⬇ Download .html</button>
           </div>
         </div>
 
         <div class="header-toolbar">
-          <nav id="format-tabs" class="tab-strip" role="tablist" aria-label="Export format">
+          <nav id="format-tabs" class="tab-strip" role="tablist">
             <button class="tab-btn active" data-tab="html-live"  role="tab" aria-selected="true">🎨 HTML Live</button>
             <button class="tab-btn"        data-tab="markdown"   role="tab">📝 Markdown</button>
             <button class="tab-btn"        data-tab="html-code"  role="tab">⌨ HTML Code</button>
@@ -40,57 +39,33 @@
         </div>
       </header>
 
-      <!-- ── Main ───────────────────────────────────────────── -->
-      <main class="preview-main">
+      <!-- ── Main ─────────────────────────────────────────── -->
+      <main class="preview-main" id="preview-main">
 
-        <!-- HTML Live -->
-        <div class="view active" id="view-html-live" role="tabpanel">
-          <iframe
-            id="html-iframe"
-            class="html-iframe"
+        <!-- Loading -->
+        <div id="loading-overlay" class="loading-overlay">
+          <div class="spinner"></div>
+          <span>Loading article…</span>
+        </div>
+
+        <!-- HTML render pane -->
+        <div id="render-wrapper" class="pane hidden">
+          <iframe id="html-iframe" class="html-iframe"
             sandbox="allow-scripts allow-same-origin"
-            title="Rendered article preview"
-          ></iframe>
+            title="Rendered article preview"></iframe>
         </div>
 
-        <!-- Markdown source -->
-        <div class="view hidden code-view" id="view-markdown" role="tabpanel">
-          <pre><code id="code-markdown" class="language-markdown"></code></pre>
+        <!-- Code pane (markdown / html-code / json / doc) -->
+        <div id="code-wrapper" class="pane hidden code-pane">
+          <pre><code id="preview-code"></code></pre>
         </div>
 
-        <!-- HTML Code -->
-        <div class="view hidden code-view" id="view-html-code" role="tabpanel">
-          <pre><code id="code-html" class="language-html"></code></pre>
-        </div>
-
-        <!-- JSON -->
-        <div class="view hidden code-view" id="view-json" role="tabpanel">
-          <pre><code id="code-json" class="language-json"></code></pre>
-        </div>
-
-        <!-- Word (.doc) HTML source -->
-        <div class="view hidden code-view" id="view-doc" role="tabpanel">
-          <pre><code id="code-doc" class="language-html"></code></pre>
-        </div>
-
-        <!-- PNG -->
-        <div class="view hidden" id="view-png" role="tabpanel">
-          <div class="png-controls">
-            <label class="checkbox-label">
-              <input type="checkbox" id="png-hq" checked />
-              High quality (2×)
-            </label>
-            <button id="png-render-btn" class="btn btn-primary">Generate Preview</button>
-          </div>
-          <div id="png-output" class="png-output">
-            <p class="png-hint">Click "Generate Preview" to render the article as an image.</p>
-          </div>
-        </div>
+        <!-- PNG tab reuses the HTML iframe — no separate pane needed -->
 
       </main>
     </div>
 
-    <!-- Vendored libs (loaded before preview.js) -->
+    <!-- Vendored libs -->
     <script src="lib/html2canvas.min.js"></script>
     <script src="lib/prismjs/prism-bundle.js"></script>
     <script src="lib/katex/katex.min.js"></script>

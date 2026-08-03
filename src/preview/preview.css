@@ -182,21 +182,19 @@ body {
   font-weight: 600;
 }
 
-/* ── Main / views ───────────────────────────────────────────────── */
+/* ── Main / panes ──────────────────────────────────────────────── */
 .preview-main {
   flex: 1;
   overflow: hidden;
   position: relative;
 }
 
-.view {
+.pane {
   position: absolute;
   inset: 0;
   overflow: auto;
 }
-
-.view.hidden { display: none; }
-.view.active { display: block; }
+.pane.hidden { display: none; }
 
 /* HTML iframe */
 .html-iframe {
@@ -206,13 +204,13 @@ body {
   background: #ffffff;
 }
 
-/* Code views */
-.code-view {
+/* Code pane */
+.code-pane {
   background: var(--bg-panel);
   overflow: auto;
 }
 
-.code-view pre {
+.code-pane pre {
   margin: 0;
   padding: 20px 24px;
   min-height: 100%;
@@ -224,17 +222,14 @@ body {
   overflow-x: auto;
 }
 
-.code-view code {
+.code-pane code {
   font-family: inherit;
   font-size: inherit;
   background: transparent;
 }
 
-/* Prism overrides for dark */
-.token.comment, .token.prolog, .token.doctype, .token.cdata { color: #6a737d; }
-
-/* ── PNG view ────────────────────────────────────────────────────── */
-#view-png {
+/* ── PNG pane ───────────────────────────────────────────────────── */
+.png-pane {
   display: flex;
   flex-direction: column;
   background: var(--bg-panel);
