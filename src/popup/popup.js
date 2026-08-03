@@ -169,13 +169,23 @@ async function openExportPreview() {
 
   try {
     const key = `decant_${Date.now()}`;
+    const targetTab = formatSelect ? formatSelect.value : 'md';
+
+    // Set auto-action flags based on format
+    const autoPrint = targetTab === 'pdf';
+    const autoDownloadPng = targetTab === 'png';
+
     await new Promise((resolve, reject) => {
-      chrome.storage.session.set({ [key]: articleData }, () => {
+      chrome.storage.session.set({
+        [key]: articleData,
+        autoPrint,
+        autoDownloadPng
+      }, () => {
         if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
         else resolve();
       });
     });
-    const targetTab = formatSelect ? formatSelect.value : 'md';
+
     await chrome.tabs.create({
       url: chrome.runtime.getURL(`preview/preview.html?key=${key}&tab=${targetTab}`),
     });

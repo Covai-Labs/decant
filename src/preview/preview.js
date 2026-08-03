@@ -428,6 +428,7 @@ function setIframeContent(content) {
 async function init() {
   const params = new URLSearchParams(location.search);
   const key = params.get('key');
+  const initialTab = params.get('tab') || 'markdown';
 
   if (!key) {
     loadingEl.innerHTML = '<p style="color:#f87171">No article key found. Re-clip the page from Decant.</p>';
@@ -436,13 +437,16 @@ async function init() {
 
   try {
     const result = await new Promise((resolve, reject) => {
-      chrome.storage.session.get(key, (data) => {
+      chrome.storage.session.get([key, 'autoPrint', 'autoDownloadPng'], (data) => {
         if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
         else resolve(data);
       });
     });
 
     articleData = result[key];
+    const autoPrint = result.autoPrint || false;
+    const autoDownloadPng = result.autoDownloadPng || false;
+
     chrome.storage.session.remove(key);
 
     if (!articleData) {
@@ -464,22 +468,31 @@ async function init() {
     docStr      = await blobToText(toDoc(articleData).blob);
 
     loadingEl.style.display = 'none';
-    const requestedTab = params.get('tab');
-    let initialTab = 'markdown';
-    if (requestedTab === 'html' || requestedTab === 'html-live') {
-      initialTab = 'html-live';
-    } else if (requestedTab === 'pdf') {
-      initialTab = 'pdf';
-    } else if (requestedTab === 'png') {
-      initialTab = 'png';
-    } else if (requestedTab === 'json') {
-      initialTab = 'json';
-    } else if (requestedTab === 'doc') {
-      initialTab = 'doc';
-    } else if (requestedTab === 'html-code') {
-      initialTab = 'html-code';
+
+    // Map tab parameter to internal tab names
+    let tabToSwitch = initialTab;
+    if (initialTab === 'html' || initialTab === 'html-live') {
+      tabToSwitch = 'html-live';
+    } else if (initialTab === 'pdf') {
+      tabToSwitch = 'pdf';
+    } else if (initialTab === 'png') {
+      tabToSwitch = 'png';
+    } else if (initialTab === 'json') {
+      tabToSwitch = 'json';
+    } else if (initialTab === 'doc') {
+      tabToSwitch = 'doc';
+    } else if (initialTab === 'html-code') {
+      tabToSwitch = 'html-code';
     }
-    switchTab(initialTab);
+    switchTab(tabToSwitch);
+
+    // Execute auto-actions if needed
+    if (window.autoPrint && tabToSwitch === 'pdf') {
+      setTimeout(() => triggerPrint(), 500);
+    }
+    if (window.autoDownloadPng && tabToSwitch === 'png') {
+      setTimeout(() => downloadPng(), 500);
+    }
 
   } catch (err) {
     loadingEl.innerHTML = `<p style="color:#f87171">Failed to load: ${err.message}</p>`;

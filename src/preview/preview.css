@@ -58,10 +58,12 @@ body {
   border-bottom: 1px solid var(--border-lite);
   z-index: 20;
   padding: 0 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="light"] .preview-header {
   background: rgba(248, 250, 252, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .header-top {
@@ -69,7 +71,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 10px 0 8px;
+  padding: 12px 0 10px;
   min-height: 52px;
 }
 
@@ -121,22 +123,37 @@ body {
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .btn-primary {
   background: var(--accent);
   color: #fff;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.25);
 }
-.btn-primary:hover { background: #7c3aed; }
+.btn-primary:hover {
+  background: #7c3aed;
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.35);
+}
 
 .btn-secondary {
   background: var(--bg-card);
   color: var(--text);
   border: 1px solid var(--border-lite);
 }
-.btn-secondary:hover { background: var(--bg-hover); }
+.btn-secondary:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-dim);
+}
 
 .btn-ghost {
   background: transparent;
@@ -144,7 +161,11 @@ body {
   border: 1px solid var(--border-lite);
   padding: 6px 10px;
 }
-.btn-ghost:hover { color: var(--text); background: var(--bg-card); }
+.btn-ghost:hover {
+  color: var(--text);
+  background: var(--bg-card);
+  border-color: var(--accent-dim);
+}
 
 /* ── Tab strip ──────────────────────────────────────────────────── */
 .header-toolbar {
@@ -170,16 +191,21 @@ body {
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 
-.tab-btn:hover { color: var(--text); background: var(--bg-hover); }
+.tab-btn:hover {
+  color: var(--text);
+  background: var(--bg-hover);
+  transform: translateY(-1px);
+}
 
 .tab-btn.active {
   background: var(--accent);
   color: #fff;
   font-weight: 600;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.25);
 }
 
 /* ── Main / panes ──────────────────────────────────────────────── */
@@ -301,6 +327,12 @@ body {
   gap: 16px;
   padding: 8px 0;
   margin-top: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Toast ───────────────────────────────────────────────────────── */
@@ -319,7 +351,7 @@ body {
   box-shadow: 0 4px 16px rgba(0,0,0,0.35);
   z-index: 1000;
   opacity: 0;
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 .toast.show {
