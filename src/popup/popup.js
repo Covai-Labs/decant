@@ -19,8 +19,14 @@ const successView   = document.getElementById('success-view');
 const successTitle  = document.getElementById('success-title');
 
 const copyBtn       = document.getElementById('copy-btn');
+const downloadMdBtn = document.getElementById('download-md-btn');
+const appSelect     = document.getElementById('app-select');
 const obsidianBtn   = document.getElementById('obsidian-btn');
+const aiSelect      = document.getElementById('ai-select');
 const aiBtn         = document.getElementById('ai-btn');
+const formatSelect  = document.getElementById('format-select');
+const mdActions     = document.getElementById('md-actions');
+const previewActions= document.getElementById('preview-actions');
 const exportBtn     = document.getElementById('export-btn');
 const optionsBtn    = document.getElementById('options-btn');
 const aiTipBanner   = document.getElementById('ai-tip-banner');
@@ -31,22 +37,15 @@ async function initPopup() {
   try {
     savedOptions = await getOptions();
 
-    // PKM button visibility
-    if (savedOptions.defaultAppTarget === 'none') {
-      obsidianBtn.style.display = 'none';
-    } else if (savedOptions.defaultAppTarget) {
-      const appName =
-        savedOptions.defaultAppTarget.charAt(0).toUpperCase() +
-        savedOptions.defaultAppTarget.slice(1);
-      obsidianBtn.textContent = `Open in ${appName}`;
+    // PKM app target selection
+    if (savedOptions.defaultAppTarget && savedOptions.defaultAppTarget !== 'none' && appSelect) {
+      appSelect.value = savedOptions.defaultAppTarget;
     }
+    updateAppButtonLabel();
 
-    // AI button visibility
-    if (savedOptions.defaultAiTarget === 'none') {
-      aiBtn.style.display = 'none';
-    } else if (savedOptions.defaultAiTarget && AI_PLATFORMS[savedOptions.defaultAiTarget]) {
-      const aiName = AI_PLATFORMS[savedOptions.defaultAiTarget].name;
-      aiBtn.textContent = `🤖 ${aiName}`;
+    // AI target selection
+    if (savedOptions.defaultAiTarget && savedOptions.defaultAiTarget !== 'none' && aiSelect) {
+      aiSelect.value = savedOptions.defaultAiTarget;
     }
 
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -128,6 +127,13 @@ async function initPopup() {
   }
 }
 
+function updateAppButtonLabel() {
+  if (!appSelect || !obsidianBtn) return;
+  const val = appSelect.value;
+  const appName = val.charAt(0).toUpperCase() + val.slice(1);
+  obsidianBtn.textContent = `Open in ${appName}`;
+}
+
 // ── Messaging ─────────────────────────────────────────────────────
 async function sendMessageToTab(tabId, message) {
   return new Promise((resolve) => {
@@ -151,7 +157,7 @@ function showError(msg) {
   successView.classList.add('hidden');
   errorView.classList.remove('hidden');
   errorText.textContent = msg;
-  exportBtn.disabled = true;
+  if (exportBtn) exportBtn.disabled = true;
 }
 
 // ── Open Export Preview tab ────────────────────────────────────────
@@ -168,14 +174,14 @@ async function openExportPreview() {
         else resolve();
       });
     });
+    const targetTab = formatSelect ? formatSelect.value : 'md';
     await chrome.tabs.create({
-      url: chrome.runtime.getURL(`preview/preview.html?key=${key}`),
+      url: chrome.runtime.getURL(`preview/preview.html?key=${key}&tab=${targetTab}`),
     });
-    // Popup can now close or stay
     exportBtn.textContent = '✓ Preview Opened';
   } catch (err) {
     logger.error('Popup', 'Failed to open preview tab:', err);
-    exportBtn.textContent = '🔍 Open Export Preview';
+    exportBtn.textContent = '🔍 Preview & Save';
     exportBtn.disabled = false;
   }
 }
@@ -185,13 +191,27 @@ copyBtn.addEventListener('click', async () => {
   if (!currentMarkdown) return;
   await navigator.clipboard.writeText(currentMarkdown);
   const orig = copyBtn.textContent;
-  copyBtn.textContent = 'Copied! ✓';
+  copyBtn.textContent = '✓ Copied';
   setTimeout(() => { copyBtn.textContent = orig; }, 1500);
 });
 
+downloadMdBtn.addEventListener('click', () => {
+  if (!currentMarkdown || !articleData) return;
+  const blob = new Blob([currentMarkdown], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const filename = `${articleData.baseFilename || 'clipped-page'}.md`;
+  chrome.downloads.download({ url, filename, saveAs: true }, () => {
+    URL.revokeObjectURL(url);
+  });
+});
+
+if (appSelect) {
+  appSelect.addEventListener('change', updateAppButtonLabel);
+}
+
 obsidianBtn.addEventListener('click', () => {
   if (!currentMarkdown) return;
-  const target = savedOptions.defaultAppTarget || 'obsidian';
+  const target = appSelect ? appSelect.value : (savedOptions.defaultAppTarget || 'obsidian');
   if (target === 'none') return;
   const uri = buildAppUri(target, {
     title: currentTitle,
@@ -204,8 +224,7 @@ obsidianBtn.addEventListener('click', () => {
 
 aiBtn.addEventListener('click', async () => {
   if (!currentMarkdown) return;
-  const target = savedOptions.defaultAiTarget || 'chatgpt';
-  if (target === 'none') return;
+  const target = aiSelect ? aiSelect.value : (savedOptions.defaultAiTarget || 'chatgpt');
 
   const prompt = buildAiPrompt({
     title: currentTitle,
@@ -218,6 +237,20 @@ aiBtn.addEventListener('click', async () => {
   logger.info('Popup', 'Copied AI prompt and opening:', target);
   chrome.tabs.create({ url: getAiPlatformUrl(target) });
 });
+
+if (formatSelect) {
+  formatSelect.addEventListener('change', () => {
+    const val = formatSelect.value;
+    if (val === 'md') {
+      mdActions.classList.remove('hidden');
+      previewActions.classList.add('hidden');
+    } else {
+      mdActions.classList.add('hidden');
+      previewActions.classList.remove('hidden');
+      exportBtn.textContent = '🔍 Preview & Save';
+    }
+  });
+}
 
 exportBtn.addEventListener('click', openExportPreview);
 

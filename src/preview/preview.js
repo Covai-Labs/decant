@@ -295,7 +295,18 @@ async function init() {
     docStr      = await blobToText(toDoc(articleData).blob);
 
     loadingEl.style.display = 'none';
-    switchTab('markdown');
+    const requestedTab = params.get('tab');
+    let initialTab = 'markdown';
+    if (requestedTab === 'html' || requestedTab === 'pdf' || requestedTab === 'png' || requestedTab === 'html-live') {
+      initialTab = 'html-live';
+    } else if (requestedTab === 'json') {
+      initialTab = 'json';
+    } else if (requestedTab === 'doc') {
+      initialTab = 'doc';
+    } else if (requestedTab === 'html-code') {
+      initialTab = 'html-code';
+    }
+    switchTab(initialTab);
 
   } catch (err) {
     loadingEl.innerHTML = `<p style="color:#f87171">Failed to load: ${err.message}</p>`;

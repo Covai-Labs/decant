@@ -43,16 +43,53 @@
       </div>
     </div>
 
-    <div class="actions primary-row">
-      <button id="copy-btn" class="btn primary">Copy Markdown</button>
-      <button id="obsidian-btn" class="btn accent" title="Open clip in Obsidian or PKM app">
-        Open in Obsidian
-      </button>
-      <button id="ai-btn" class="btn ai-btn" title="Send article to AI Chat">🤖 Send to AI</button>
+    <!-- Row 1: AI Transfer -->
+    <div class="actions row-ai">
+      <select id="ai-select" class="select-dropdown" title="Select AI Platform">
+        <option value="chatgpt">ChatGPT</option>
+        <option value="claude">Claude</option>
+        <option value="gemini">Gemini</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="perplexity">Perplexity</option>
+      </select>
+      <button id="ai-btn" class="btn ai-btn" title="Send article prompt to AI Chat">🤖 Send to AI</button>
     </div>
 
-    <div class="actions secondary-row">
-      <button id="export-btn" class="btn export-btn">🔍 Open Export Preview</button>
+    <!-- Row 2: PKM / App Transfer -->
+    <div class="actions row-app">
+      <select id="app-select" class="select-dropdown" title="Select PKM / Note App">
+        <option value="obsidian">Obsidian</option>
+        <option value="logseq">Logseq</option>
+        <option value="bear">Bear</option>
+        <option value="noteplan">NotePlan</option>
+        <option value="drafts">Drafts</option>
+      </select>
+      <button id="obsidian-btn" class="btn accent" title="Open clip in PKM app">
+        Open in Obsidian
+      </button>
+    </div>
+
+    <hr class="popup-divider" />
+
+    <!-- Row 3: Format Selection & Actions -->
+    <div class="actions row-format">
+      <select id="format-select" class="select-dropdown format-select" title="Export Format">
+        <option value="md" selected>Markdown (.md)</option>
+        <option value="html">HTML (.html)</option>
+        <option value="json">JSON (.json)</option>
+        <option value="doc">Word (.doc)</option>
+        <option value="pdf">PDF (.pdf)</option>
+        <option value="png">PNG (.png)</option>
+      </select>
+
+      <div id="md-actions" class="format-action-group">
+        <button id="copy-btn" class="btn primary" title="Copy Markdown to clipboard">📋 Copy</button>
+        <button id="download-md-btn" class="btn primary" title="Download Markdown file">⬇ Save</button>
+      </div>
+
+      <div id="preview-actions" class="format-action-group hidden">
+        <button id="export-btn" class="btn export-btn" title="Preview and save in selected format">🔍 Preview &amp; Save</button>
+      </div>
     </div>
 
     <script src="popup.js"></script>
