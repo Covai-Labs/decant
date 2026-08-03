@@ -23,6 +23,7 @@ const dirs = [
   `${distDir}/popup`,
   `${distDir}/options`,
   `${distDir}/icons`,
+  `${distDir}/preview`,
 ];
 
 if (target !== 'firefox') {
@@ -69,6 +70,8 @@ function copyStaticFiles() {
     { src: 'src/popup/popup.css', dest: `${distDir}/popup/popup.css` },
     { src: 'src/options/options.html', dest: `${distDir}/options/options.html` },
     { src: 'src/options/options.css', dest: `${distDir}/options/options.css` },
+    { src: 'src/preview/preview.html', dest: `${distDir}/preview/preview.html` },
+    { src: 'src/preview/preview.css', dest: `${distDir}/preview/preview.css` },
   ];
 
   if (target !== 'firefox') {
@@ -83,6 +86,19 @@ function copyStaticFiles() {
       fs.copyFileSync(src, dest);
     }
   });
+
+  // Copy preview lib directory (html2canvas, katex, prismjs) recursively
+  function copyDirRecursive(src, dest) {
+    if (!fs.existsSync(src)) return;
+    fs.mkdirSync(dest, { recursive: true });
+    for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+      const s = path.join(src, entry.name);
+      const d = path.join(dest, entry.name);
+      if (entry.isDirectory()) copyDirRecursive(s, d);
+      else fs.copyFileSync(s, d);
+    }
+  }
+  copyDirRecursive('src/preview/lib', `${distDir}/preview/lib`);
 
   if (fs.existsSync('src/icons')) {
     const icons = fs.readdirSync('src/icons');
@@ -100,6 +116,7 @@ const entryPoints = [
   { in: 'src/content/content.js', out: 'content/content' },
   { in: 'src/popup/popup.js', out: 'popup/popup' },
   { in: 'src/options/options.js', out: 'options/options' },
+  { in: 'src/preview/preview.js', out: 'preview/preview' },
 ];
 
 if (target !== 'firefox') {

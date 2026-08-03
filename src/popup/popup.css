@@ -185,80 +185,63 @@ body.in-iframe {
   }
 }
 
-/* ── Split download button ─────────────────────────────────────── */
+/* ── Success state ─────────────────────────────────────────────── */
 
-.split-btn-wrap {
-  position: relative;
-  display: flex;
-  width: 100%;
-  gap: 0;
-}
-
-.split-main {
-  flex: 1;
-  border-radius: var(--radius) 0 0 var(--radius);
-  border-right: none;
-  text-align: center;
-}
-
-.split-chevron {
-  flex: 0 0 32px;
-  padding: 8px 0;
-  border-radius: 0 var(--radius) var(--radius) 0;
-  border-left: 1px solid var(--bg-color);
-  font-size: 0.75rem;
-}
-
-.split-chevron[aria-expanded='true'] {
-  background-color: var(--accent-color);
-  color: #fff;
-  border-color: var(--accent-color);
-}
-
-.split-menu {
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: #1e293b;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
-  z-index: 100;
-  overflow: hidden;
-  animation: menu-in 0.12s ease;
-}
-
-@keyframes menu-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.split-item {
-  display: block;
-  width: 100%;
-  padding: 8px 12px;
-  background: transparent;
-  border: none;
-  color: var(--text-main);
-  font-size: 0.82rem;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.split-item:hover {
+.success-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   background: rgba(139, 92, 246, 0.18);
-  color: #c4b5fd;
-}
-
-.split-item.active {
+  border: 2px solid var(--accent-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
   color: #a78bfa;
+  margin-bottom: 10px;
+  animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.split-divider {
-  border: none;
-  border-top: 1px solid var(--border-color);
-  margin: 2px 0;
+@keyframes pop-in {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.success-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.success-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── Export button ──────────────────────────────────────────────── */
+
+.export-btn {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(109,40,217,0.18));
+  color: #c4b5fd;
+  border: 1px solid rgba(139,92,246,0.35);
+  font-size: 0.83rem;
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  background: linear-gradient(135deg, rgba(139,92,246,0.28), rgba(109,40,217,0.28));
+  border-color: rgba(139,92,246,0.55);
+  color: #e9d5ff;
+}
+
+.export-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }

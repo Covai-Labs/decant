@@ -3,58 +3,48 @@ import { buildAppUri } from '../shared/uri-transfer.js';
 import { buildAiPrompt, getAiPlatformUrl, AI_PLATFORMS } from '../shared/ai-transfer.js';
 import { isAiChatUrl } from '../shared/ai-detect.js';
 import { logger } from '../shared/logger.js';
-import { toMarkdown, toHtml, toJson, toDoc, openPrintDialog } from '../shared/exporters.js';
 
+// ── State ─────────────────────────────────────────────────────────
 let currentMarkdown = '';
-let currentTitle = 'Clipped Note';
-let currentUrl = '';
-let currentFilename = 'clipped-page.md';
-let currentBaseFilename = 'clipped-page';
-let currentHtmlContent = '';
-let currentByline = '';
-let currentSiteName = '';
-let currentExcerpt = '';
-let currentPublishedTime = '';
-let currentFormat = 'md';
-let savedOptions = {};
+let currentTitle    = 'Clipped Note';
+let currentUrl      = '';
+let articleData     = null;   // full data object for session handoff
+let savedOptions    = {};
 
-const loadingView = document.getElementById('loading');
-const errorView = document.getElementById('error-view');
-const errorText = document.getElementById('error-text');
-const previewView = document.getElementById('preview-view');
-const markdownPreview = document.getElementById('markdown-preview');
+// ── DOM refs ──────────────────────────────────────────────────────
+const loadingView   = document.getElementById('loading');
+const errorView     = document.getElementById('error-view');
+const errorText     = document.getElementById('error-text');
+const successView   = document.getElementById('success-view');
+const successTitle  = document.getElementById('success-title');
 
-const copyBtn = document.getElementById('copy-btn');
-const obsidianBtn = document.getElementById('obsidian-btn');
-const aiBtn = document.getElementById('ai-btn');
-const downloadBtn = document.getElementById('download-btn');
-const downloadChevron = document.getElementById('download-chevron');
-const downloadMenu = document.getElementById('download-menu');
-const optionsBtn = document.getElementById('options-btn');
-const aiTipBanner = document.getElementById('ai-tip-banner');
+const copyBtn       = document.getElementById('copy-btn');
+const obsidianBtn   = document.getElementById('obsidian-btn');
+const aiBtn         = document.getElementById('ai-btn');
+const exportBtn     = document.getElementById('export-btn');
+const optionsBtn    = document.getElementById('options-btn');
+const aiTipBanner   = document.getElementById('ai-tip-banner');
 
+// ── Init ──────────────────────────────────────────────────────────
 async function initPopup() {
-  logger.info('Popup', 'Initializing Decant popup UI...');
+  logger.info('Popup', 'Initializing Decant popup UI…');
   try {
     savedOptions = await getOptions();
-    logger.log('Popup', 'Loaded user options:', savedOptions);
 
-    // PKM Button visibility
+    // PKM button visibility
     if (savedOptions.defaultAppTarget === 'none') {
       obsidianBtn.style.display = 'none';
     } else if (savedOptions.defaultAppTarget) {
-      obsidianBtn.style.display = '';
       const appName =
         savedOptions.defaultAppTarget.charAt(0).toUpperCase() +
         savedOptions.defaultAppTarget.slice(1);
       obsidianBtn.textContent = `Open in ${appName}`;
     }
 
-    // AI Button visibility
+    // AI button visibility
     if (savedOptions.defaultAiTarget === 'none') {
       aiBtn.style.display = 'none';
     } else if (savedOptions.defaultAiTarget && AI_PLATFORMS[savedOptions.defaultAiTarget]) {
-      aiBtn.style.display = '';
       const aiName = AI_PLATFORMS[savedOptions.defaultAiTarget].name;
       aiBtn.textContent = `🤖 ${aiName}`;
     }
@@ -68,15 +58,13 @@ async function initPopup() {
 
     currentUrl = tab.url || '';
 
-    // Detect if current page is an AI Chat platform -> display AI Chat Exporter tip
+    // AI Chat tip banner
     if (isAiChatUrl(currentUrl)) {
-      logger.info(
-        'Popup',
-        'AI Chat page detected. Displaying AI Chat Exporter recommendation banner.',
-      );
+      logger.info('Popup', 'AI Chat page detected — showing AI Chat Exporter tip.');
       if (aiTipBanner) aiTipBanner.classList.remove('hidden');
     }
 
+    // Restricted pages
     if (
       currentUrl &&
       (currentUrl.startsWith('chrome://') ||
@@ -89,13 +77,14 @@ async function initPopup() {
       return;
     }
 
+    // Extract article
     let response = await sendMessageToTab(tab.id, {
       action: 'EXTRACT_MARKDOWN',
       options: savedOptions,
     });
 
     if (!response) {
-      logger.info('Popup', 'Content script not responding. Attempting dynamic script injection...');
+      logger.info('Popup', 'Content script not responding — injecting dynamically…');
       try {
         await chrome.scripting.executeScript({
           target: { tabId: tab.id },
@@ -111,17 +100,25 @@ async function initPopup() {
     }
 
     if (response && response.status === 'success') {
-      currentMarkdown = response.data.markdown;
-      currentTitle = response.data.title || 'Clipped Note';
-      currentUrl = response.data.url || currentUrl;
-      currentFilename = response.data.filename;
-      currentBaseFilename = response.data.baseFilename || 'clipped-page';
-      currentHtmlContent = response.data.htmlContent || '';
-      currentByline = response.data.byline || '';
-      currentSiteName = response.data.siteName || '';
-      currentExcerpt = response.data.excerpt || '';
-      currentPublishedTime = response.data.publishedTime || '';
-      showPreview(currentMarkdown);
+      const d = response.data;
+      currentMarkdown = d.markdown;
+      currentTitle    = d.title || 'Clipped Note';
+      currentUrl      = d.url || currentUrl;
+
+      // Store full article data for the preview tab
+      articleData = {
+        title:         d.title || 'Untitled',
+        markdown:      d.markdown,
+        htmlContent:   d.htmlContent || '',
+        url:           d.url || currentUrl,
+        byline:        d.byline || '',
+        siteName:      d.siteName || '',
+        excerpt:       d.excerpt || '',
+        publishedTime: d.publishedTime || '',
+        baseFilename:  d.baseFilename || 'clipped-page',
+      };
+
+      showSuccess(currentTitle);
     } else {
       showError(response?.error || 'Could not extract content from this page.');
     }
@@ -131,40 +128,65 @@ async function initPopup() {
   }
 }
 
+// ── Messaging ─────────────────────────────────────────────────────
 async function sendMessageToTab(tabId, message) {
   return new Promise((resolve) => {
     chrome.tabs.sendMessage(tabId, message, (res) => {
-      if (chrome.runtime.lastError) {
-        resolve(null);
-      } else {
-        resolve(res);
-      }
+      if (chrome.runtime.lastError) resolve(null);
+      else resolve(res);
     });
   });
 }
 
-function showPreview(markdown) {
+// ── Views ─────────────────────────────────────────────────────────
+function showSuccess(title) {
   loadingView.classList.add('hidden');
   errorView.classList.add('hidden');
-  previewView.classList.remove('hidden');
-  markdownPreview.value = markdown;
+  successView.classList.remove('hidden');
+  successTitle.textContent = title;
 }
 
 function showError(msg) {
   loadingView.classList.add('hidden');
-  previewView.classList.add('hidden');
+  successView.classList.add('hidden');
   errorView.classList.remove('hidden');
   errorText.textContent = msg;
+  exportBtn.disabled = true;
 }
 
+// ── Open Export Preview tab ────────────────────────────────────────
+async function openExportPreview() {
+  if (!articleData) return;
+  exportBtn.disabled = true;
+  exportBtn.textContent = 'Opening…';
+
+  try {
+    const key = `decant_${Date.now()}`;
+    await new Promise((resolve, reject) => {
+      chrome.storage.session.set({ [key]: articleData }, () => {
+        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+        else resolve();
+      });
+    });
+    await chrome.tabs.create({
+      url: chrome.runtime.getURL(`preview/preview.html?key=${key}`),
+    });
+    // Popup can now close or stay
+    exportBtn.textContent = '✓ Preview Opened';
+  } catch (err) {
+    logger.error('Popup', 'Failed to open preview tab:', err);
+    exportBtn.textContent = '🔍 Open Export Preview';
+    exportBtn.disabled = false;
+  }
+}
+
+// ── Action listeners ──────────────────────────────────────────────
 copyBtn.addEventListener('click', async () => {
   if (!currentMarkdown) return;
   await navigator.clipboard.writeText(currentMarkdown);
-  const origText = copyBtn.textContent;
+  const orig = copyBtn.textContent;
   copyBtn.textContent = 'Copied! ✓';
-  setTimeout(() => {
-    copyBtn.textContent = origText;
-  }, 1500);
+  setTimeout(() => { copyBtn.textContent = orig; }, 1500);
 });
 
 obsidianBtn.addEventListener('click', () => {
@@ -176,7 +198,6 @@ obsidianBtn.addEventListener('click', () => {
     content: currentMarkdown,
     vault: savedOptions.obsidianVault,
   });
-
   logger.info('Popup', 'Opening PKM app URI:', uri);
   window.open(uri, '_self');
 });
@@ -194,106 +215,11 @@ aiBtn.addEventListener('click', async () => {
   });
 
   await navigator.clipboard.writeText(prompt);
-  logger.info('Popup', 'Copied AI prompt to clipboard and opening:', target);
-
-  const targetUrl = getAiPlatformUrl(target);
-  chrome.tabs.create({ url: targetUrl });
+  logger.info('Popup', 'Copied AI prompt and opening:', target);
+  chrome.tabs.create({ url: getAiPlatformUrl(target) });
 });
 
-// ── Format helpers ────────────────────────────────────────────────
-
-const FORMAT_LABELS = {
-  md:   '⬇ Download .md',
-  html: '⬇ Download .html',
-  json: '⬇ Download .json',
-  doc:  '⬇ Download .doc',
-  pdf:  '🖨 Print / Save as PDF…',
-};
-
-function getArticleData() {
-  return {
-    title: currentTitle,
-    markdown: currentMarkdown,
-    htmlContent: currentHtmlContent,
-    url: currentUrl,
-    byline: currentByline,
-    siteName: currentSiteName,
-    excerpt: currentExcerpt,
-    publishedTime: currentPublishedTime,
-    baseFilename: currentBaseFilename,
-  };
-}
-
-async function triggerDownload(format) {
-  if (!currentMarkdown) return;
-  const data = getArticleData();
-
-  if (format === 'pdf') {
-    openPrintDialog(data);
-    return;
-  }
-
-  const converters = { md: toMarkdown, html: toHtml, json: toJson, doc: toDoc };
-  const convert = converters[format] || toMarkdown;
-  const { blob, ext } = convert(data);
-
-  const blobUrl = URL.createObjectURL(blob);
-  const filename = `${data.baseFilename}.${ext}`;
-
-  chrome.downloads.download({ url: blobUrl, filename, saveAs: true }, () => {
-    URL.revokeObjectURL(blobUrl);
-  });
-}
-
-function setActiveFormat(format) {
-  currentFormat = format;
-  downloadBtn.textContent = FORMAT_LABELS[format] || FORMAT_LABELS.md;
-  // Update active highlight in menu
-  downloadMenu.querySelectorAll('.split-item').forEach((el) => {
-    el.classList.toggle('active', el.dataset.format === format);
-  });
-}
-
-function closeMenu() {
-  downloadMenu.classList.add('hidden');
-  downloadChevron.setAttribute('aria-expanded', 'false');
-}
-
-// ── Download button ───────────────────────────────────────────────
-
-downloadBtn.addEventListener('click', () => {
-  closeMenu();
-  triggerDownload(currentFormat);
-});
-
-// ── Chevron toggle ────────────────────────────────────────────────
-
-downloadChevron.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const isOpen = !downloadMenu.classList.contains('hidden');
-  if (isOpen) {
-    closeMenu();
-  } else {
-    downloadMenu.classList.remove('hidden');
-    downloadChevron.setAttribute('aria-expanded', 'true');
-  }
-});
-
-// ── Menu item selection ───────────────────────────────────────────
-
-downloadMenu.addEventListener('click', (e) => {
-  const item = e.target.closest('.split-item');
-  if (!item) return;
-  const format = item.dataset.format;
-  closeMenu();
-  setActiveFormat(format);
-  triggerDownload(format);
-});
-
-// Close menu when clicking outside
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.split-btn-wrap')) closeMenu();
-});
+exportBtn.addEventListener('click', openExportPreview);
 
 optionsBtn.addEventListener('click', () => {
   if (chrome.runtime.openOptionsPage) {

@@ -16,7 +16,7 @@
 
     <div id="ai-tip-banner" class="ai-tip-banner hidden">
       <span
-        >💡 Exporting AI chat? For multi-turn chats & code blocks, try
+        >💡 Exporting AI chat? For multi-turn chats &amp; code blocks, try
         <a href="https://ai-chat-exporter.covai.org/" target="_blank" id="ai-exporter-link"
           >AI Chat Exporter →</a
         ></span
@@ -24,17 +24,22 @@
     </div>
 
     <div class="content-container">
+      <!-- Loading -->
       <div id="loading" class="state-view">
         <div class="spinner"></div>
-        <p>Decanting page to Markdown...</p>
+        <p>Decanting page…</p>
       </div>
 
+      <!-- Error -->
       <div id="error-view" class="state-view hidden">
         <p class="error-msg" id="error-text">Could not extract content from this page.</p>
       </div>
 
-      <div id="preview-view" class="state-view hidden">
-        <textarea id="markdown-preview" readonly></textarea>
+      <!-- Success -->
+      <div id="success-view" class="state-view hidden">
+        <div class="success-icon">✓</div>
+        <p class="success-title" id="success-title">Article Title</p>
+        <p class="success-sub">Decanted · ready to export</p>
       </div>
     </div>
 
@@ -47,20 +52,7 @@
     </div>
 
     <div class="actions secondary-row">
-      <div class="split-btn-wrap">
-        <button id="download-btn" class="btn secondary split-main" title="Download">
-          ⬇ Download .md
-        </button>
-        <button id="download-chevron" class="btn secondary split-chevron" title="More formats" aria-haspopup="true" aria-expanded="false">▾</button>
-        <div id="download-menu" class="split-menu hidden" role="menu">
-          <button class="split-item active" data-format="md" role="menuitem">📄 Markdown (.md)</button>
-          <button class="split-item" data-format="html" role="menuitem">🌐 HTML (.html)</button>
-          <button class="split-item" data-format="json" role="menuitem">{ } JSON (.json)</button>
-          <button class="split-item" data-format="doc" role="menuitem">📝 Word (.doc)</button>
-          <hr class="split-divider" />
-          <button class="split-item" data-format="pdf" role="menuitem">🖨 Print / Save as PDF…</button>
-        </div>
-      </div>
+      <button id="export-btn" class="btn export-btn">🔍 Open Export Preview</button>
     </div>
 
     <script src="popup.js"></script>
