@@ -79,10 +79,16 @@ ${scriptClose}`;
 }
 
 function updateActionButtons(tab) {
-  if (copyBtn) copyBtn.hidden = !['markdown', 'html-live', 'html-code', 'json'].includes(tab);
-  if (downloadBtn) downloadBtn.hidden = !['markdown', 'html-live', 'html-code', 'json', 'doc'].includes(tab);
-  if (printBtn) printBtn.hidden = tab !== 'pdf';
-  if (pngBtn) pngBtn.hidden = tab !== 'png';
+  const setVisible = (button, visible) => {
+    if (!button) return;
+    button.hidden = !visible;
+    button.classList.toggle('hidden', !visible);
+  };
+
+  setVisible(copyBtn, ['markdown', 'html-live', 'html-code', 'json'].includes(tab));
+  setVisible(downloadBtn, ['markdown', 'html-live', 'html-code', 'json', 'doc'].includes(tab));
+  setVisible(printBtn, tab === 'pdf');
+  setVisible(pngBtn, tab === 'png');
   updateDownloadLabel(tab);
 }
 
