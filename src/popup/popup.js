@@ -74,7 +74,7 @@ async function initPopup() {
         currentUrl.startsWith('about:'))
     ) {
       showError(
-        'Decant cannot clip browser system pages (chrome://). Open a normal website (e.g. news, article, docs) to clip.',
+        'Decant cannot clip browser system pages. Open a normal website (e.g. news, article, docs) to clip.',
       );
       return;
     }
