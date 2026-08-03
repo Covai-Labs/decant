@@ -47,7 +47,20 @@
     </div>
 
     <div class="actions secondary-row">
-      <button id="download-btn" class="btn secondary">Download .md</button>
+      <div class="split-btn-wrap">
+        <button id="download-btn" class="btn secondary split-main" title="Download">
+          ⬇ Download .md
+        </button>
+        <button id="download-chevron" class="btn secondary split-chevron" title="More formats" aria-haspopup="true" aria-expanded="false">▾</button>
+        <div id="download-menu" class="split-menu hidden" role="menu">
+          <button class="split-item active" data-format="md" role="menuitem">📄 Markdown (.md)</button>
+          <button class="split-item" data-format="html" role="menuitem">🌐 HTML (.html)</button>
+          <button class="split-item" data-format="json" role="menuitem">{ } JSON (.json)</button>
+          <button class="split-item" data-format="doc" role="menuitem">📝 Word (.doc)</button>
+          <hr class="split-divider" />
+          <button class="split-item" data-format="pdf" role="menuitem">🖨 Print / Save as PDF…</button>
+        </div>
+      </div>
     </div>
 
     <script src="popup.js"></script>

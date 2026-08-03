@@ -184,3 +184,81 @@ body.in-iframe {
     transform: rotate(360deg);
   }
 }
+
+/* ── Split download button ─────────────────────────────────────── */
+
+.split-btn-wrap {
+  position: relative;
+  display: flex;
+  width: 100%;
+  gap: 0;
+}
+
+.split-main {
+  flex: 1;
+  border-radius: var(--radius) 0 0 var(--radius);
+  border-right: none;
+  text-align: center;
+}
+
+.split-chevron {
+  flex: 0 0 32px;
+  padding: 8px 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  border-left: 1px solid var(--bg-color);
+  font-size: 0.75rem;
+}
+
+.split-chevron[aria-expanded='true'] {
+  background-color: var(--accent-color);
+  color: #fff;
+  border-color: var(--accent-color);
+}
+
+.split-menu {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #1e293b;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  overflow: hidden;
+  animation: menu-in 0.12s ease;
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.split-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.split-item:hover {
+  background: rgba(139, 92, 246, 0.18);
+  color: #c4b5fd;
+}
+
+.split-item.active {
+  color: #a78bfa;
+}
+
+.split-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 2px 0;
+}

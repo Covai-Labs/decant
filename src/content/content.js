@@ -42,17 +42,20 @@ export function extractArticle(options = DEFAULT_OPTIONS) {
     dir: article?.dir || '',
     excerpt: article?.excerpt || '',
     siteName: article?.siteName || '',
+    publishedTime: article?.publishedTime || '',
     url: window.location.href,
     content: markdownBody,
+    htmlContent,
   };
 
   const formattedMarkdown = formatMarkdown(parsedArticle, options);
-  const filename = `${sanitizeFilename(title)}.md`;
+  const baseFilename = sanitizeFilename(title);
 
   return {
     ...parsedArticle,
     markdown: formattedMarkdown,
-    filename,
+    filename: `${baseFilename}.md`,
+    baseFilename,
   };
 }
 

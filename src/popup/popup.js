@@ -3,11 +3,19 @@ import { buildAppUri } from '../shared/uri-transfer.js';
 import { buildAiPrompt, getAiPlatformUrl, AI_PLATFORMS } from '../shared/ai-transfer.js';
 import { isAiChatUrl } from '../shared/ai-detect.js';
 import { logger } from '../shared/logger.js';
+import { toMarkdown, toHtml, toJson, toDoc, openPrintDialog } from '../shared/exporters.js';
 
 let currentMarkdown = '';
 let currentTitle = 'Clipped Note';
 let currentUrl = '';
 let currentFilename = 'clipped-page.md';
+let currentBaseFilename = 'clipped-page';
+let currentHtmlContent = '';
+let currentByline = '';
+let currentSiteName = '';
+let currentExcerpt = '';
+let currentPublishedTime = '';
+let currentFormat = 'md';
 let savedOptions = {};
 
 const loadingView = document.getElementById('loading');
@@ -20,6 +28,8 @@ const copyBtn = document.getElementById('copy-btn');
 const obsidianBtn = document.getElementById('obsidian-btn');
 const aiBtn = document.getElementById('ai-btn');
 const downloadBtn = document.getElementById('download-btn');
+const downloadChevron = document.getElementById('download-chevron');
+const downloadMenu = document.getElementById('download-menu');
 const optionsBtn = document.getElementById('options-btn');
 const aiTipBanner = document.getElementById('ai-tip-banner');
 
@@ -105,6 +115,12 @@ async function initPopup() {
       currentTitle = response.data.title || 'Clipped Note';
       currentUrl = response.data.url || currentUrl;
       currentFilename = response.data.filename;
+      currentBaseFilename = response.data.baseFilename || 'clipped-page';
+      currentHtmlContent = response.data.htmlContent || '';
+      currentByline = response.data.byline || '';
+      currentSiteName = response.data.siteName || '';
+      currentExcerpt = response.data.excerpt || '';
+      currentPublishedTime = response.data.publishedTime || '';
       showPreview(currentMarkdown);
     } else {
       showError(response?.error || 'Could not extract content from this page.');
@@ -184,14 +200,99 @@ aiBtn.addEventListener('click', async () => {
   chrome.tabs.create({ url: targetUrl });
 });
 
-downloadBtn.addEventListener('click', () => {
+// ── Format helpers ────────────────────────────────────────────────
+
+const FORMAT_LABELS = {
+  md:   '⬇ Download .md',
+  html: '⬇ Download .html',
+  json: '⬇ Download .json',
+  doc:  '⬇ Download .doc',
+  pdf:  '🖨 Print / Save as PDF…',
+};
+
+function getArticleData() {
+  return {
+    title: currentTitle,
+    markdown: currentMarkdown,
+    htmlContent: currentHtmlContent,
+    url: currentUrl,
+    byline: currentByline,
+    siteName: currentSiteName,
+    excerpt: currentExcerpt,
+    publishedTime: currentPublishedTime,
+    baseFilename: currentBaseFilename,
+  };
+}
+
+async function triggerDownload(format) {
   if (!currentMarkdown) return;
-  const blobUrl = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(currentMarkdown);
-  chrome.downloads.download({
-    url: blobUrl,
-    filename: currentFilename,
-    saveAs: true,
+  const data = getArticleData();
+
+  if (format === 'pdf') {
+    openPrintDialog(data);
+    return;
+  }
+
+  const converters = { md: toMarkdown, html: toHtml, json: toJson, doc: toDoc };
+  const convert = converters[format] || toMarkdown;
+  const { blob, ext } = convert(data);
+
+  const blobUrl = URL.createObjectURL(blob);
+  const filename = `${data.baseFilename}.${ext}`;
+
+  chrome.downloads.download({ url: blobUrl, filename, saveAs: true }, () => {
+    URL.revokeObjectURL(blobUrl);
   });
+}
+
+function setActiveFormat(format) {
+  currentFormat = format;
+  downloadBtn.textContent = FORMAT_LABELS[format] || FORMAT_LABELS.md;
+  // Update active highlight in menu
+  downloadMenu.querySelectorAll('.split-item').forEach((el) => {
+    el.classList.toggle('active', el.dataset.format === format);
+  });
+}
+
+function closeMenu() {
+  downloadMenu.classList.add('hidden');
+  downloadChevron.setAttribute('aria-expanded', 'false');
+}
+
+// ── Download button ───────────────────────────────────────────────
+
+downloadBtn.addEventListener('click', () => {
+  closeMenu();
+  triggerDownload(currentFormat);
+});
+
+// ── Chevron toggle ────────────────────────────────────────────────
+
+downloadChevron.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isOpen = !downloadMenu.classList.contains('hidden');
+  if (isOpen) {
+    closeMenu();
+  } else {
+    downloadMenu.classList.remove('hidden');
+    downloadChevron.setAttribute('aria-expanded', 'true');
+  }
+});
+
+// ── Menu item selection ───────────────────────────────────────────
+
+downloadMenu.addEventListener('click', (e) => {
+  const item = e.target.closest('.split-item');
+  if (!item) return;
+  const format = item.dataset.format;
+  closeMenu();
+  setActiveFormat(format);
+  triggerDownload(format);
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.split-btn-wrap')) closeMenu();
 });
 
 optionsBtn.addEventListener('click', () => {
