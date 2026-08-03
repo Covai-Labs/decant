@@ -10,37 +10,46 @@
   </head>
   <body>
     <div class="shell">
-
       <!-- ── Header ───────────────────────────────────────── -->
       <header class="preview-header">
         <div class="header-top">
           <div class="header-brand">
-            <a class="logo" id="source-link" href="#" target="_blank"
-               rel="noopener noreferrer" title="View original source">🍷 Decant</a>
+            <a
+              class="logo"
+              id="source-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="View original source"
+              >🍷 Decant</a
+            >
             <h1 id="article-title" class="article-title">Loading…</h1>
           </div>
           <div class="header-actions">
-            <button id="theme-btn"    class="btn btn-ghost"      title="Toggle dark / light">🌙</button>
-            <button id="copy-btn"     class="btn btn-secondary" hidden>Copy</button>
-            <button id="png-btn"      class="btn btn-secondary" hidden>🖼 Download PNG</button>
+            <button id="theme-btn" class="btn btn-ghost" title="Toggle dark / light">🌙</button>
+            <button id="copy-btn" class="btn btn-secondary" hidden>Copy</button>
+            <button id="png-btn" class="btn btn-secondary" hidden>🖼 Download PNG</button>
             <button id="download-btn" class="btn btn-primary" hidden>⬇ Download Markdown</button>
-            <button id="print-btn"    class="btn btn-secondary" hidden>🖨 Print / PDF</button>
+            <button id="print-btn" class="btn btn-secondary" hidden>🖨 Print / PDF</button>
           </div>
         </div>
 
         <div class="header-toolbar">
           <nav id="format-tabs" class="tab-strip" role="tablist">
-            <button class="tab-btn active" data-tab="markdown"   role="tab" aria-selected="true">📝 Markdown</button>
-            <button class="tab-btn"        data-tab="html-live"  role="tab">🎨 HTML</button>
-            <button class="tab-btn"        data-tab="html-code"  role="tab">⌨ HTML Code</button>
-            <button class="tab-btn"        data-tab="json"       role="tab">{ } JSON</button>
-            <button class="tab-btn"        data-tab="doc"        role="tab">📄 Word (.doc)</button>
-            <button class="tab-btn"        data-tab="pdf"        role="tab">🖨️ PDF</button>
-            <button class="tab-btn"        data-tab="png"        role="tab">🖼️ PNG</button>
+            <button class="tab-btn active" data-tab="markdown" role="tab" aria-selected="true">
+              📝 Markdown
+            </button>
+            <button class="tab-btn" data-tab="html-live" role="tab">🎨 HTML</button>
+            <button class="tab-btn" data-tab="html-code" role="tab">⌨ HTML Code</button>
+            <button class="tab-btn" data-tab="json" role="tab">{ } JSON</button>
+            <button class="tab-btn" data-tab="doc" role="tab">📄 Word (.doc)</button>
+            <button class="tab-btn" data-tab="pdf" role="tab">🖨️ PDF</button>
+            <button class="tab-btn" data-tab="png" role="tab">🖼️ PNG</button>
           </nav>
         </div>
         <div id="png-warning-banner" class="png-warning-banner hidden">
-          ⚠️ PNG export on long articles may take a few moments. Consider PDF or Markdown for instant export.
+          ⚠️ PNG export on long articles may take a few moments. Consider PDF or Markdown for
+          instant export.
         </div>
         <div id="png-options-bar" class="png-options-bar hidden">
           <label class="checkbox-label">
@@ -56,7 +65,6 @@
 
       <!-- ── Main ─────────────────────────────────────────── -->
       <main class="preview-main" id="preview-main">
-
         <!-- Loading -->
         <div id="loading-overlay" class="loading-overlay">
           <div class="spinner"></div>
@@ -65,9 +73,12 @@
 
         <!-- HTML render pane -->
         <div id="render-wrapper" class="pane hidden">
-          <iframe id="html-iframe" class="html-iframe"
+          <iframe
+            id="html-iframe"
+            class="html-iframe"
             sandbox="allow-scripts allow-modals allow-same-origin"
-            title="Rendered article preview"></iframe>
+            title="Rendered article preview"
+          ></iframe>
         </div>
 
         <!-- Code pane (markdown / html-code / json / doc) -->
@@ -76,7 +87,6 @@
         </div>
 
         <!-- PNG tab reuses the HTML iframe — no separate pane needed -->
-
       </main>
     </div>
 

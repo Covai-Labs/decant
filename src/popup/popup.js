@@ -6,29 +6,29 @@ import { logger } from '../shared/logger.js';
 
 // ── State ─────────────────────────────────────────────────────────
 let currentMarkdown = '';
-let currentTitle    = 'Clipped Note';
-let currentUrl      = '';
-let articleData     = null;   // full data object for session handoff
-let savedOptions    = {};
+let currentTitle = 'Clipped Note';
+let currentUrl = '';
+let articleData = null; // full data object for session handoff
+let savedOptions = {};
 
 // ── DOM refs ──────────────────────────────────────────────────────
-const loadingView   = document.getElementById('loading');
-const errorView     = document.getElementById('error-view');
-const errorText     = document.getElementById('error-text');
-const successView   = document.getElementById('success-view');
-const successTitle  = document.getElementById('success-title');
+const loadingView = document.getElementById('loading');
+const errorView = document.getElementById('error-view');
+const errorText = document.getElementById('error-text');
+const successView = document.getElementById('success-view');
+const successTitle = document.getElementById('success-title');
 
-const copyBtn       = document.getElementById('copy-btn');
+const copyBtn = document.getElementById('copy-btn');
 const downloadMdBtn = document.getElementById('download-md-btn');
-const appSelect     = document.getElementById('app-select');
-const obsidianBtn   = document.getElementById('obsidian-btn');
-const aiSelect      = document.getElementById('ai-select');
-const aiBtn         = document.getElementById('ai-btn');
-const formatSelect  = document.getElementById('format-select');
-const mdActions     = document.getElementById('md-actions');
-const exportBtn     = document.getElementById('export-btn');
-const optionsBtn    = document.getElementById('options-btn');
-const aiTipBanner   = document.getElementById('ai-tip-banner');
+const appSelect = document.getElementById('app-select');
+const obsidianBtn = document.getElementById('obsidian-btn');
+const aiSelect = document.getElementById('ai-select');
+const aiBtn = document.getElementById('ai-btn');
+const formatSelect = document.getElementById('format-select');
+const mdActions = document.getElementById('md-actions');
+const exportBtn = document.getElementById('export-btn');
+const optionsBtn = document.getElementById('options-btn');
+const aiTipBanner = document.getElementById('ai-tip-banner');
 const pngWarningBanner = document.getElementById('png-warning-banner');
 
 // ── Init ──────────────────────────────────────────────────────────
@@ -101,20 +101,20 @@ async function initPopup() {
     if (response && response.status === 'success') {
       const d = response.data;
       currentMarkdown = d.markdown;
-      currentTitle    = d.title || 'Clipped Note';
-      currentUrl      = d.url || currentUrl;
+      currentTitle = d.title || 'Clipped Note';
+      currentUrl = d.url || currentUrl;
 
       // Store full article data for the preview tab
       articleData = {
-        title:         d.title || 'Untitled',
-        markdown:      d.markdown,
-        htmlContent:   d.htmlContent || '',
-        url:           d.url || currentUrl,
-        byline:        d.byline || '',
-        siteName:      d.siteName || '',
-        excerpt:       d.excerpt || '',
+        title: d.title || 'Untitled',
+        markdown: d.markdown,
+        htmlContent: d.htmlContent || '',
+        url: d.url || currentUrl,
+        byline: d.byline || '',
+        siteName: d.siteName || '',
+        excerpt: d.excerpt || '',
         publishedTime: d.publishedTime || '',
-        baseFilename:  d.baseFilename || 'clipped-page',
+        baseFilename: d.baseFilename || 'clipped-page',
       };
 
       showSuccess(currentTitle);
@@ -176,14 +176,17 @@ async function openExportPreview() {
     const autoDownloadPng = selectedFormat === 'png';
 
     await new Promise((resolve, reject) => {
-      chrome.storage.session.set({
-        [key]: articleData,
-        autoPrint,
-        autoDownloadPng
-      }, () => {
-        if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-        else resolve();
-      });
+      chrome.storage.session.set(
+        {
+          [key]: articleData,
+          autoPrint,
+          autoDownloadPng,
+        },
+        () => {
+          if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
+          else resolve();
+        },
+      );
     });
 
     await chrome.tabs.create({
@@ -203,7 +206,9 @@ copyBtn.addEventListener('click', async () => {
   await navigator.clipboard.writeText(currentMarkdown);
   const orig = copyBtn.textContent;
   copyBtn.textContent = '✓ Copied';
-  setTimeout(() => { copyBtn.textContent = orig; }, 1500);
+  setTimeout(() => {
+    copyBtn.textContent = orig;
+  }, 1500);
 });
 
 downloadMdBtn.addEventListener('click', () => {
@@ -222,7 +227,7 @@ if (appSelect) {
 
 obsidianBtn.addEventListener('click', () => {
   if (!currentMarkdown) return;
-  const target = appSelect ? appSelect.value : (savedOptions.defaultAppTarget || 'obsidian');
+  const target = appSelect ? appSelect.value : savedOptions.defaultAppTarget || 'obsidian';
   if (target === 'none') return;
   const uri = buildAppUri(target, {
     title: currentTitle,
@@ -235,7 +240,7 @@ obsidianBtn.addEventListener('click', () => {
 
 aiBtn.addEventListener('click', async () => {
   if (!currentMarkdown) return;
-  const target = aiSelect ? aiSelect.value : (savedOptions.defaultAiTarget || 'chatgpt');
+  const target = aiSelect ? aiSelect.value : savedOptions.defaultAiTarget || 'chatgpt';
 
   const prompt = buildAiPrompt({
     title: currentTitle,

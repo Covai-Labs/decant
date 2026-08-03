@@ -172,16 +172,16 @@ body.in-iframe {
 
 .btn.ai-btn {
   flex: 1;
-  background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(109,40,217,0.18));
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(109, 40, 217, 0.18));
   color: #c4b5fd;
-  border: 1px solid rgba(139,92,246,0.35);
+  border: 1px solid rgba(139, 92, 246, 0.35);
   font-size: 0.83rem;
   transition: all 0.2s ease;
 }
 
 .btn.ai-btn:hover {
-  background: linear-gradient(135deg, rgba(139,92,246,0.28), rgba(109,40,217,0.28));
-  border-color: rgba(139,92,246,0.55);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.28), rgba(109, 40, 217, 0.28));
+  border-color: rgba(139, 92, 246, 0.55);
   color: #e9d5ff;
 }
 
@@ -225,8 +225,14 @@ body.in-iframe {
 }
 
 @keyframes pop-in {
-  from { transform: scale(0.5); opacity: 0; }
-  to   { transform: scale(1);   opacity: 1; }
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .success-title {

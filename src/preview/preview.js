@@ -2,38 +2,38 @@ import { toMarkdown, toHtml, toJson, toDoc } from '../shared/exporters.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────
 const articleTitleEl = document.getElementById('article-title');
-const sourceLinkEl   = document.getElementById('source-link');
-const loadingEl      = document.getElementById('loading-overlay');
-const renderWrapper  = document.getElementById('render-wrapper');
-const codeWrapper    = document.getElementById('code-wrapper');
-const htmlIframe     = document.getElementById('html-iframe');
-const codeEl         = document.getElementById('preview-code');
-const tabStrip       = document.getElementById('format-tabs');
-const themeBtn       = document.getElementById('theme-btn');
-const copyBtn        = document.getElementById('copy-btn');
-const printBtn       = document.getElementById('print-btn');
-const pngBtn         = document.getElementById('png-btn');
-const downloadBtn    = document.getElementById('download-btn');
+const sourceLinkEl = document.getElementById('source-link');
+const loadingEl = document.getElementById('loading-overlay');
+const renderWrapper = document.getElementById('render-wrapper');
+const codeWrapper = document.getElementById('code-wrapper');
+const htmlIframe = document.getElementById('html-iframe');
+const codeEl = document.getElementById('preview-code');
+const tabStrip = document.getElementById('format-tabs');
+const themeBtn = document.getElementById('theme-btn');
+const copyBtn = document.getElementById('copy-btn');
+const printBtn = document.getElementById('print-btn');
+const pngBtn = document.getElementById('png-btn');
+const downloadBtn = document.getElementById('download-btn');
 const pngWarningBanner = document.getElementById('png-warning-banner');
-const pngOptionsBar  = document.getElementById('png-options-bar');
+const pngOptionsBar = document.getElementById('png-options-bar');
 const pngQualityCheckbox = document.getElementById('png-quality-checkbox');
 const includeImagesCheckbox = document.getElementById('include-images-checkbox');
 
 // ── State ─────────────────────────────────────────────────────────
-let articleData    = null;
-let isDark         = true;
-let iframeLoaded   = false;
+let articleData = null;
+let isDark = true;
+let iframeLoaded = false;
 
 // Pre-generated format strings (populated in init)
-let htmlStr      = '';
-let markdownStr  = '';
-let jsonStr      = '';
-let docStr       = '';
+let htmlStr = '';
+let markdownStr = '';
+let jsonStr = '';
+let docStr = '';
 
 // Active format tracking
-let activeContent   = '';
+let activeContent = '';
 let activeExtension = 'md';
-let activeTab       = 'markdown';
+let activeTab = 'markdown';
 
 // Blob URL management
 let currentBlobUrl = null;
@@ -42,7 +42,7 @@ let currentBlobUrl = null;
 function blobToText(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload  = () => resolve(reader.result);
+    reader.onload = () => resolve(reader.result);
     reader.onerror = reject;
     reader.readAsText(blob);
   });
@@ -134,9 +134,9 @@ function switchTab(tab) {
             if (win.renderMathInElement) {
               win.renderMathInElement(doc.body, {
                 delimiters: [
-                  {left: '$$', right: '$$', display: true},
-                  {left: '$',  right: '$',  display: false}
-                ]
+                  { left: '$$', right: '$$', display: true },
+                  { left: '$', right: '$', display: false },
+                ],
               });
             }
             if (win.Prism) win.Prism.highlightAll();
@@ -148,7 +148,8 @@ function switchTab(tab) {
 
       htmlIframe.onerror = () => {
         console.error('Iframe loading failed');
-        loadingEl.innerHTML = '<p style="color:#f87171">Failed to load preview. Please try again.</p>';
+        loadingEl.innerHTML =
+          '<p style="color:#f87171">Failed to load preview. Please try again.</p>';
       };
 
       htmlIframe.setAttribute('data-content', htmlStr);
@@ -158,55 +159,53 @@ function switchTab(tab) {
 
     // Set content and extension based on tab
     if (tab === 'html-live') {
-      activeContent   = htmlStr;
+      activeContent = htmlStr;
       activeExtension = 'html';
     } else if (tab === 'pdf') {
-      activeContent   = htmlStr;
+      activeContent = htmlStr;
       activeExtension = 'pdf';
     } else if (tab === 'png') {
-      activeContent   = htmlStr;
+      activeContent = htmlStr;
       activeExtension = 'png';
     }
-
   } else {
     codeWrapper.classList.remove('hidden');
 
     // Set content and extension based on tab
     if (tab === 'markdown') {
-      codeEl.textContent  = markdownStr;
-      codeEl.className    = 'language-markdown';
-      activeContent       = markdownStr;
-      activeExtension     = 'md';
+      codeEl.textContent = markdownStr;
+      codeEl.className = 'language-markdown';
+      activeContent = markdownStr;
+      activeExtension = 'md';
     } else if (tab === 'html-code') {
-      codeEl.textContent  = htmlStr;
-      codeEl.className    = 'language-html';
-      activeContent       = htmlStr;
-      activeExtension     = 'html';
+      codeEl.textContent = htmlStr;
+      codeEl.className = 'language-html';
+      activeContent = htmlStr;
+      activeExtension = 'html';
     } else if (tab === 'json') {
-      codeEl.textContent  = jsonStr;
-      codeEl.className    = 'language-json';
-      activeContent       = jsonStr;
-      activeExtension     = 'json';
+      codeEl.textContent = jsonStr;
+      codeEl.className = 'language-json';
+      activeContent = jsonStr;
+      activeExtension = 'json';
     } else if (tab === 'doc') {
-      codeEl.textContent  = docStr;
-      codeEl.className    = 'language-html';
-      activeContent       = docStr;
-      activeExtension     = 'doc';
+      codeEl.textContent = docStr;
+      codeEl.className = 'language-html';
+      activeContent = docStr;
+      activeExtension = 'doc';
     }
 
     if (window.Prism) window.Prism.highlightElement(codeEl);
   }
-
 }
 
 // ── Download label ────────────────────────────────────────────────
 const DL_LABELS = {
-  markdown:   '⬇ Download Markdown',
+  markdown: '⬇ Download Markdown',
   'html-live': '⬇ Download HTML',
   'html-code': '⬇ Download HTML Code',
-  json:       '⬇ Download JSON',
-  doc:        '⬇ Download Word (.doc)',
-  png:        '⬇ Download PNG',
+  json: '⬇ Download JSON',
+  doc: '⬇ Download Word (.doc)',
+  png: '⬇ Download PNG',
 };
 
 function updateDownloadLabel(tab = activeTab) {
@@ -219,9 +218,9 @@ async function triggerDownload() {
 
   const converters = {
     html: () => toHtml(articleData),
-    md:   () => toMarkdown(articleData),
+    md: () => toMarkdown(articleData),
     json: () => toJson(articleData),
-    doc:  () => toDoc(articleData),
+    doc: () => toDoc(articleData),
   };
 
   const convert = converters[activeExtension] || converters.html;
@@ -264,10 +263,17 @@ async function downloadPng() {
 
     const container = document.createElement('div');
     container.style.cssText = [
-      'position:absolute', 'left:-9999px', 'top:0', 'width:900px',
-      'background:#ffffff', 'color:#1a202c', 'padding:48px 64px',
+      'position:absolute',
+      'left:-9999px',
+      'top:0',
+      'width:900px',
+      'background:#ffffff',
+      'color:#1a202c',
+      'padding:48px 64px',
       'font-family:-apple-system,BlinkMacSystemFont,sans-serif',
-      'font-size:18px', 'line-height:1.7', 'box-sizing:border-box'
+      'font-size:18px',
+      'line-height:1.7',
+      'box-sizing:border-box',
     ].join(';');
 
     // Clone content and optionally remove images
@@ -276,7 +282,7 @@ async function downloadPng() {
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = contentHtml;
       const images = tempDiv.querySelectorAll('img');
-      images.forEach(img => img.remove());
+      images.forEach((img) => img.remove());
       contentHtml = tempDiv.innerHTML;
     }
 
@@ -326,10 +332,14 @@ async function triggerCopy() {
   try {
     await navigator.clipboard.writeText(activeContent);
     copyBtn.textContent = '✓ Copied';
-    setTimeout(() => { copyBtn.innerHTML = orig; }, 1800);
+    setTimeout(() => {
+      copyBtn.innerHTML = orig;
+    }, 1800);
   } catch {
     copyBtn.textContent = 'Failed';
-    setTimeout(() => { copyBtn.innerHTML = orig; }, 1800);
+    setTimeout(() => {
+      copyBtn.innerHTML = orig;
+    }, 1800);
   }
 }
 
@@ -372,8 +382,8 @@ function syncThemeToIframe(theme) {
 
   // Also try direct DOM manipulation
   try {
-    const doc = htmlIframe.contentDocument ||
-                (htmlIframe.contentWindow && htmlIframe.contentWindow.document);
+    const doc =
+      htmlIframe.contentDocument || (htmlIframe.contentWindow && htmlIframe.contentWindow.document);
     if (doc && doc.documentElement) {
       if (theme === 'dark') {
         doc.documentElement.setAttribute('data-theme', 'dark');
@@ -407,7 +417,8 @@ async function init() {
   const initialTab = params.get('tab') || 'markdown';
 
   if (!key) {
-    loadingEl.innerHTML = '<p style="color:#f87171">No article key found. Re-clip the page from Decant.</p>';
+    loadingEl.innerHTML =
+      '<p style="color:#f87171">No article key found. Re-clip the page from Decant.</p>';
     return;
   }
 
@@ -439,9 +450,9 @@ async function init() {
     if (articleData.url) sourceLinkEl.href = articleData.url;
 
     markdownStr = articleData.markdown;
-    htmlStr     = await blobToText(toHtml(articleData).blob);
-    jsonStr     = await blobToText(toJson(articleData).blob);
-    docStr      = await blobToText(toDoc(articleData).blob);
+    htmlStr = await blobToText(toHtml(articleData).blob);
+    jsonStr = await blobToText(toJson(articleData).blob);
+    docStr = await blobToText(toDoc(articleData).blob);
 
     loadingEl.style.display = 'none';
 
@@ -469,7 +480,6 @@ async function init() {
     if (autoDownloadPng && tabToSwitch === 'png') {
       setTimeout(() => downloadPng(), 500);
     }
-
   } catch (err) {
     loadingEl.innerHTML = `<p style="color:#f87171">Failed to load: ${err.message}</p>`;
   }
@@ -481,11 +491,11 @@ tabStrip.addEventListener('click', (e) => {
   if (btn?.dataset.tab) switchTab(btn.dataset.tab);
 });
 
-themeBtn.addEventListener('click',    () => setTheme(isDark ? 'light' : 'dark'));
+themeBtn.addEventListener('click', () => setTheme(isDark ? 'light' : 'dark'));
 downloadBtn.addEventListener('click', triggerDownload);
-copyBtn.addEventListener('click',     triggerCopy);
+copyBtn.addEventListener('click', triggerCopy);
 if (printBtn) printBtn.addEventListener('click', triggerPrint);
-if (pngBtn)   pngBtn.addEventListener('click',   downloadPng);
+if (pngBtn) pngBtn.addEventListener('click', downloadPng);
 
 // Cleanup blob URL on page unload
 window.addEventListener('beforeunload', () => {
