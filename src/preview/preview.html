@@ -23,18 +23,18 @@
             <button id="theme-btn"    class="btn btn-ghost"      title="Toggle dark / light">🌙</button>
             <button id="copy-btn"     class="btn btn-secondary">Copy</button>
             <button id="print-btn"    class="btn btn-secondary hidden">🖨 Print / PDF</button>
-            <button id="download-btn" class="btn btn-primary">⬇ Download .html</button>
+            <button id="png-btn"      class="btn btn-secondary hidden">🖼 Download PNG</button>
+            <button id="download-btn" class="btn btn-primary">⬇ Download .md</button>
           </div>
         </div>
 
         <div class="header-toolbar">
           <nav id="format-tabs" class="tab-strip" role="tablist">
-            <button class="tab-btn active" data-tab="html-live"  role="tab" aria-selected="true">🎨 HTML Live</button>
-            <button class="tab-btn"        data-tab="markdown"   role="tab">📝 Markdown</button>
+            <button class="tab-btn active" data-tab="markdown"   role="tab" aria-selected="true">📝 Markdown</button>
+            <button class="tab-btn"        data-tab="html-live"  role="tab">🎨 HTML / PDF / PNG</button>
             <button class="tab-btn"        data-tab="html-code"  role="tab">⌨ HTML Code</button>
             <button class="tab-btn"        data-tab="json"       role="tab">{ } JSON</button>
-            <button class="tab-btn"        data-tab="doc"        role="tab">📄 Word</button>
-            <button class="tab-btn"        data-tab="png"        role="tab">🖼 PNG</button>
+            <button class="tab-btn"        data-tab="doc"        role="tab">📄 Word (.doc)</button>
           </nav>
         </div>
       </header>
@@ -51,7 +51,7 @@
         <!-- HTML render pane -->
         <div id="render-wrapper" class="pane hidden">
           <iframe id="html-iframe" class="html-iframe"
-            sandbox="allow-scripts allow-same-origin"
+            sandbox="allow-scripts"
             title="Rendered article preview"></iframe>
         </div>
 

@@ -12,6 +12,7 @@ const tabStrip       = document.getElementById('format-tabs');
 const themeBtn       = document.getElementById('theme-btn');
 const copyBtn        = document.getElementById('copy-btn');
 const printBtn       = document.getElementById('print-btn');
+const pngBtn         = document.getElementById('png-btn');
 const downloadBtn    = document.getElementById('download-btn');
 
 // ── State ─────────────────────────────────────────────────────────
@@ -27,8 +28,8 @@ let docStr       = '';
 
 // Active format tracking
 let activeContent   = '';
-let activeExtension = 'html';
-let activeTab       = 'html-live';
+let activeExtension = 'md';
+let activeTab       = 'markdown';
 
 // ── Helpers ───────────────────────────────────────────────────────
 function blobToText(blob) {
@@ -82,7 +83,7 @@ function switchTab(tab) {
   renderWrapper.classList.add('hidden');
   codeWrapper.classList.add('hidden');
 
-  if (tab === 'html-live' || tab === 'png') {
+  if (tab === 'html-live') {
     renderWrapper.classList.remove('hidden');
     if (!iframeLoaded) {
       const theme = isDark ? 'dark' : 'light';
@@ -90,12 +91,14 @@ function switchTab(tab) {
       iframeLoaded = true;
     }
     activeContent   = htmlStr;
-    activeExtension = tab === 'png' ? 'png' : 'html';
-    printBtn.classList.remove('hidden');
+    activeExtension = 'html';
+    if (printBtn) printBtn.classList.remove('hidden');
+    if (pngBtn)   pngBtn.classList.remove('hidden');
 
   } else {
     codeWrapper.classList.remove('hidden');
-    printBtn.classList.add('hidden');
+    if (printBtn) printBtn.classList.add('hidden');
+    if (pngBtn)   pngBtn.classList.add('hidden');
 
     if (tab === 'markdown') {
       codeEl.textContent  = markdownStr;
@@ -142,11 +145,6 @@ function updateDownloadLabel() {
 async function triggerDownload() {
   if (!articleData) return;
 
-  if (activeExtension === 'png') {
-    await downloadPng();
-    return;
-  }
-
   const converters = {
     html: () => toHtml(articleData),
     md:   () => toMarkdown(articleData),
@@ -174,9 +172,10 @@ async function downloadPng() {
     return;
   }
 
-  const origText = downloadBtn.textContent;
-  downloadBtn.disabled = true;
-  downloadBtn.textContent = 'Generating PNG…';
+  const btnToDisable = pngBtn || downloadBtn;
+  const origText = btnToDisable.textContent;
+  btnToDisable.disabled = true;
+  btnToDisable.textContent = 'Generating PNG…';
 
   try {
     const parser = new DOMParser();
@@ -213,8 +212,8 @@ async function downloadPng() {
   } catch (err) {
     alert('PNG generation failed: ' + err.message);
   } finally {
-    downloadBtn.disabled = false;
-    downloadBtn.textContent = origText;
+    btnToDisable.disabled = false;
+    btnToDisable.textContent = origText;
   }
 }
 
@@ -250,9 +249,9 @@ function setTheme(theme) {
   themeBtn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
   chrome.storage.local.set({ previewTheme: theme });
 
-  if ((activeTab === 'html-live' || activeTab === 'png') && htmlStr) {
+  if (activeTab === 'html-live' && htmlStr) {
     iframeLoaded = false;
-    switchTab(activeTab);
+    switchTab('html-live');
   }
 }
 
@@ -295,9 +294,8 @@ async function init() {
     jsonStr     = await blobToText(toJson(articleData).blob);
     docStr      = await blobToText(toDoc(articleData).blob);
 
-    // Hide loading, show initial tab
     loadingEl.style.display = 'none';
-    switchTab('html-live');
+    switchTab('markdown');
 
   } catch (err) {
     loadingEl.innerHTML = `<p style="color:#f87171">Failed to load: ${err.message}</p>`;
@@ -313,8 +311,8 @@ tabStrip.addEventListener('click', (e) => {
 themeBtn.addEventListener('click',    () => setTheme(isDark ? 'light' : 'dark'));
 downloadBtn.addEventListener('click', triggerDownload);
 copyBtn.addEventListener('click',     triggerCopy);
-printBtn.addEventListener('click',    triggerPrint);
-pngRenderBtn.addEventListener('click', generatePng);
+if (printBtn) printBtn.addEventListener('click', triggerPrint);
+if (pngBtn)   pngBtn.addEventListener('click',   downloadPng);
 
 // ── Boot ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', init);
