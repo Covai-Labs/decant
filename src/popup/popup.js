@@ -168,11 +168,12 @@ async function openExportPreview() {
 
   try {
     const key = `decant_${Date.now()}`;
-    const targetTab = formatSelect ? formatSelect.value : 'md';
+    const selectedFormat = formatSelect ? formatSelect.value : 'md';
+    const targetTab = selectedFormat === 'md' ? 'markdown' : selectedFormat;
 
     // Set auto-action flags based on format
-    const autoPrint = targetTab === 'pdf';
-    const autoDownloadPng = targetTab === 'png';
+    const autoPrint = selectedFormat === 'pdf';
+    const autoDownloadPng = selectedFormat === 'png';
 
     await new Promise((resolve, reject) => {
       chrome.storage.session.set({
