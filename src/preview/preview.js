@@ -192,20 +192,21 @@ function switchTab(tab) {
     if (window.Prism) Prism.highlightElement(codeEl);
   }
 
-  updateDownloadLabel();
+  updateDownloadLabel(tab);
 }
 
 // ── Download label ────────────────────────────────────────────────
 const DL_LABELS = {
-  html: '⬇ Download .html',
-  md:   '⬇ Download .md',
-  json: '⬇ Download .json',
-  doc:  '⬇ Download .doc',
-  png:  '⬇ Download .png',
+  markdown:   '⬇ Download Markdown',
+  'html-live': '⬇ Download HTML',
+  'html-code': '⬇ Download HTML Code',
+  json:       '⬇ Download JSON',
+  doc:        '⬇ Download Word (.doc)',
+  png:        '⬇ Download PNG',
 };
 
-function updateDownloadLabel() {
-  downloadBtn.textContent = DL_LABELS[activeExtension] || '⬇ Download';
+function updateDownloadLabel(tab = activeTab) {
+  downloadBtn.textContent = DL_LABELS[tab] || '⬇ Download';
 }
 
 // ── Download ──────────────────────────────────────────────────────
