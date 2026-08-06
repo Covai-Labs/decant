@@ -62,6 +62,80 @@ export function extractArticle(options = DEFAULT_OPTIONS) {
 // Global flag to indicate content script readiness
 window.__DECANT_LOADED__ = true;
 
+export async function checkAndInjectContinuation() {
+  try {
+    if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) return;
+    const res = await chrome.storage.local.get('pendingContinuation');
+    const data = res?.pendingContinuation;
+    if (!data || !data.payload) return;
+
+    // Expire pending continuation after 5 minutes
+    if (Date.now() - (data.timestamp || 0) > 300000) {
+      await chrome.storage.local.remove('pendingContinuation');
+      return;
+    }
+
+    const inputSelectors = [
+      '#prompt-textarea',
+      'div[contenteditable="true"]',
+      'textarea',
+      '.user-prompt textarea',
+      'ms-prompt-editor textarea',
+      'rich-textarea div[contenteditable="true"]',
+    ];
+
+    const maxAttempts = 20; // poll every 300ms up to 6s
+    let attempts = 0;
+
+    const timer = setInterval(async () => {
+      attempts++;
+      let inputEl = null;
+
+      for (const sel of inputSelectors) {
+        inputEl = document.querySelector(sel);
+        if (inputEl) break;
+      }
+
+      if (inputEl) {
+        clearInterval(timer);
+        try {
+          inputEl.focus();
+
+          if (inputEl.tagName === 'TEXTAREA' || inputEl.tagName === 'INPUT') {
+            inputEl.value = data.payload;
+            inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+            inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+          } else {
+            // contenteditable element
+            let inserted = false;
+            try {
+              inserted = document.execCommand('insertText', false, data.payload);
+            } catch {
+              inserted = false;
+            }
+
+            if (!inserted || !inputEl.textContent || inputEl.textContent.trim().length === 0) {
+              inputEl.textContent = data.payload;
+            }
+            inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+            inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+
+          await chrome.storage.local.remove('pendingContinuation');
+          logger.info('ContentScript', 'Auto-injected decanted prompt into AI chat input.');
+        } catch (err) {
+          logger.error('ContentScript', 'Error populating input element:', err);
+        }
+      } else if (attempts >= maxAttempts) {
+        clearInterval(timer);
+        logger.warn('ContentScript', 'Could not locate AI chat prompt input element after max attempts.');
+      }
+    }, 300);
+  } catch (e) {
+    logger.warn('ContentScript', 'Continuation injection check failed:', e);
+  }
+}
+
 // Message Listener
 if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -85,3 +159,5 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
     }
   });
 }
+
+checkAndInjectContinuation();

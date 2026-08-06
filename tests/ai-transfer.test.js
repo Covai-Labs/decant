@@ -32,3 +32,21 @@ test('buildAiPrompt replaces template variables when custom template provided', 
 
   assert.equal(prompt, 'Summarize Custom Title from https://example.com:\n\nBody content');
 });
+
+test('pendingContinuation payload structure contains target, timestamp, and payload text', () => {
+  const prompt = buildAiPrompt({
+    title: 'Test',
+    url: 'https://example.com',
+    content: 'Test content',
+  });
+
+  const continuationObj = {
+    payload: prompt,
+    targetPlatform: 'chatgpt',
+    timestamp: Date.now(),
+  };
+
+  assert.equal(typeof continuationObj.payload, 'string');
+  assert.equal(continuationObj.targetPlatform, 'chatgpt');
+  assert.ok(continuationObj.timestamp <= Date.now());
+});

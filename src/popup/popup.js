@@ -249,7 +249,24 @@ aiBtn.addEventListener('click', async () => {
     template: savedOptions.aiPromptTemplate,
   });
 
-  await navigator.clipboard.writeText(prompt);
+  try {
+    await navigator.clipboard.writeText(prompt);
+  } catch (err) {
+    logger.warn('Popup', 'Clipboard writeText failed:', err);
+  }
+
+  try {
+    await chrome.storage.local.set({
+      pendingContinuation: {
+        payload: prompt,
+        targetPlatform: target,
+        timestamp: Date.now(),
+      },
+    });
+  } catch (err) {
+    logger.error('Popup', 'Failed to save pendingContinuation:', err);
+  }
+
   logger.info('Popup', 'Copied AI prompt and opening:', target);
   chrome.tabs.create({ url: getAiPlatformUrl(target) });
 });

@@ -20,11 +20,11 @@ def main():
 
     os.makedirs('releases', exist_ok=True)
 
-    chrome_zip = f"releases/decant-chrome-v{version}.zip"
-    firefox_zip = f"releases/decant-firefox-v{version}.zip"
-    source_zip = f"releases/decant-source-v{version}.zip"
+    chrome_zip = "releases/decant-chromium.zip"
+    firefox_zip = "releases/decant-firefox.zip"
+    source_zip = "releases/decant-source.zip"
 
-    # 1. Package Chrome / Edge / Chromium build
+    # 1. Package Chromium build
     if os.path.exists('dist'):
         create_zip('dist', chrome_zip)
 
@@ -44,9 +44,9 @@ def main():
                 zipf.write(file_path, arcname)
 
     print("\n✅ Packaging complete! Zip files prepared in releases/:")
-    print(f"  - Chrome / Edge:    {chrome_zip}")
-    print(f"  - Firefox AMO:      {firefox_zip}")
-    print(f"  - AMO Source Zip:   {source_zip}\n")
+    print(f"  - Chromium (Chrome/Edge): {chrome_zip}")
+    print(f"  - Firefox AMO:           {firefox_zip}")
+    print(f"  - AMO Source Zip:        {source_zip}\n")
 
 if __name__ == '__main__':
     main()

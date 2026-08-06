@@ -1,4 +1,6 @@
 import { toMarkdown, toHtml, toJson, toDoc } from '../shared/exporters.js';
+import { getOptions } from '../shared/storage.js';
+import { buildAiPrompt, getAiPlatformUrl } from '../shared/ai-transfer.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────
 const articleTitleEl = document.getElementById('article-title');
@@ -14,6 +16,8 @@ const copyBtn = document.getElementById('copy-btn');
 const printBtn = document.getElementById('print-btn');
 const pngBtn = document.getElementById('png-btn');
 const downloadBtn = document.getElementById('download-btn');
+const aiSelect = document.getElementById('ai-select');
+const aiBtn = document.getElementById('ai-btn');
 const pngWarningBanner = document.getElementById('png-warning-banner');
 const pngOptionsBar = document.getElementById('png-options-bar');
 const pngQualityCheckbox = document.getElementById('png-quality-checkbox');
@@ -473,6 +477,11 @@ async function init() {
     }
     switchTab(tabToSwitch);
 
+    const savedOpts = await getOptions();
+    if (savedOpts.defaultAiTarget && aiSelect) {
+      aiSelect.value = savedOpts.defaultAiTarget;
+    }
+
     // Execute auto-actions if needed
     if (autoPrint && tabToSwitch === 'pdf') {
       setTimeout(() => triggerPrint(), 500);
@@ -496,6 +505,41 @@ downloadBtn.addEventListener('click', triggerDownload);
 copyBtn.addEventListener('click', triggerCopy);
 if (printBtn) printBtn.addEventListener('click', triggerPrint);
 if (pngBtn) pngBtn.addEventListener('click', downloadPng);
+
+if (aiBtn) {
+  aiBtn.addEventListener('click', async () => {
+    if (!articleData || !markdownStr) return;
+    const savedOpts = await getOptions();
+    const target = aiSelect ? aiSelect.value : savedOpts.defaultAiTarget || 'chatgpt';
+
+    const prompt = buildAiPrompt({
+      title: articleData.title || 'Untitled',
+      url: articleData.url || '',
+      content: markdownStr,
+      template: savedOpts.aiPromptTemplate,
+    });
+
+    try {
+      await navigator.clipboard.writeText(prompt);
+    } catch (e) {
+      console.warn('Clipboard writeText failed:', e);
+    }
+
+    try {
+      await chrome.storage.local.set({
+        pendingContinuation: {
+          payload: prompt,
+          targetPlatform: target,
+          timestamp: Date.now(),
+        },
+      });
+    } catch (e) {
+      console.error('Failed to set pendingContinuation:', e);
+    }
+
+    chrome.tabs.create({ url: getAiPlatformUrl(target) });
+  });
+}
 
 // Cleanup blob URL on page unload
 window.addEventListener('beforeunload', () => {

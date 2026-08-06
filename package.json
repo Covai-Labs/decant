@@ -1,6 +1,6 @@
 {
   "name": "decant",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Fast, privacy-first Manifest V3 web clipper that decants articles and web pages into clean Markdown.",
   "main": "dist/background.js",
   "type": "module",
