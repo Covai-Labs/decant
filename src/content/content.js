@@ -128,7 +128,10 @@ export async function checkAndInjectContinuation() {
         }
       } else if (attempts >= maxAttempts) {
         clearInterval(timer);
-        logger.warn('ContentScript', 'Could not locate AI chat prompt input element after max attempts.');
+        logger.warn(
+          'ContentScript',
+          'Could not locate AI chat prompt input element after max attempts.',
+        );
       }
     }, 300);
   } catch (e) {
