@@ -24,3 +24,12 @@ decant/
 ## License
 
 This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. See the [LICENSE](file:///home/anu/Workspace/Public/Add-ons/decant/LICENSE) file for details.
+
+## Background
+
+Decant started as a quick personal tool to extract web page content, send it to a backend API, and chat with articles inside a popup. But when preparing to put it on extension stores, two things became clear:
+
+1. **Privacy matters**: Nobody wants an extension sending their browsed content off to random third-party servers.
+2. **Simplicity wins**: Why force API keys or cloud middleman servers when you can just extract crisp, clean Markdown locally and drop it into ChatGPT, Claude, or your favorite AI chat window?
+
+While browsers have started bundling built-in AI tools, Decant keeps things delightfully simple: fast, privacy-first local extraction that gives you raw, clean Markdown to use anywhere you want without telemetry or lock-in.
