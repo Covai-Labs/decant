@@ -1,6 +1,7 @@
 import { toMarkdown, toHtml, toJson, toDoc } from '../shared/exporters.js';
 import { getOptions } from '../shared/storage.js';
 import { buildAiPrompt, getAiPlatformUrl } from '../shared/ai-transfer.js';
+import { initI18n } from '../shared/i18n.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────
 const articleTitleEl = document.getElementById('article-title');
@@ -427,6 +428,7 @@ async function init() {
   }
 
   try {
+    await initI18n();
     const result = await new Promise((resolve, reject) => {
       chrome.storage.session.get([key, 'autoPrint', 'autoDownloadPng'], (data) => {
         if (chrome.runtime.lastError) reject(chrome.runtime.lastError);

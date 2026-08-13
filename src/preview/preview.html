@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Decant Export Preview</title>
+    <title data-i18n="extName">Decant Export Preview</title>
     <link rel="stylesheet" href="lib/katex/katex.min.css" />
     <link rel="stylesheet" href="lib/prismjs/prism-tomorrow.min.css" />
     <link rel="stylesheet" href="preview.css" />
@@ -23,7 +23,7 @@
               title="View original source"
               >🍷 Decant</a
             >
-            <h1 id="article-title" class="article-title">Loading…</h1>
+            <h1 id="article-title" class="article-title" data-i18n="decantingPage">Loading…</h1>
           </div>
           <div class="header-actions">
             <button id="theme-btn" class="btn btn-ghost" title="Toggle dark / light">🌙</button>
@@ -34,12 +34,12 @@
               <option value="deepseek">DeepSeek</option>
               <option value="perplexity">Perplexity</option>
             </select>
-            <button id="ai-btn" class="btn btn-secondary" title="Send to AI Chat">
+            <button id="ai-btn" class="btn btn-secondary" title="Send to AI Chat" data-i18n="sendToAi">
               🤖 Send to AI
             </button>
-            <button id="copy-btn" class="btn btn-secondary" hidden>Copy</button>
+            <button id="copy-btn" class="btn btn-secondary" hidden data-i18n="copyButton">Copy</button>
             <button id="png-btn" class="btn btn-secondary" hidden>🖼 Download PNG</button>
-            <button id="download-btn" class="btn btn-primary" hidden>⬇ Download Markdown</button>
+            <button id="download-btn" class="btn btn-primary" hidden data-i18n="saveButton">⬇ Download Markdown</button>
             <button id="print-btn" class="btn btn-secondary" hidden>🖨 Print / PDF</button>
           </div>
         </div>
@@ -57,7 +57,7 @@
             <button class="tab-btn" data-tab="png" role="tab">🖼️ PNG</button>
           </nav>
         </div>
-        <div id="png-warning-banner" class="png-warning-banner hidden">
+        <div id="png-warning-banner" class="png-warning-banner hidden" data-i18n="pngWarning">
           ⚠️ PNG export on long articles may take a few moments. Consider PDF or Markdown for
           instant export.
         </div>
@@ -78,7 +78,7 @@
         <!-- Loading -->
         <div id="loading-overlay" class="loading-overlay">
           <div class="spinner"></div>
-          <span>Loading article…</span>
+          <span data-i18n="decantingPage">Loading article…</span>
         </div>
 
         <!-- HTML render pane -->

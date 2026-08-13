@@ -1,0 +1,94 @@
+{
+  "extName": {
+    "message": "Decant - WebからMarkdownクリッパー",
+    "description": "The name of the extension"
+  },
+  "extDescription": {
+    "message": "記事やウェブページをクリーンなMarkdownに変換する、高速でプライバシー重視のウェブクリッパー。",
+    "description": "The description of the extension"
+  },
+  "actionTitle": {
+    "message": "Markdownに変換",
+    "description": "Tooltip for the extension icon"
+  },
+  "cmdOpenPopup": {
+    "message": "Decantポップアップを開く",
+    "description": "Shortcut command description for opening popup"
+  },
+  "cmdClipTab": {
+    "message": "現在のタブをMarkdownとして保存",
+    "description": "Shortcut command description for clipping current tab"
+  },
+  "cmdCopyTab": {
+    "message": "現在のタブのMarkdownをコピー",
+    "description": "Shortcut command description for copying tab markdown"
+  },
+  "contextMenuPage": {
+    "message": "ページをMarkdownに変換",
+    "description": "Context menu title for clipping entire page"
+  },
+  "contextMenuSelection": {
+    "message": "選択範囲をMarkdownに変換",
+    "description": "Context menu title for clipping selected text"
+  },
+  "optionsTitle": {
+    "message": "Decant 設定",
+    "description": "Title of the options page"
+  },
+  "generalSettings": {
+    "message": "一般設定",
+    "description": "Section header for general settings"
+  },
+  "uiLanguage": {
+    "message": "UIの言語",
+    "description": "Label for UI language selection dropdown"
+  },
+  "uiLanguageAuto": {
+    "message": "自動 (システム言語)",
+    "description": "Option for system default language"
+  },
+  "saveSettings": {
+    "message": "設定を保存",
+    "description": "Button to save settings"
+  },
+  "settingsSaved": {
+    "message": "設定が正常に保存されました！",
+    "description": "Toast message when settings are saved"
+  },
+  "copyButton": {
+    "message": "📋 コピー",
+    "description": "Copy button text"
+  },
+  "saveButton": {
+    "message": "⬇ 保存",
+    "description": "Save button text"
+  },
+  "previewButton": {
+    "message": "🔍 新しいタブでプレビュー",
+    "description": "Preview button text"
+  },
+  "sendToAi": {
+    "message": "🤖 AIに送信",
+    "description": "Send to AI button text"
+  },
+  "openInObsidian": {
+    "message": "Obsidianで開く",
+    "description": "Open in Obsidian button text"
+  },
+  "decantingPage": {
+    "message": "ページを処理中…",
+    "description": "Loading message when processing article"
+  },
+  "couldNotExtract": {
+    "message": "このページからコンテンツを抽出できませんでした。",
+    "description": "Error message when extraction fails"
+  },
+  "decantedReady": {
+    "message": "処理完了 · エクスポート準備完了",
+    "description": "Success subtitle when clipping is ready"
+  },
+  "pngWarning": {
+    "message": "⚠️ 長い記事のPNGエクスポートには少し時間がかかる場合があります。即時エクスポートにはPDFまたはMarkdownをご利用ください。",
+    "description": "Warning message for PNG export"
+  }
+}

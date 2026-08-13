@@ -3,6 +3,7 @@ import { buildAppUri } from '../shared/uri-transfer.js';
 import { buildAiPrompt, getAiPlatformUrl } from '../shared/ai-transfer.js';
 import { isAiChatUrl } from '../shared/ai-detect.js';
 import { logger } from '../shared/logger.js';
+import { initI18n } from '../shared/i18n.js';
 
 // ── State ─────────────────────────────────────────────────────────
 let currentMarkdown = '';
@@ -35,6 +36,7 @@ const pngWarningBanner = document.getElementById('png-warning-banner');
 async function initPopup() {
   logger.info('Popup', 'Initializing Decant popup UI…');
   try {
+    await initI18n();
     savedOptions = await getOptions();
 
     // PKM app target selection

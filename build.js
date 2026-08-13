@@ -99,6 +99,7 @@ function copyStaticFiles() {
     }
   }
   copyDirRecursive('src/preview/lib', `${distDir}/preview/lib`);
+  copyDirRecursive('src/_locales', `${distDir}/_locales`);
 
   if (fs.existsSync('src/icons')) {
     const icons = fs.readdirSync('src/icons');

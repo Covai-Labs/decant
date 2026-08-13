@@ -280,6 +280,43 @@
         background: rgba(51, 65, 85, 0.8);
       }
 
+      .btn-store {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 24px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .btn-chrome {
+        background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+        color: white;
+        box-shadow: 0 10px 25px var(--accent-purple-glow);
+      }
+
+      .btn-chrome:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px var(--accent-purple-glow);
+      }
+
+      .btn-firefox {
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        color: white;
+        box-shadow: 0 10px 25px rgba(234, 88, 12, 0.35);
+      }
+
+      .btn-firefox:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba(234, 88, 12, 0.45);
+      }
+
       /* Code Preview Box */
       .preview-container {
         max-width: 900px;
@@ -465,10 +502,25 @@
       </p>
 
       <div class="cta-group">
-        <a href="https://github.com/Rat-S/decant/releases" class="btn-primary"
-          >Download Extension</a
+        <a
+          href="https://chromewebstore.google.com/detail/decant-web-to-markdown-cl/gaedmbipeogpcddnoedpmjcemgcoboaa"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-store btn-chrome"
         >
-        <a href="https://github.com/Rat-S/decant" class="btn-secondary">View Source Code</a>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="21.17" y1="8" x2="12" y2="8"/><line x1="3.95" y1="6.06" x2="8.54" y2="14"/><line x1="10.88" y1="21.94" x2="15.46" y2="14"/></svg>
+          Add to Chrome
+        </a>
+        <a
+          href="https://addons.mozilla.org/en-US/firefox/addon/decant/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-store btn-firefox"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12a10 10 0 0 1 10-10z"/><path d="M12 6a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg>
+          Add to Firefox
+        </a>
+        <a href="https://github.com/Rat-S/decant" target="_blank" rel="noopener noreferrer" class="btn-secondary">View Source Code</a>
       </div>
     </section>
 
@@ -566,9 +618,11 @@
     <!-- Footer -->
     <footer>
       <div class="footer-links">
+        <a href="https://chromewebstore.google.com/detail/decant-web-to-markdown-cl/gaedmbipeogpcddnoedpmjcemgcoboaa" target="_blank" rel="noopener noreferrer">Chrome Web Store</a> •
+        <a href="https://addons.mozilla.org/en-US/firefox/addon/decant/" target="_blank" rel="noopener noreferrer">Firefox Add-ons</a> •
         <a href="privacy.html">Privacy Policy</a> • <a href="license.html">License (AGPL-3.0)</a> •
-        <a href="https://github.com/Rat-S/decant" target="_blank">GitHub Repository</a> •
-        <a href="https://covai.org" target="_blank">Covai Labs</a>
+        <a href="https://github.com/Rat-S/decant" target="_blank" rel="noopener noreferrer">GitHub Repository</a> •
+        <a href="https://covai.org" target="_blank" rel="noopener noreferrer">Covai Labs</a>
       </div>
       <p>
         &copy; 2026 Decant Project. Licensed under GNU Affero General Public License v3.0

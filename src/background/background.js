@@ -1,5 +1,6 @@
 import { getOptions } from '../shared/storage.js';
 import { logger } from '../shared/logger.js';
+import { getMessage } from '../shared/i18n.js';
 
 const UNINSTALL_URL = 'https://decant.covai.org/uninstall-feedback.html';
 const WELCOME_URL = 'https://decant.covai.org/welcome.html';
@@ -20,13 +21,13 @@ chrome.runtime.onInstalled.addListener((details) => {
 
   chrome.contextMenus.create({
     id: 'decant-page',
-    title: 'Decant page to Markdown',
+    title: getMessage('contextMenuPage', 'Decant page to Markdown'),
     contexts: ['page'],
   });
 
   chrome.contextMenus.create({
     id: 'decant-selection',
-    title: 'Decant selection to Markdown',
+    title: getMessage('contextMenuSelection', 'Decant selection to Markdown'),
     contexts: ['selection'],
   });
 });
