@@ -1,39 +1,52 @@
-<html lang="en" class="dark"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Covai Enterprise — AI Engineering Studio</title>
-    <meta name="description" content="Covai Enterprise AI Engineering Studio designs and builds enterprise knowledge systems, private LLM architecture, agentic workflows, and high-resilience legacy modernization.">
-    <link rel="canonical" href="https://enterprise.covai.org/">
+    <meta
+      name="description"
+      content="Covai Enterprise AI Engineering Studio designs and builds enterprise knowledge systems, private LLM architecture, agentic workflows, and high-resilience legacy modernization."
+    />
+    <link rel="canonical" href="https://enterprise.covai.org/" />
 
     <!-- Open Graph / Facebook / LinkedIn -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://enterprise.covai.org/">
-    <meta property="og:title" content="Covai Enterprise — AI Engineering Studio">
-    <meta property="og:description" content="Covai Enterprise AI Engineering Studio designs and builds enterprise knowledge systems, private LLM architecture, agentic workflows, and high-resilience legacy modernization.">
-    <meta property="og:image" content="https://enterprise.covai.org/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="Covai Enterprise">
-    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://enterprise.covai.org/" />
+    <meta property="og:title" content="Covai Enterprise — AI Engineering Studio" />
+    <meta
+      property="og:description"
+      content="Covai Enterprise AI Engineering Studio designs and builds enterprise knowledge systems, private LLM architecture, agentic workflows, and high-resilience legacy modernization."
+    />
+    <meta property="og:image" content="https://enterprise.covai.org/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Covai Enterprise" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter / X -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://enterprise.covai.org/">
-    <meta name="twitter:title" content="Covai Enterprise — AI Engineering Studio">
-    <meta name="twitter:description" content="Covai Enterprise AI Engineering Studio designs and builds enterprise knowledge systems, private LLM architecture, agentic workflows, and high-resilience legacy modernization.">
-    <meta name="twitter:image" content="https://enterprise.covai.org/og-image.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://enterprise.covai.org/" />
+    <meta name="twitter:title" content="Covai Enterprise — AI Engineering Studio" />
+    <meta
+      name="twitter:description"
+      content="Covai Enterprise AI Engineering Studio designs and builds enterprise knowledge systems, private LLM architecture, agentic workflows, and high-resilience legacy modernization."
+    />
+    <meta name="twitter:image" content="https://enterprise.covai.org/og-image.png" />
 
     <!-- Favicons -->
-    <link rel="icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
+    <link rel="icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="manifest" href="site.webmanifest" />
 
     <!-- Google Fonts: IBM Plex Sans & JetBrains Mono -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,26 +62,20 @@
       }
 
       tailwind.config = {
-        darkMode: "class",
+        darkMode: 'class',
         theme: {
           extend: {
             fontFamily: {
               sans: [
-                "IBM Plex Sans",
-                "system-ui",
-                "-apple-system",
-                "BlinkMacSystemFont",
-                "Segoe UI",
-                "Roboto",
-                "sans-serif",
+                'IBM Plex Sans',
+                'system-ui',
+                '-apple-system',
+                'BlinkMacSystemFont',
+                'Segoe UI',
+                'Roboto',
+                'sans-serif',
               ],
-              mono: [
-                "JetBrains Mono",
-                "Menlo",
-                "Monaco",
-                "Consolas",
-                "monospace",
-              ],
+              mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
             },
           },
         },
@@ -80,7 +87,10 @@
       .tactile-card {
         border: 2px solid #cbd5e1;
         box-shadow: 4px 4px 0px 0px #0f172a;
-        transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        transition:
+          transform 0.15s ease-in-out,
+          box-shadow 0.15s ease-in-out,
+          border-color 0.15s ease-in-out;
       }
 
       .dark .tactile-card {
@@ -104,22 +114,1140 @@
         box-shadow: 6px 6px 0px 0px #10b981;
       }
     </style>
-  <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:IBM Plex Sans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, Menlo, Monaco, Consolas, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-10{margin-bottom:2.5rem}.mt-0\.5{margin-top:0.125rem}.mt-16{margin-top:4rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.size-2{width:0.5rem;height:0.5rem}.h-12{height:3rem}.h-3{height:0.75rem}.min-h-screen{min-height:100vh}.w-3{width:0.75rem}.w-auto{width:auto}.max-w-6xl{max-width:72rem}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.shrink-0{flex-shrink:0}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-14 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(3.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(3.5rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-sm{border-radius:0.125rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-l-4{border-left-width:4px}.border-t{border-top-width:1px}.border-amber-300{--tw-border-opacity:1;border-color:rgb(252 211 77 / var(--tw-border-opacity, 1))}.border-emerald-300{--tw-border-opacity:1;border-color:rgb(110 231 183 / var(--tw-border-opacity, 1))}.border-emerald-500{--tw-border-opacity:1;border-color:rgb(16 185 129 / var(--tw-border-opacity, 1))}.border-purple-300{--tw-border-opacity:1;border-color:rgb(216 180 254 / var(--tw-border-opacity, 1))}.border-sky-300{--tw-border-opacity:1;border-color:rgb(125 211 252 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-900{--tw-border-opacity:1;border-color:rgb(15 23 42 / var(--tw-border-opacity, 1))}.border-l-emerald-500{--tw-border-opacity:1;border-left-color:rgb(16 185 129 / var(--tw-border-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-purple-100{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-sky-100{--tw-bg-opacity:1;background-color:rgb(224 242 254 / var(--tw-bg-opacity, 1))}.bg-sky-500{--tw-bg-opacity:1;background-color:rgb(14 165 233 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.object-contain{object-fit:contain}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-4{padding-left:1rem;padding-right:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pb-2{padding-bottom:0.5rem}.pb-3{padding-bottom:0.75rem}.pb-6{padding-bottom:1.5rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-8{padding-top:2rem}.text-center{text-align:center}.font-sans{font-family:IBM Plex Sans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif}.font-mono{font-family:JetBrains Mono, Menlo, Monaco, Consolas, monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-emerald-800{--tw-text-opacity:1;color:rgb(6 95 70 / var(--tw-text-opacity, 1))}.text-purple-800{--tw-text-opacity:1;color:rgb(107 33 168 / var(--tw-text-opacity, 1))}.text-sky-800{--tw-text-opacity:1;color:rgb(7 89 133 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow-\[2px_2px_0px_0px_\#000\]{--tw-shadow:2px 2px 0px 0px #000;--tw-shadow-colored:2px 2px 0px 0px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[3px_3px_0px_0px_\#000\]{--tw-shadow:3px 3px 0px 0px #000;--tw-shadow-colored:3px 3px 0px 0px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.selection\:bg-emerald-500 *::selection{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-emerald-500::selection{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:border-emerald-500:hover{--tw-border-opacity:1;border-color:rgb(16 185 129 / var(--tw-border-opacity, 1))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-600:hover{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.hover\:bg-purple-500:hover{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.hover\:text-emerald-400:hover{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.hover\:text-emerald-600:hover{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.hover\:text-purple-400:hover{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.hover\:text-sky-400:hover{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.dark\:border-amber-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(146 64 14 / var(--tw-border-opacity, 1))}.dark\:border-emerald-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(6 95 70 / var(--tw-border-opacity, 1))}.dark\:border-purple-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(107 33 168 / var(--tw-border-opacity, 1))}.dark\:border-sky-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(7 89 133 / var(--tw-border-opacity, 1))}.dark\:border-slate-700:is(.dark *){--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.dark\:border-slate-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.dark\:border-l-emerald-400:is(.dark *){--tw-border-opacity:1;border-left-color:rgb(52 211 153 / var(--tw-border-opacity, 1))}.dark\:bg-\[\#0b0f17\]:is(.dark *){--tw-bg-opacity:1;background-color:rgb(11 15 23 / var(--tw-bg-opacity, 1))}.dark\:bg-\[\#121824\]:is(.dark *){--tw-bg-opacity:1;background-color:rgb(18 24 36 / var(--tw-bg-opacity, 1))}.dark\:bg-amber-950\/60:is(.dark *){background-color:rgb(69 26 3 / 0.6)}.dark\:bg-emerald-500:is(.dark *){--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.dark\:bg-emerald-950\/60:is(.dark *){background-color:rgb(2 44 34 / 0.6)}.dark\:bg-emerald-950\/70:is(.dark *){background-color:rgb(2 44 34 / 0.7)}.dark\:bg-emerald-950\/80:is(.dark *){background-color:rgb(2 44 34 / 0.8)}.dark\:bg-purple-950\/60:is(.dark *){background-color:rgb(59 7 100 / 0.6)}.dark\:bg-sky-950\/60:is(.dark *){background-color:rgb(8 47 73 / 0.6)}.dark\:bg-slate-800:is(.dark *){--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.dark\:bg-slate-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.dark\:text-slate-100:is(.dark *){--tw-text-opacity:1;color:rgb(241 245 249 / var(--tw-text-opacity, 1))}.dark\:text-amber-300:is(.dark *){--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.dark\:text-emerald-300:is(.dark *){--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.dark\:text-emerald-400:is(.dark *){--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.dark\:text-purple-300:is(.dark *){--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.dark\:text-sky-300:is(.dark *){--tw-text-opacity:1;color:rgb(125 211 252 / var(--tw-text-opacity, 1))}.dark\:text-slate-200:is(.dark *){--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.dark\:text-slate-300:is(.dark *){--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.dark\:text-slate-400:is(.dark *){--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.dark\:text-slate-700:is(.dark *){--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.dark\:text-slate-950:is(.dark *){--tw-text-opacity:1;color:rgb(2 6 23 / var(--tw-text-opacity, 1))}.dark\:text-white:is(.dark *){--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.dark\:hover\:bg-emerald-400:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.dark\:hover\:bg-slate-700:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.dark\:hover\:text-emerald-400:hover:is(.dark *){--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:p-10{padding:2.5rem}.md\:p-12{padding:3rem}.md\:p-6{padding:1.5rem}.md\:p-8{padding:2rem}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-5xl{font-size:3rem;line-height:1}.md\:text-base{font-size:1rem;line-height:1.5rem}.md\:text-lg{font-size:1.125rem;line-height:1.75rem}}</style></head>
-  <body class="mx-auto min-h-screen max-w-6xl px-4 py-8 font-sans antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-[#0b0f17] selection:bg-emerald-500 selection:text-white">
+    <style>
+      *,
+      ::before,
+      ::after {
+        --tw-border-spacing-x: 0;
+        --tw-border-spacing-y: 0;
+        --tw-translate-x: 0;
+        --tw-translate-y: 0;
+        --tw-rotate: 0;
+        --tw-skew-x: 0;
+        --tw-skew-y: 0;
+        --tw-scale-x: 1;
+        --tw-scale-y: 1;
+        --tw-pan-x: ;
+        --tw-pan-y: ;
+        --tw-pinch-zoom: ;
+        --tw-scroll-snap-strictness: proximity;
+        --tw-gradient-from-position: ;
+        --tw-gradient-via-position: ;
+        --tw-gradient-to-position: ;
+        --tw-ordinal: ;
+        --tw-slashed-zero: ;
+        --tw-numeric-figure: ;
+        --tw-numeric-spacing: ;
+        --tw-numeric-fraction: ;
+        --tw-ring-inset: ;
+        --tw-ring-offset-width: 0px;
+        --tw-ring-offset-color: #fff;
+        --tw-ring-color: rgb(59 130 246 / 0.5);
+        --tw-ring-offset-shadow: 0 0 #0000;
+        --tw-ring-shadow: 0 0 #0000;
+        --tw-shadow: 0 0 #0000;
+        --tw-shadow-colored: 0 0 #0000;
+        --tw-blur: ;
+        --tw-brightness: ;
+        --tw-contrast: ;
+        --tw-grayscale: ;
+        --tw-hue-rotate: ;
+        --tw-invert: ;
+        --tw-saturate: ;
+        --tw-sepia: ;
+        --tw-drop-shadow: ;
+        --tw-backdrop-blur: ;
+        --tw-backdrop-brightness: ;
+        --tw-backdrop-contrast: ;
+        --tw-backdrop-grayscale: ;
+        --tw-backdrop-hue-rotate: ;
+        --tw-backdrop-invert: ;
+        --tw-backdrop-opacity: ;
+        --tw-backdrop-saturate: ;
+        --tw-backdrop-sepia: ;
+        --tw-contain-size: ;
+        --tw-contain-layout: ;
+        --tw-contain-paint: ;
+        --tw-contain-style: ;
+      }
+      ::backdrop {
+        --tw-border-spacing-x: 0;
+        --tw-border-spacing-y: 0;
+        --tw-translate-x: 0;
+        --tw-translate-y: 0;
+        --tw-rotate: 0;
+        --tw-skew-x: 0;
+        --tw-skew-y: 0;
+        --tw-scale-x: 1;
+        --tw-scale-y: 1;
+        --tw-pan-x: ;
+        --tw-pan-y: ;
+        --tw-pinch-zoom: ;
+        --tw-scroll-snap-strictness: proximity;
+        --tw-gradient-from-position: ;
+        --tw-gradient-via-position: ;
+        --tw-gradient-to-position: ;
+        --tw-ordinal: ;
+        --tw-slashed-zero: ;
+        --tw-numeric-figure: ;
+        --tw-numeric-spacing: ;
+        --tw-numeric-fraction: ;
+        --tw-ring-inset: ;
+        --tw-ring-offset-width: 0px;
+        --tw-ring-offset-color: #fff;
+        --tw-ring-color: rgb(59 130 246 / 0.5);
+        --tw-ring-offset-shadow: 0 0 #0000;
+        --tw-ring-shadow: 0 0 #0000;
+        --tw-shadow: 0 0 #0000;
+        --tw-shadow-colored: 0 0 #0000;
+        --tw-blur: ;
+        --tw-brightness: ;
+        --tw-contrast: ;
+        --tw-grayscale: ;
+        --tw-hue-rotate: ;
+        --tw-invert: ;
+        --tw-saturate: ;
+        --tw-sepia: ;
+        --tw-drop-shadow: ;
+        --tw-backdrop-blur: ;
+        --tw-backdrop-brightness: ;
+        --tw-backdrop-contrast: ;
+        --tw-backdrop-grayscale: ;
+        --tw-backdrop-hue-rotate: ;
+        --tw-backdrop-invert: ;
+        --tw-backdrop-opacity: ;
+        --tw-backdrop-saturate: ;
+        --tw-backdrop-sepia: ;
+        --tw-contain-size: ;
+        --tw-contain-layout: ;
+        --tw-contain-paint: ;
+        --tw-contain-style: ;
+      } /* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */
+      *,
+      ::after,
+      ::before {
+        box-sizing: border-box;
+        border-width: 0;
+        border-style: solid;
+        border-color: #e5e7eb;
+      }
+      ::after,
+      ::before {
+        --tw-content: '';
+      }
+      :host,
+      html {
+        line-height: 1.5;
+        -webkit-text-size-adjust: 100%;
+        -moz-tab-size: 4;
+        tab-size: 4;
+        font-family:
+          IBM Plex Sans,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          Segoe UI,
+          Roboto,
+          sans-serif;
+        font-feature-settings: normal;
+        font-variation-settings: normal;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        margin: 0;
+        line-height: inherit;
+      }
+      hr {
+        height: 0;
+        color: inherit;
+        border-top-width: 1px;
+      }
+      abbr:where([title]) {
+        -webkit-text-decoration: underline dotted;
+        text-decoration: underline dotted;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: inherit;
+        font-weight: inherit;
+      }
+      a {
+        color: inherit;
+        text-decoration: inherit;
+      }
+      b,
+      strong {
+        font-weight: bolder;
+      }
+      code,
+      kbd,
+      pre,
+      samp {
+        font-family:
+          JetBrains Mono,
+          Menlo,
+          Monaco,
+          Consolas,
+          monospace;
+        font-feature-settings: normal;
+        font-variation-settings: normal;
+        font-size: 1em;
+      }
+      small {
+        font-size: 80%;
+      }
+      sub,
+      sup {
+        font-size: 75%;
+        line-height: 0;
+        position: relative;
+        vertical-align: baseline;
+      }
+      sub {
+        bottom: -0.25em;
+      }
+      sup {
+        top: -0.5em;
+      }
+      table {
+        text-indent: 0;
+        border-color: inherit;
+        border-collapse: collapse;
+      }
+      button,
+      input,
+      optgroup,
+      select,
+      textarea {
+        font-family: inherit;
+        font-feature-settings: inherit;
+        font-variation-settings: inherit;
+        font-size: 100%;
+        font-weight: inherit;
+        line-height: inherit;
+        letter-spacing: inherit;
+        color: inherit;
+        margin: 0;
+        padding: 0;
+      }
+      button,
+      select {
+        text-transform: none;
+      }
+      button,
+      input:where([type='button']),
+      input:where([type='reset']),
+      input:where([type='submit']) {
+        -webkit-appearance: button;
+        background-color: transparent;
+        background-image: none;
+      }
+      :-moz-focusring {
+        outline: auto;
+      }
+      :-moz-ui-invalid {
+        box-shadow: none;
+      }
+      progress {
+        vertical-align: baseline;
+      }
+      ::-webkit-inner-spin-button,
+      ::-webkit-outer-spin-button {
+        height: auto;
+      }
+      [type='search'] {
+        -webkit-appearance: textfield;
+        outline-offset: -2px;
+      }
+      ::-webkit-search-decoration {
+        -webkit-appearance: none;
+      }
+      ::-webkit-file-upload-button {
+        -webkit-appearance: button;
+        font: inherit;
+      }
+      summary {
+        display: list-item;
+      }
+      blockquote,
+      dd,
+      dl,
+      figure,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      hr,
+      p,
+      pre {
+        margin: 0;
+      }
+      fieldset {
+        margin: 0;
+        padding: 0;
+      }
+      legend {
+        padding: 0;
+      }
+      menu,
+      ol,
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      dialog {
+        padding: 0;
+      }
+      textarea {
+        resize: vertical;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        opacity: 1;
+        color: #9ca3af;
+      }
+      [role='button'],
+      button {
+        cursor: pointer;
+      }
+      :disabled {
+        cursor: default;
+      }
+      audio,
+      canvas,
+      embed,
+      iframe,
+      img,
+      object,
+      svg,
+      video {
+        display: block;
+        vertical-align: middle;
+      }
+      img,
+      video {
+        max-width: 100%;
+        height: auto;
+      }
+      [hidden]:where(:not([hidden='until-found'])) {
+        display: none;
+      }
+      .mx-auto {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .mb-1 {
+        margin-bottom: 0.25rem;
+      }
+      .mb-10 {
+        margin-bottom: 2.5rem;
+      }
+      .mt-0\.5 {
+        margin-top: 0.125rem;
+      }
+      .mt-16 {
+        margin-top: 4rem;
+      }
+      .block {
+        display: block;
+      }
+      .inline-block {
+        display: inline-block;
+      }
+      .flex {
+        display: flex;
+      }
+      .inline-flex {
+        display: inline-flex;
+      }
+      .grid {
+        display: grid;
+      }
+      .size-2 {
+        width: 0.5rem;
+        height: 0.5rem;
+      }
+      .h-12 {
+        height: 3rem;
+      }
+      .h-3 {
+        height: 0.75rem;
+      }
+      .min-h-screen {
+        min-height: 100vh;
+      }
+      .w-3 {
+        width: 0.75rem;
+      }
+      .w-auto {
+        width: auto;
+      }
+      .max-w-6xl {
+        max-width: 72rem;
+      }
+      .max-w-2xl {
+        max-width: 42rem;
+      }
+      .max-w-3xl {
+        max-width: 48rem;
+      }
+      .max-w-4xl {
+        max-width: 56rem;
+      }
+      .shrink-0 {
+        flex-shrink: 0;
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.5;
+        }
+      }
+      .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .flex-col {
+        flex-direction: column;
+      }
+      .flex-wrap {
+        flex-wrap: wrap;
+      }
+      .items-start {
+        align-items: flex-start;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .justify-center {
+        justify-content: center;
+      }
+      .justify-between {
+        justify-content: space-between;
+      }
+      .gap-2 {
+        gap: 0.5rem;
+      }
+      .gap-3 {
+        gap: 0.75rem;
+      }
+      .gap-4 {
+        gap: 1rem;
+      }
+      .gap-5 {
+        gap: 1.25rem;
+      }
+      .gap-6 {
+        gap: 1.5rem;
+      }
+      .space-y-1 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+      }
+      .space-y-14 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(3.5rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(3.5rem * var(--tw-space-y-reverse));
+      }
+      .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+      }
+      .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+      }
+      .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+      }
+      .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+        --tw-space-y-reverse: 0;
+        margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+      }
+      .rounded {
+        border-radius: 0.25rem;
+      }
+      .rounded-full {
+        border-radius: 9999px;
+      }
+      .rounded-lg {
+        border-radius: 0.5rem;
+      }
+      .rounded-md {
+        border-radius: 0.375rem;
+      }
+      .rounded-sm {
+        border-radius: 0.125rem;
+      }
+      .rounded-xl {
+        border-radius: 0.75rem;
+      }
+      .border {
+        border-width: 1px;
+      }
+      .border-2 {
+        border-width: 2px;
+      }
+      .border-b {
+        border-bottom-width: 1px;
+      }
+      .border-b-2 {
+        border-bottom-width: 2px;
+      }
+      .border-l-4 {
+        border-left-width: 4px;
+      }
+      .border-t {
+        border-top-width: 1px;
+      }
+      .border-amber-300 {
+        --tw-border-opacity: 1;
+        border-color: rgb(252 211 77 / var(--tw-border-opacity, 1));
+      }
+      .border-emerald-300 {
+        --tw-border-opacity: 1;
+        border-color: rgb(110 231 183 / var(--tw-border-opacity, 1));
+      }
+      .border-emerald-500 {
+        --tw-border-opacity: 1;
+        border-color: rgb(16 185 129 / var(--tw-border-opacity, 1));
+      }
+      .border-purple-300 {
+        --tw-border-opacity: 1;
+        border-color: rgb(216 180 254 / var(--tw-border-opacity, 1));
+      }
+      .border-sky-300 {
+        --tw-border-opacity: 1;
+        border-color: rgb(125 211 252 / var(--tw-border-opacity, 1));
+      }
+      .border-slate-200 {
+        --tw-border-opacity: 1;
+        border-color: rgb(226 232 240 / var(--tw-border-opacity, 1));
+      }
+      .border-slate-300 {
+        --tw-border-opacity: 1;
+        border-color: rgb(203 213 225 / var(--tw-border-opacity, 1));
+      }
+      .border-slate-900 {
+        --tw-border-opacity: 1;
+        border-color: rgb(15 23 42 / var(--tw-border-opacity, 1));
+      }
+      .border-l-emerald-500 {
+        --tw-border-opacity: 1;
+        border-left-color: rgb(16 185 129 / var(--tw-border-opacity, 1));
+      }
+      .bg-slate-50 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(248 250 252 / var(--tw-bg-opacity, 1));
+      }
+      .bg-amber-100 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(254 243 199 / var(--tw-bg-opacity, 1));
+      }
+      .bg-amber-500 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(245 158 11 / var(--tw-bg-opacity, 1));
+      }
+      .bg-emerald-100 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(209 250 229 / var(--tw-bg-opacity, 1));
+      }
+      .bg-emerald-500 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(16 185 129 / var(--tw-bg-opacity, 1));
+      }
+      .bg-emerald-600 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(5 150 105 / var(--tw-bg-opacity, 1));
+      }
+      .bg-purple-100 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(243 232 255 / var(--tw-bg-opacity, 1));
+      }
+      .bg-purple-500 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(168 85 247 / var(--tw-bg-opacity, 1));
+      }
+      .bg-purple-600 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(147 51 234 / var(--tw-bg-opacity, 1));
+      }
+      .bg-sky-100 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(224 242 254 / var(--tw-bg-opacity, 1));
+      }
+      .bg-sky-500 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(14 165 233 / var(--tw-bg-opacity, 1));
+      }
+      .bg-slate-100 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(241 245 249 / var(--tw-bg-opacity, 1));
+      }
+      .bg-slate-900 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(15 23 42 / var(--tw-bg-opacity, 1));
+      }
+      .bg-white {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+      }
+      .object-contain {
+        object-fit: contain;
+      }
+      .p-1 {
+        padding: 0.25rem;
+      }
+      .p-2 {
+        padding: 0.5rem;
+      }
+      .p-3 {
+        padding: 0.75rem;
+      }
+      .p-5 {
+        padding: 1.25rem;
+      }
+      .p-6 {
+        padding: 1.5rem;
+      }
+      .p-8 {
+        padding: 2rem;
+      }
+      .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .py-8 {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+      .px-2 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      .px-2\.5 {
+        padding-left: 0.625rem;
+        padding-right: 0.625rem;
+      }
+      .px-3 {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      .px-5 {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+      }
+      .px-6 {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+      .py-0\.5 {
+        padding-top: 0.125rem;
+        padding-bottom: 0.125rem;
+      }
+      .py-1 {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+      }
+      .py-1\.5 {
+        padding-top: 0.375rem;
+        padding-bottom: 0.375rem;
+      }
+      .py-2 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+      .py-3 {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+      }
+      .pb-2 {
+        padding-bottom: 0.5rem;
+      }
+      .pb-3 {
+        padding-bottom: 0.75rem;
+      }
+      .pb-6 {
+        padding-bottom: 1.5rem;
+      }
+      .pt-2 {
+        padding-top: 0.5rem;
+      }
+      .pt-3 {
+        padding-top: 0.75rem;
+      }
+      .pt-8 {
+        padding-top: 2rem;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .font-sans {
+        font-family:
+          IBM Plex Sans,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          Segoe UI,
+          Roboto,
+          sans-serif;
+      }
+      .font-mono {
+        font-family:
+          JetBrains Mono,
+          Menlo,
+          Monaco,
+          Consolas,
+          monospace;
+      }
+      .text-2xl {
+        font-size: 1.5rem;
+        line-height: 2rem;
+      }
+      .text-3xl {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+      }
+      .text-\[10px\] {
+        font-size: 10px;
+      }
+      .text-\[11px\] {
+        font-size: 11px;
+      }
+      .text-base {
+        font-size: 1rem;
+        line-height: 1.5rem;
+      }
+      .text-lg {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+      }
+      .text-sm {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+      }
+      .text-xl {
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+      }
+      .text-xs {
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
+      .font-bold {
+        font-weight: 700;
+      }
+      .font-extrabold {
+        font-weight: 800;
+      }
+      .font-semibold {
+        font-weight: 600;
+      }
+      .uppercase {
+        text-transform: uppercase;
+      }
+      .leading-none {
+        line-height: 1;
+      }
+      .leading-relaxed {
+        line-height: 1.625;
+      }
+      .leading-tight {
+        line-height: 1.25;
+      }
+      .tracking-tight {
+        letter-spacing: -0.025em;
+      }
+      .tracking-wide {
+        letter-spacing: 0.025em;
+      }
+      .tracking-wider {
+        letter-spacing: 0.05em;
+      }
+      .tracking-widest {
+        letter-spacing: 0.1em;
+      }
+      .text-slate-900 {
+        --tw-text-opacity: 1;
+        color: rgb(15 23 42 / var(--tw-text-opacity, 1));
+      }
+      .text-amber-800 {
+        --tw-text-opacity: 1;
+        color: rgb(146 64 14 / var(--tw-text-opacity, 1));
+      }
+      .text-emerald-600 {
+        --tw-text-opacity: 1;
+        color: rgb(5 150 105 / var(--tw-text-opacity, 1));
+      }
+      .text-emerald-700 {
+        --tw-text-opacity: 1;
+        color: rgb(4 120 87 / var(--tw-text-opacity, 1));
+      }
+      .text-emerald-800 {
+        --tw-text-opacity: 1;
+        color: rgb(6 95 70 / var(--tw-text-opacity, 1));
+      }
+      .text-purple-800 {
+        --tw-text-opacity: 1;
+        color: rgb(107 33 168 / var(--tw-text-opacity, 1));
+      }
+      .text-sky-800 {
+        --tw-text-opacity: 1;
+        color: rgb(7 89 133 / var(--tw-text-opacity, 1));
+      }
+      .text-slate-300 {
+        --tw-text-opacity: 1;
+        color: rgb(203 213 225 / var(--tw-text-opacity, 1));
+      }
+      .text-slate-400 {
+        --tw-text-opacity: 1;
+        color: rgb(148 163 184 / var(--tw-text-opacity, 1));
+      }
+      .text-slate-500 {
+        --tw-text-opacity: 1;
+        color: rgb(100 116 139 / var(--tw-text-opacity, 1));
+      }
+      .text-slate-600 {
+        --tw-text-opacity: 1;
+        color: rgb(71 85 105 / var(--tw-text-opacity, 1));
+      }
+      .text-slate-700 {
+        --tw-text-opacity: 1;
+        color: rgb(51 65 85 / var(--tw-text-opacity, 1));
+      }
+      .text-slate-800 {
+        --tw-text-opacity: 1;
+        color: rgb(30 41 59 / var(--tw-text-opacity, 1));
+      }
+      .text-white {
+        --tw-text-opacity: 1;
+        color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+      }
+      .antialiased {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .shadow-\[2px_2px_0px_0px_\#000\] {
+        --tw-shadow: 2px 2px 0px 0px #000;
+        --tw-shadow-colored: 2px 2px 0px 0px var(--tw-shadow-color);
+        box-shadow:
+          var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+          var(--tw-shadow);
+      }
+      .shadow-\[3px_3px_0px_0px_\#000\] {
+        --tw-shadow: 3px 3px 0px 0px #000;
+        --tw-shadow-colored: 3px 3px 0px 0px var(--tw-shadow-color);
+        box-shadow:
+          var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
+          var(--tw-shadow);
+      }
+      .transition-all {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+      }
+      .transition-colors {
+        transition-property:
+          color,
+          background-color,
+          border-color,
+          fill,
+          stroke,
+          -webkit-text-decoration-color;
+        transition-property:
+          color, background-color, border-color, text-decoration-color, fill, stroke;
+        transition-property:
+          color,
+          background-color,
+          border-color,
+          text-decoration-color,
+          fill,
+          stroke,
+          -webkit-text-decoration-color;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+      }
+      .selection\:bg-emerald-500 *::selection {
+        --tw-bg-opacity: 1;
+        background-color: rgb(16 185 129 / var(--tw-bg-opacity, 1));
+      }
+      .selection\:text-white *::selection {
+        --tw-text-opacity: 1;
+        color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+      }
+      .selection\:bg-emerald-500::selection {
+        --tw-bg-opacity: 1;
+        background-color: rgb(16 185 129 / var(--tw-bg-opacity, 1));
+      }
+      .selection\:text-white::selection {
+        --tw-text-opacity: 1;
+        color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+      }
+      .hover\:border-emerald-500:hover {
+        --tw-border-opacity: 1;
+        border-color: rgb(16 185 129 / var(--tw-border-opacity, 1));
+      }
+      .hover\:bg-emerald-500:hover {
+        --tw-bg-opacity: 1;
+        background-color: rgb(16 185 129 / var(--tw-bg-opacity, 1));
+      }
+      .hover\:bg-emerald-600:hover {
+        --tw-bg-opacity: 1;
+        background-color: rgb(5 150 105 / var(--tw-bg-opacity, 1));
+      }
+      .hover\:bg-purple-500:hover {
+        --tw-bg-opacity: 1;
+        background-color: rgb(168 85 247 / var(--tw-bg-opacity, 1));
+      }
+      .hover\:bg-slate-200:hover {
+        --tw-bg-opacity: 1;
+        background-color: rgb(226 232 240 / var(--tw-bg-opacity, 1));
+      }
+      .hover\:text-emerald-400:hover {
+        --tw-text-opacity: 1;
+        color: rgb(52 211 153 / var(--tw-text-opacity, 1));
+      }
+      .hover\:text-emerald-600:hover {
+        --tw-text-opacity: 1;
+        color: rgb(5 150 105 / var(--tw-text-opacity, 1));
+      }
+      .hover\:text-purple-400:hover {
+        --tw-text-opacity: 1;
+        color: rgb(192 132 252 / var(--tw-text-opacity, 1));
+      }
+      .hover\:text-sky-400:hover {
+        --tw-text-opacity: 1;
+        color: rgb(56 189 248 / var(--tw-text-opacity, 1));
+      }
+      .dark\:border-amber-800:is(.dark *) {
+        --tw-border-opacity: 1;
+        border-color: rgb(146 64 14 / var(--tw-border-opacity, 1));
+      }
+      .dark\:border-emerald-800:is(.dark *) {
+        --tw-border-opacity: 1;
+        border-color: rgb(6 95 70 / var(--tw-border-opacity, 1));
+      }
+      .dark\:border-purple-800:is(.dark *) {
+        --tw-border-opacity: 1;
+        border-color: rgb(107 33 168 / var(--tw-border-opacity, 1));
+      }
+      .dark\:border-sky-800:is(.dark *) {
+        --tw-border-opacity: 1;
+        border-color: rgb(7 89 133 / var(--tw-border-opacity, 1));
+      }
+      .dark\:border-slate-700:is(.dark *) {
+        --tw-border-opacity: 1;
+        border-color: rgb(51 65 85 / var(--tw-border-opacity, 1));
+      }
+      .dark\:border-slate-800:is(.dark *) {
+        --tw-border-opacity: 1;
+        border-color: rgb(30 41 59 / var(--tw-border-opacity, 1));
+      }
+      .dark\:border-l-emerald-400:is(.dark *) {
+        --tw-border-opacity: 1;
+        border-left-color: rgb(52 211 153 / var(--tw-border-opacity, 1));
+      }
+      .dark\:bg-\[\#0b0f17\]:is(.dark *) {
+        --tw-bg-opacity: 1;
+        background-color: rgb(11 15 23 / var(--tw-bg-opacity, 1));
+      }
+      .dark\:bg-\[\#121824\]:is(.dark *) {
+        --tw-bg-opacity: 1;
+        background-color: rgb(18 24 36 / var(--tw-bg-opacity, 1));
+      }
+      .dark\:bg-amber-950\/60:is(.dark *) {
+        background-color: rgb(69 26 3 / 0.6);
+      }
+      .dark\:bg-emerald-500:is(.dark *) {
+        --tw-bg-opacity: 1;
+        background-color: rgb(16 185 129 / var(--tw-bg-opacity, 1));
+      }
+      .dark\:bg-emerald-950\/60:is(.dark *) {
+        background-color: rgb(2 44 34 / 0.6);
+      }
+      .dark\:bg-emerald-950\/70:is(.dark *) {
+        background-color: rgb(2 44 34 / 0.7);
+      }
+      .dark\:bg-emerald-950\/80:is(.dark *) {
+        background-color: rgb(2 44 34 / 0.8);
+      }
+      .dark\:bg-purple-950\/60:is(.dark *) {
+        background-color: rgb(59 7 100 / 0.6);
+      }
+      .dark\:bg-sky-950\/60:is(.dark *) {
+        background-color: rgb(8 47 73 / 0.6);
+      }
+      .dark\:bg-slate-800:is(.dark *) {
+        --tw-bg-opacity: 1;
+        background-color: rgb(30 41 59 / var(--tw-bg-opacity, 1));
+      }
+      .dark\:bg-slate-900:is(.dark *) {
+        --tw-bg-opacity: 1;
+        background-color: rgb(15 23 42 / var(--tw-bg-opacity, 1));
+      }
+      .dark\:text-slate-100:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(241 245 249 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-amber-300:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(252 211 77 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-emerald-300:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(110 231 183 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-emerald-400:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(52 211 153 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-purple-300:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(216 180 254 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-sky-300:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(125 211 252 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-slate-200:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(226 232 240 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-slate-300:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(203 213 225 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-slate-400:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(148 163 184 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-slate-700:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(51 65 85 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-slate-950:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(2 6 23 / var(--tw-text-opacity, 1));
+      }
+      .dark\:text-white:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+      }
+      .dark\:hover\:bg-emerald-400:hover:is(.dark *) {
+        --tw-bg-opacity: 1;
+        background-color: rgb(52 211 153 / var(--tw-bg-opacity, 1));
+      }
+      .dark\:hover\:bg-slate-700:hover:is(.dark *) {
+        --tw-bg-opacity: 1;
+        background-color: rgb(51 65 85 / var(--tw-bg-opacity, 1));
+      }
+      .dark\:hover\:text-emerald-400:hover:is(.dark *) {
+        --tw-text-opacity: 1;
+        color: rgb(52 211 153 / var(--tw-text-opacity, 1));
+      }
+      @media (min-width: 640px) {
+        .sm\:grid-cols-2 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .sm\:flex-row {
+          flex-direction: row;
+        }
+        .sm\:items-center {
+          align-items: center;
+        }
+      }
+      @media (min-width: 768px) {
+        .md\:grid-cols-2 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .md\:grid-cols-3 {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .md\:grid-cols-4 {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        .md\:flex-row {
+          flex-direction: row;
+        }
+        .md\:p-10 {
+          padding: 2.5rem;
+        }
+        .md\:p-12 {
+          padding: 3rem;
+        }
+        .md\:p-6 {
+          padding: 1.5rem;
+        }
+        .md\:p-8 {
+          padding: 2rem;
+        }
+        .md\:text-2xl {
+          font-size: 1.5rem;
+          line-height: 2rem;
+        }
+        .md\:text-3xl {
+          font-size: 1.875rem;
+          line-height: 2.25rem;
+        }
+        .md\:text-5xl {
+          font-size: 3rem;
+          line-height: 1;
+        }
+        .md\:text-base {
+          font-size: 1rem;
+          line-height: 1.5rem;
+        }
+        .md\:text-lg {
+          font-size: 1.125rem;
+          line-height: 1.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="mx-auto min-h-screen max-w-6xl px-4 py-8 font-sans antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-[#0b0f17] selection:bg-emerald-500 selection:text-white"
+  >
     <!-- Navigation Header -->
-    <header class="mb-10 p-5 md:p-6 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col md:flex-row items-center justify-between gap-6">
+    <header
+      class="mb-10 p-5 md:p-6 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col md:flex-row items-center justify-between gap-6"
+    >
       <div class="flex items-center gap-4">
         <picture>
-          <source srcset="covai-logo.avif" type="image/avif">
-          <source srcset="covai-logo.webp" type="image/webp">
-          <img src="covai-logo.webp" alt="Covai Logo" class="h-12 w-auto object-contain rounded-md border border-slate-300 dark:border-slate-700 p-1 bg-slate-900">
+          <source srcset="covai-logo.avif" type="image/avif" />
+          <source srcset="covai-logo.webp" type="image/webp" />
+          <img
+            src="covai-logo.webp"
+            alt="Covai Logo"
+            class="h-12 w-auto object-contain rounded-md border border-slate-300 dark:border-slate-700 p-1 bg-slate-900"
+          />
         </picture>
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-xl md:text-2xl font-extrabold tracking-wider uppercase text-slate-900 dark:text-white">
+            <span
+              class="text-xl md:text-2xl font-extrabold tracking-wider uppercase text-slate-900 dark:text-white"
+            >
               COVAI LABS
             </span>
-            <span class="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 rounded">
+            <span
+              class="px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 rounded"
+            >
               ENTERPRISE
             </span>
           </div>
@@ -129,18 +1257,46 @@
         </div>
       </div>
 
-      <nav class="flex flex-wrap items-center justify-center gap-4 text-xs font-mono font-semibold text-slate-700 dark:text-slate-300">
-        <a href="#capabilities" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">CAPABILITIES</a>
+      <nav
+        class="flex flex-wrap items-center justify-center gap-4 text-xs font-mono font-semibold text-slate-700 dark:text-slate-300"
+      >
+        <a
+          href="#capabilities"
+          class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >CAPABILITIES</a
+        >
         <span class="text-slate-300 dark:text-slate-700">•</span>
-        <a href="#select-work" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">SELECT WORK</a>
+        <a
+          href="#select-work"
+          class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >SELECT WORK</a
+        >
         <span class="text-slate-300 dark:text-slate-700">•</span>
-        <a href="#methodology" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">METHODOLOGY</a>
+        <a
+          href="#methodology"
+          class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >METHODOLOGY</a
+        >
         <span class="text-slate-300 dark:text-slate-700">•</span>
-        <a href="#stack" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">TECH STACK</a>
+        <a
+          href="#stack"
+          class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >TECH STACK</a
+        >
         <span class="text-slate-300 dark:text-slate-700">•</span>
-        <a href="#contact" class="px-3 py-1.5 rounded-md bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 font-bold hover:bg-emerald-600 dark:hover:bg-emerald-400 transition-colors shadow-[2px_2px_0px_0px_#000]">CONTACT</a>
+        <a
+          href="#contact"
+          class="px-3 py-1.5 rounded-md bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 font-bold hover:bg-emerald-600 dark:hover:bg-emerald-400 transition-colors shadow-[2px_2px_0px_0px_#000]"
+          >CONTACT</a
+        >
         <span class="text-slate-300 dark:text-slate-700">•</span>
-        <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:border-emerald-500 transition-colors flex items-center justify-center text-sm leading-none" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
+        <button
+          id="theme-toggle"
+          onclick="toggleTheme()"
+          class="p-2 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:border-emerald-500 transition-colors flex items-center justify-center text-sm leading-none"
+          title="Toggle Light / Dark Theme"
+          aria-label="Toggle Theme"
+        >
           <span id="theme-toggle-icon">🌙</span>
         </button>
       </nav>
@@ -149,26 +1305,43 @@
     <!-- Main Content Area -->
     <main class="space-y-14">
       <!-- Hero Section (Swiss Bento Anchor) -->
-      <section class="p-8 md:p-12 rounded-xl bg-white dark:bg-[#121824] tactile-card border-l-4 border-l-emerald-500 dark:border-l-emerald-400 space-y-6">
-        <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 rounded-md">
+      <section
+        class="p-8 md:p-12 rounded-xl bg-white dark:bg-[#121824] tactile-card border-l-4 border-l-emerald-500 dark:border-l-emerald-400 space-y-6"
+      >
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 text-xs font-mono font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 rounded-md"
+        >
           <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
           Pragmatic AI Systems &amp; Legacy Modernization
         </div>
 
-        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight max-w-4xl">
-          Building knowledge systems, workflow automation, and AI platforms for complex organizations.
+        <h1
+          class="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight max-w-4xl"
+        >
+          Building knowledge systems, workflow automation, and AI platforms for complex
+          organizations.
         </h1>
 
-        <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
-          We partner with enterprise teams to modernize legacy software environments, introduce private LLM capabilities, and deploy resilient agentic infrastructure — keeping uptime at 99.9% with zero risk to operational continuity.
+        <p
+          class="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl"
+        >
+          We partner with enterprise teams to modernize legacy software environments, introduce
+          private LLM capabilities, and deploy resilient agentic infrastructure — keeping uptime at
+          99.9% with zero risk to operational continuity.
         </p>
 
         <div class="pt-2 flex flex-wrap items-center gap-4">
-          <a href="mailto:office@covai.org" class="px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-sm font-bold shadow-[3px_3px_0px_0px_#000] transition-all flex items-center gap-2">
+          <a
+            href="mailto:office@covai.org"
+            class="px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-sm font-bold shadow-[3px_3px_0px_0px_#000] transition-all flex items-center gap-2"
+          >
             <span>Discuss an Initiative</span>
             <span>→</span>
           </a>
-          <a href="#select-work" class="px-6 py-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-mono text-sm font-semibold border border-slate-300 dark:border-slate-700 transition-colors">
+          <a
+            href="#select-work"
+            class="px-6 py-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-mono text-sm font-semibold border border-slate-300 dark:border-slate-700 transition-colors"
+          >
             Explore Select Work
           </a>
         </div>
@@ -177,7 +1350,9 @@
       <!-- Proof & Impact Metrics Strip -->
       <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="p-5 rounded-xl bg-white dark:bg-[#121824] tactile-card text-center space-y-1">
-          <div class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+          <div
+            class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400"
+          >
             $2M+
           </div>
           <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -186,7 +1361,9 @@
         </div>
 
         <div class="p-5 rounded-xl bg-white dark:bg-[#121824] tactile-card text-center space-y-1">
-          <div class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+          <div
+            class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400"
+          >
             99.99%
           </div>
           <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -195,7 +1372,9 @@
         </div>
 
         <div class="p-5 rounded-xl bg-white dark:bg-[#121824] tactile-card text-center space-y-1">
-          <div class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+          <div
+            class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400"
+          >
             85%
           </div>
           <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -204,7 +1383,9 @@
         </div>
 
         <div class="p-5 rounded-xl bg-white dark:bg-[#121824] tactile-card text-center space-y-1">
-          <div class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+          <div
+            class="text-2xl md:text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400"
+          >
             40%+
           </div>
           <div class="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -215,9 +1396,15 @@
 
       <!-- Section 1: Capabilities (Bento Box Grid) -->
       <section id="capabilities" class="space-y-6">
-        <div class="border-b-2 border-slate-900 dark:border-slate-700 pb-3 flex items-center justify-between">
-          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <span class="w-3 h-3 bg-emerald-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"></span>
+        <div
+          class="border-b-2 border-slate-900 dark:border-slate-700 pb-3 flex items-center justify-between"
+        >
+          <h2
+            class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2"
+          >
+            <span
+              class="w-3 h-3 bg-emerald-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"
+            ></span>
             Capabilities &amp; Core Pillars
           </h2>
           <span class="text-xs font-mono text-slate-500 dark:text-slate-400">
@@ -227,82 +1414,141 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <!-- Pillar 1 -->
-          <div class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4">
+          <div
+            class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4"
+          >
             <div class="space-y-3">
-              <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+              <span
+                class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest"
+              >
                 01 / ARCHITECTURE
               </span>
               <h3 class="text-xl font-bold text-slate-900 dark:text-white">
                 Enterprise Knowledge Systems
               </h3>
               <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Design and integration of production RAG architectures, private vector indexing, contextual search over fragmented enterprise datasets, and offline-first internal copilots.
+                Design and integration of production RAG architectures, private vector indexing,
+                contextual search over fragmented enterprise datasets, and offline-first internal
+                copilots.
               </p>
             </div>
             <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Production RAG</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Private Datasets</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Hybrid Search</span>
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Production RAG</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Private Datasets</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Hybrid Search</span
+              >
             </div>
           </div>
 
           <!-- Pillar 2 -->
-          <div class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4">
+          <div
+            class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4"
+          >
             <div class="space-y-3">
-              <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+              <span
+                class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest"
+              >
                 02 / PLATFORM &amp; GOVERNANCE
               </span>
               <h3 class="text-xl font-bold text-slate-900 dark:text-white">
                 AI Infrastructure &amp; Governance
               </h3>
               <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Unified LLM API gateways (Gatepass Proxy), model evaluation frameworks, token cost routing, rate limiting, cryptographic audit trails, and data sovereignty compliance.
+                Unified LLM API gateways (Gatepass Proxy), model evaluation frameworks, token cost
+                routing, rate limiting, cryptographic audit trails, and data sovereignty compliance.
               </p>
             </div>
             <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Gatepass LLM Proxy</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Token Governance</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Observability</span>
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Gatepass LLM Proxy</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Token Governance</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Observability</span
+              >
             </div>
           </div>
 
           <!-- Pillar 3 -->
-          <div class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4">
+          <div
+            class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4"
+          >
             <div class="space-y-3">
-              <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+              <span
+                class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest"
+              >
                 03 / AUTOMATION
               </span>
               <h3 class="text-xl font-bold text-slate-900 dark:text-white">
                 Agentic Workflow Orchestration
               </h3>
               <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Multi-agent decision systems built on Model Context Protocol (MCP) and LangGraph. Automating repetitive technical workflows while enforcing strict human-in-the-loop controls.
+                Multi-agent decision systems built on Model Context Protocol (MCP) and LangGraph.
+                Automating repetitive technical workflows while enforcing strict human-in-the-loop
+                controls.
               </p>
             </div>
             <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">LangGraph</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">MCP Integration</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Human Oversight</span>
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >LangGraph</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >MCP Integration</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Human Oversight</span
+              >
             </div>
           </div>
 
           <!-- Pillar 4 -->
-          <div class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4">
+          <div
+            class="p-6 md:p-8 rounded-xl bg-white dark:bg-[#121824] tactile-card flex flex-col justify-between space-y-4"
+          >
             <div class="space-y-3">
-              <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+              <span
+                class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest"
+              >
                 04 / MODERNIZATION
               </span>
               <h3 class="text-xl font-bold text-slate-900 dark:text-white">
                 Legacy-to-AI Systems Modernization
               </h3>
               <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                Incremental refactoring of high-stakes systems without platform downtime. Rebuilding legacy databases (e.g. Oracle-to-PostgreSQL), consolidating software versions, and attaching AI layers seamlessly.
+                Incremental refactoring of high-stakes systems without platform downtime. Rebuilding
+                legacy databases (e.g. Oracle-to-PostgreSQL), consolidating software versions, and
+                attaching AI layers seamlessly.
               </p>
             </div>
             <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Zero Downtime</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Oracle &amp; DB Migration</span>
-              <span class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded">Version Consolidation</span>
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Zero Downtime</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Oracle &amp; DB Migration</span
+              >
+              <span
+                class="px-2 py-0.5 text-[11px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded"
+                >Version Consolidation</span
+              >
             </div>
           </div>
         </div>
@@ -310,9 +1556,15 @@
 
       <!-- Section 2: Select Work (Anonymized Enterprise Case Studies) -->
       <section id="select-work" class="space-y-6">
-        <div class="border-b-2 border-slate-900 dark:border-slate-700 pb-3 flex items-center justify-between">
-          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <span class="w-3 h-3 bg-sky-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"></span>
+        <div
+          class="border-b-2 border-slate-900 dark:border-slate-700 pb-3 flex items-center justify-between"
+        >
+          <h2
+            class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2"
+          >
+            <span
+              class="w-3 h-3 bg-sky-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"
+            ></span>
             Select Work &amp; Engagements
           </h2>
           <span class="text-xs font-mono text-slate-500 dark:text-slate-400">
@@ -324,7 +1576,9 @@
           <!-- Case Study 1 -->
           <div class="p-6 rounded-xl bg-white dark:bg-[#121824] tactile-card space-y-4">
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 text-xs font-mono font-bold bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800 rounded">
+              <span
+                class="px-2.5 py-0.5 text-xs font-mono font-bold bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800 rounded"
+              >
                 TELECOM / UCaaS
               </span>
               <span class="text-xs font-mono text-slate-400">Enterprise AI Product</span>
@@ -333,9 +1587,13 @@
               UCaaS Call Intelligence &amp; Diarization Platform
             </h3>
             <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Designed and integrated automated speech transcription, speaker diarization, and LLM meeting insights into legacy telecom infrastructure. Created a new high-value revenue stream from existing enterprise clients without requiring a platform rebuild.
+              Designed and integrated automated speech transcription, speaker diarization, and LLM
+              meeting insights into legacy telecom infrastructure. Created a new high-value revenue
+              stream from existing enterprise clients without requiring a platform rebuild.
             </p>
-            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+            <div
+              class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold"
+            >
               ✓ New ARR stream created • Zero platform downtime
             </div>
           </div>
@@ -343,7 +1601,9 @@
           <!-- Case Study 2 -->
           <div class="p-6 rounded-xl bg-white dark:bg-[#121824] tactile-card space-y-4">
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 text-xs font-mono font-bold bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800 rounded">
+              <span
+                class="px-2.5 py-0.5 text-xs font-mono font-bold bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-800 rounded"
+              >
                 SECURITY / INFRASTRUCTURE
               </span>
               <span class="text-xs font-mono text-slate-400">LLM Threat Analysis</span>
@@ -352,9 +1612,13 @@
               AI Threat &amp; Phishing Detection System
             </h3>
             <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Deployed real-time LLM threat analysis into legacy enterprise communication channels. Added enterprise-grade security filters directly on top of active infrastructure without interrupting live traffic.
+              Deployed real-time LLM threat analysis into legacy enterprise communication channels.
+              Added enterprise-grade security filters directly on top of active infrastructure
+              without interrupting live traffic.
             </p>
-            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+            <div
+              class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold"
+            >
               ✓ Real-time analysis • Zero infrastructure replacement
             </div>
           </div>
@@ -362,7 +1626,9 @@
           <!-- Case Study 3 -->
           <div class="p-6 rounded-xl bg-white dark:bg-[#121824] tactile-card space-y-4">
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 text-xs font-mono font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 rounded">
+              <span
+                class="px-2.5 py-0.5 text-xs font-mono font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800 rounded"
+              >
                 REGTECH / SUPPORT
               </span>
               <span class="text-xs font-mono text-slate-400">Support Automation</span>
@@ -371,9 +1637,13 @@
               Self-Service RAG Support Portals
             </h3>
             <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Built and deployed RAG-based support agents that deflected 40%+ of routine enterprise tickets for regulated clients. Maintained strict SLA compliance while reducing operational support overhead.
+              Built and deployed RAG-based support agents that deflected 40%+ of routine enterprise
+              tickets for regulated clients. Maintained strict SLA compliance while reducing
+              operational support overhead.
             </p>
-            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+            <div
+              class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold"
+            >
               ✓ 40%+ ticket deflection • SLA response guarantees
             </div>
           </div>
@@ -381,7 +1651,9 @@
           <!-- Case Study 4 -->
           <div class="p-6 rounded-xl bg-white dark:bg-[#121824] tactile-card space-y-4">
             <div class="flex items-center justify-between">
-              <span class="px-2.5 py-0.5 text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded">
+              <span
+                class="px-2.5 py-0.5 text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded"
+              >
                 FINTECH / REGTECH
               </span>
               <span class="text-xs font-mono text-slate-400">Global Modernization</span>
@@ -390,9 +1662,13 @@
               High-Throughput Reconciliation &amp; Data Sovereignty Engine
             </h3>
             <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Directed international technical expansion across KSA and UAE for a financial reconciliation platform. Implemented strict cryptographic signing and data sovereignty protocols while scaling transaction volume by 350%.
+              Directed international technical expansion across KSA and UAE for a financial
+              reconciliation platform. Implemented strict cryptographic signing and data sovereignty
+              protocols while scaling transaction volume by 350%.
             </p>
-            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+            <div
+              class="pt-3 border-t border-slate-200 dark:border-slate-800 text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold"
+            >
               ✓ 350% transaction scale • KSA/UAE compliance
             </div>
           </div>
@@ -400,10 +1676,17 @@
       </section>
 
       <!-- Section 3: Methodology (How We Work) -->
-      <section id="methodology" class="p-8 md:p-10 rounded-xl bg-white dark:bg-[#121824] tactile-card space-y-6">
+      <section
+        id="methodology"
+        class="p-8 md:p-10 rounded-xl bg-white dark:bg-[#121824] tactile-card space-y-6"
+      >
         <div class="border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <span class="w-3 h-3 bg-amber-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"></span>
+          <h2
+            class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2"
+          >
+            <span
+              class="w-3 h-3 bg-amber-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"
+            ></span>
             How We Work — Engineering Principles
           </h2>
         </div>
@@ -414,7 +1697,8 @@
               1. Modernization Over Replacement
             </h3>
             <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              We specialize in high-stakes legacy platforms. Rather than advocating risky rip-and-replace overhauls, we attach modern AI capability to proven core systems.
+              We specialize in high-stakes legacy platforms. Rather than advocating risky
+              rip-and-replace overhauls, we attach modern AI capability to proven core systems.
             </p>
           </div>
 
@@ -423,7 +1707,8 @@
               2. Rapid AI-Assisted Validation
             </h3>
             <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              Every initiative begins with fast feasibility discovery. Using LLM orchestration workflows, clients validate architecture in days before committing engineering budget.
+              Every initiative begins with fast feasibility discovery. Using LLM orchestration
+              workflows, clients validate architecture in days before committing engineering budget.
             </p>
           </div>
 
@@ -432,7 +1717,9 @@
               3. Open Standards &amp; Zero Lock-in
             </h3>
             <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-              Systems are engineered on open standards (Model Context Protocol, open APIs, containerization), giving enterprises complete ownership of their data and model choices.
+              Systems are engineered on open standards (Model Context Protocol, open APIs,
+              containerization), giving enterprises complete ownership of their data and model
+              choices.
             </p>
           </div>
         </div>
@@ -440,32 +1727,71 @@
 
       <!-- Section 4: Technology & Infrastructure Stack -->
       <section id="stack" class="space-y-4">
-        <div class="border-b-2 border-slate-900 dark:border-slate-700 pb-2 flex items-center justify-between">
+        <div
+          class="border-b-2 border-slate-900 dark:border-slate-700 pb-2 flex items-center justify-between"
+        >
           <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span class="w-3 h-3 bg-purple-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"></span>
+            <span
+              class="w-3 h-3 bg-purple-500 rounded-sm inline-block shadow-[2px_2px_0px_0px_#000]"
+            ></span>
             Supported Enterprise Infrastructure &amp; Stack
           </h2>
           <span class="text-xs font-mono text-slate-400">Production Standards</span>
         </div>
 
         <div class="flex flex-wrap gap-2 pt-2">
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">OpenAI Enterprise</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">Anthropic Claude</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">Google Gemini</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">Azure OpenAI</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">AWS Cloud</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">Python / FastAPI</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">Docker / Podman</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">PostgreSQL</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">LangGraph</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">Model Context Protocol (MCP)</span>
-          <span class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md">Gatepass Proxy</span>
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >OpenAI Enterprise</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >Anthropic Claude</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >Google Gemini</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >Azure OpenAI</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >AWS Cloud</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >Python / FastAPI</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >Docker / Podman</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >PostgreSQL</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >LangGraph</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >Model Context Protocol (MCP)</span
+          >
+          <span
+            class="px-3 py-1.5 text-xs font-mono font-semibold bg-white dark:bg-[#121824] tactile-card rounded-md"
+            >Gatepass Proxy</span
+          >
         </div>
       </section>
 
       <!-- Section 5: Open Source & Portal Cross Links -->
       <section class="p-6 rounded-xl bg-white dark:bg-[#121824] tactile-card space-y-4">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-3"
+        >
           <div>
             <h3 class="text-lg font-bold text-slate-900 dark:text-white">
               Public Work &amp; Open Source Ecosystem
@@ -474,28 +1800,48 @@
               Open developer infrastructure and public utility projects maintained by Covai Labs.
             </p>
           </div>
-          <a href="https://go.covai.org" target="_blank" class="px-4 py-2 text-xs font-mono font-bold bg-purple-600 hover:bg-purple-500 text-white rounded-md transition-colors shrink-0 shadow-[2px_2px_0px_0px_#000]">
+          <a
+            href="https://go.covai.org"
+            target="_blank"
+            class="px-4 py-2 text-xs font-mono font-bold bg-purple-600 hover:bg-purple-500 text-white rounded-md transition-colors shrink-0 shadow-[2px_2px_0px_0px_#000]"
+          >
             Visit go.covai.org →
           </a>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
-          <a href="https://gatepass.covai.org" target="_blank" class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block">
+          <a
+            href="https://gatepass.covai.org"
+            target="_blank"
+            class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block"
+          >
             <div class="font-bold text-slate-900 dark:text-white mb-1">Gatepass Proxy</div>
             <div class="text-slate-500 text-[11px]">LLM Rate Limiting &amp; Proxy</div>
           </a>
 
-          <a href="https://wikimedia-bridge.covai.org" target="_blank" class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block">
+          <a
+            href="https://wikimedia-bridge.covai.org"
+            target="_blank"
+            class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block"
+          >
             <div class="font-bold text-slate-900 dark:text-white mb-1">Wikimedia Bridge</div>
             <div class="text-slate-500 text-[11px]">Google Photos to Commons</div>
           </a>
 
-          <a href="https://resume-ops.covai.org" target="_blank" class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block">
+          <a
+            href="https://resume-ops.covai.org"
+            target="_blank"
+            class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block"
+          >
             <div class="font-bold text-slate-900 dark:text-white mb-1">Resume-Ops</div>
             <div class="text-slate-500 text-[11px]">CI/CD Document Pipeline</div>
           </a>
 
-          <a href="https://ai-chat-exporter.covai.org" target="_blank" class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block">
+          <a
+            href="https://ai-chat-exporter.covai.org"
+            target="_blank"
+            class="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition-colors block"
+          >
             <div class="font-bold text-slate-900 dark:text-white mb-1">AI Chat Exporter</div>
             <div class="text-slate-500 text-[11px]">Browser Markdown Exporter</div>
           </a>
@@ -503,25 +1849,41 @@
       </section>
 
       <!-- Section 6: Contact & Discussion -->
-      <section id="contact" class="p-8 md:p-12 rounded-xl bg-white dark:bg-[#121824] tactile-card border-2 border-emerald-500 space-y-6">
+      <section
+        id="contact"
+        class="p-8 md:p-12 rounded-xl bg-white dark:bg-[#121824] tactile-card border-2 border-emerald-500 space-y-6"
+      >
         <div class="space-y-2">
-          <span class="px-2.5 py-0.5 text-xs font-mono font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 rounded">
+          <span
+            class="px-2.5 py-0.5 text-xs font-mono font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 rounded"
+          >
             GET IN TOUCH
           </span>
           <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
             Discuss an Enterprise AI Initiative
           </h2>
-          <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-            We collaborate directly with engineering executives, product leads, and technical founders. Reach out to schedule an initial discovery call.
+          <p
+            class="text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed"
+          >
+            We collaborate directly with engineering executives, product leads, and technical
+            founders. Reach out to schedule an initial discovery call.
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-4 pt-2">
-          <a href="mailto:office@covai.org" class="px-5 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-sm font-bold shadow-[3px_3px_0px_0px_#000] transition-all flex items-center gap-2">
+          <a
+            href="mailto:office@covai.org"
+            class="px-5 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-sm font-bold shadow-[3px_3px_0px_0px_#000] transition-all flex items-center gap-2"
+          >
             <span>Email office@covai.org</span>
             <span>↗</span>
           </a>
-          <a href="https://www.linkedin.com/company/covai-labs/" target="_blank" rel="noopener noreferrer" class="px-5 py-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-mono text-sm font-semibold border border-slate-300 dark:border-slate-700 transition-colors flex items-center gap-2">
+          <a
+            href="https://www.linkedin.com/company/covai-labs/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-5 py-3 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-mono text-sm font-semibold border border-slate-300 dark:border-slate-700 transition-colors flex items-center gap-2"
+          >
             <span>LinkedIn Company Page</span>
             <span>↗</span>
           </a>
@@ -530,17 +1892,26 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-16 pt-8 pb-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400 font-mono">
+    <footer
+      class="mt-16 pt-8 pb-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400 font-mono"
+    >
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         <p>© 2023 Covai Labs. All rights reserved.</p>
         <div class="flex items-center gap-4">
-          <a href="https://www.covai.org" class="hover:text-emerald-400 transition-colors">covai.org</a>
+          <a href="https://www.covai.org" class="hover:text-emerald-400 transition-colors"
+            >covai.org</a
+          >
           <span>•</span>
-          <a href="https://smb.covai.org" class="hover:text-sky-400 transition-colors">smb.covai.org</a>
+          <a href="https://smb.covai.org" class="hover:text-sky-400 transition-colors"
+            >smb.covai.org</a
+          >
           <span>•</span>
-          <a href="https://go.covai.org" class="hover:text-purple-400 transition-colors">go.covai.org</a>
+          <a href="https://go.covai.org" class="hover:text-purple-400 transition-colors"
+            >go.covai.org</a
+          >
+        </div>
       </div>
-    </div></footer>
+    </footer>
 
     <!-- Theme Toggle Logic Script -->
     <script>
@@ -565,6 +1936,10 @@
 
       document.addEventListener('DOMContentLoaded', updateThemeUI);
     </script>
-  
 
-<span style="visibility: hidden;" id="__TIMER_INJECTION_FLAG__{a8cf72f7-09b7-4cd4-9aaa-7a023bf09916}"></span></body></html>
+    <span
+      style="visibility: hidden"
+      id="__TIMER_INJECTION_FLAG__{a8cf72f7-09b7-4cd4-9aaa-7a023bf09916}"
+    ></span>
+  </body>
+</html>
