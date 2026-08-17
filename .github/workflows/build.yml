@@ -117,7 +117,8 @@ jobs:
             --api-key="${{ secrets.AMO_JWT_ISSUER }}" \
             --api-secret="${{ secrets.AMO_JWT_SECRET }}" \
             --channel="listed" \
-            --source-dir="dist-firefox"
+            --source-dir="dist-firefox" \
+            --approval-timeout 0
 
   publish-chrome:
     name: Publish to Chrome Web Store
