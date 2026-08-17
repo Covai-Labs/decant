@@ -4,7 +4,14 @@ import globals from 'globals';
 export default [
   js.configs.recommended,
   {
-    ignores: ['node_modules/**', 'dist/**', 'dist-firefox/**', 'releases/**', 'src/preview/lib/**'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'dist-firefox/**',
+      'releases/**',
+      'src/preview/lib/**',
+      'src/vendor/**',
+    ],
   },
   {
     languageOptions: {

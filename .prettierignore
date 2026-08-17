@@ -3,4 +3,5 @@ dist/
 dist-firefox/
 releases/
 src/preview/lib/
+src/vendor/
 *.log

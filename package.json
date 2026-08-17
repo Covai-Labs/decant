@@ -26,7 +26,6 @@
   "author": "Rat-S",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@mozilla/readability": "^0.6.0",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2"
   },

@@ -104,7 +104,7 @@ decant/
 ## Key Architectural Notes
 
 - **Source manifest** (`src/manifest.json`) is the Chromium source of truth. Firefox-specific fields (`browser_specific_settings`, `data_collection_permissions`, background script format, sidepanel removal) are injected at build time by `build.js`.
-- **Content extraction** uses [@mozilla/readability](https://github.com/mozilla/readability) — the same engine as Firefox Reader View.
+- **Content extraction** uses a vendored copy of [@mozilla/readability](https://github.com/mozilla/readability) (the same engine as Firefox Reader View), located in `src/vendor/readability/`. See the vendor README for version details and update instructions.
 - **Markdown conversion** uses [Turndown](https://github.com/mixmark-io/turndown) with the GFM plugin.
 - **No bundler config file** — all esbuild options are defined inline in `build.js`.
 

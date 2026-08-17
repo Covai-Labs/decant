@@ -1,4 +1,4 @@
-import { Readability } from '@mozilla/readability';
+import { Readability } from '../vendor/readability/index.js';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
 import { DEFAULT_OPTIONS } from '../shared/storage.js';
