@@ -12,7 +12,6 @@ export default [
       '.wxt/**',
       'releases/**',
       'public/preview/lib/**',
-      'src/preview/lib/**',
       'src/vendor/**',
     ],
   },
