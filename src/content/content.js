@@ -27,7 +27,7 @@ export function extractArticle(options = DEFAULT_OPTIONS) {
   const article = reader.parse();
 
   const title = article?.title || document.title || 'Untitled';
-  const htmlContent = article?.content || document.body.innerHTML;
+  const htmlContent = article?.content || document.body?.innerHTML || '';
 
   logger.log('ContentScript', 'Extracted title:', title, '| HTML length:', htmlContent?.length);
 
@@ -58,9 +58,6 @@ export function extractArticle(options = DEFAULT_OPTIONS) {
     baseFilename,
   };
 }
-
-// Global flag to indicate content script readiness
-window.__DECANT_LOADED__ = true;
 
 export async function checkAndInjectContinuation() {
   try {
@@ -139,28 +136,45 @@ export async function checkAndInjectContinuation() {
   }
 }
 
-// Message Listener
-if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    logger.log('ContentScript', 'Received message:', request);
+// Global flag to prevent duplicate event listener registrations on dynamic injection
+if (!window.__DECANT_LOADED__) {
+  window.__DECANT_LOADED__ = true;
 
-    if (request.action === 'PING') {
-      sendResponse({ status: 'pong' });
-      return true;
-    }
+  // Message Listener
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      logger.log('ContentScript', 'Received message:', request);
 
-    if (request.action === 'EXTRACT_MARKDOWN') {
-      try {
-        const result = extractArticle(request.options || DEFAULT_OPTIONS);
-        logger.info('ContentScript', 'Extraction successful for:', result.title);
-        sendResponse({ status: 'success', data: result });
-      } catch (err) {
-        logger.error('ContentScript', 'Extraction failed:', err);
-        sendResponse({ status: 'error', error: err.message });
+      if (request.action === 'PING') {
+        sendResponse({ status: 'pong' });
+        return true;
       }
-      return true;
-    }
-  });
-}
 
-checkAndInjectContinuation();
+      if (request.action === 'COPY_TO_CLIPBOARD') {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(request.text || '')
+            .then(() => sendResponse({ status: 'success' }))
+            .catch((err) => sendResponse({ status: 'error', error: err?.message }));
+        } else {
+          sendResponse({ status: 'error', error: 'Clipboard API unavailable' });
+        }
+        return true;
+      }
+
+      if (request.action === 'EXTRACT_MARKDOWN') {
+        try {
+          const result = extractArticle(request.options || DEFAULT_OPTIONS);
+          logger.info('ContentScript', 'Extraction successful for:', result.title);
+          sendResponse({ status: 'success', data: result });
+        } catch (err) {
+          logger.error('ContentScript', 'Extraction failed:', err);
+          sendResponse({ status: 'error', error: err.message });
+        }
+        return true;
+      }
+    });
+  }
+
+  checkAndInjectContinuation();
+}

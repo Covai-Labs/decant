@@ -60,7 +60,7 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
 
 async function clipTab(tabId, options) {
   try {
-    let response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options });
+    let response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options }, 1, 50);
 
     if (!response) {
       logger.info('Background', 'Injecting content script dynamically into tab:', tabId);
@@ -68,7 +68,7 @@ async function clipTab(tabId, options) {
         target: { tabId },
         files: ['content/content.js'],
       });
-      response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options });
+      response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options }, 5, 100);
     }
 
     if (response && response.status === 'success') {
@@ -84,39 +84,53 @@ async function clipTab(tabId, options) {
 
 async function copyTabToClipboard(tabId, options) {
   try {
-    let response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options });
+    let response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options }, 1, 50);
 
     if (!response) {
       await chrome.scripting.executeScript({
         target: { tabId },
         files: ['content/content.js'],
       });
-      response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options });
+      response = await sendMessageToTab(tabId, { action: 'EXTRACT_MARKDOWN', options }, 5, 100);
     }
 
     if (response && response.status === 'success') {
       logger.info('Background', 'Copying markdown to clipboard...');
-      chrome.tabs.sendMessage(tabId, {
-        action: 'COPY_TO_CLIPBOARD',
-        text: response.data.markdown,
-      });
+      await sendMessageToTab(
+        tabId,
+        {
+          action: 'COPY_TO_CLIPBOARD',
+          text: response.data.markdown,
+        },
+        2,
+        50,
+      );
     }
   } catch (err) {
     logger.error('Background', 'Error copying tab to clipboard:', err);
   }
 }
 
-function sendMessageToTab(tabId, message) {
-  return new Promise((resolve) => {
-    chrome.tabs.sendMessage(tabId, message, (res) => {
-      if (chrome.runtime.lastError) {
-        logger.warn('Background', 'sendMessage lastError:', chrome.runtime.lastError.message);
-        resolve(null);
-      } else {
-        resolve(res);
-      }
+async function sendMessageToTab(tabId, message, maxRetries = 0, retryDelay = 100) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const res = await new Promise((resolve) => {
+      chrome.tabs.sendMessage(tabId, message, (response) => {
+        if (chrome.runtime.lastError) {
+          if (attempt === maxRetries) {
+            logger.warn('Background', 'sendMessage lastError:', chrome.runtime.lastError.message);
+          }
+          resolve(null);
+        } else {
+          resolve(response);
+        }
+      });
     });
-  });
+    if (res) return res;
+    if (attempt < maxRetries) {
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
+  }
+  return null;
 }
 
 function downloadMarkdown(filename, content) {

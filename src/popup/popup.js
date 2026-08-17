@@ -70,7 +70,10 @@ async function initPopup() {
       currentUrl &&
       (currentUrl.startsWith('chrome://') ||
         currentUrl.startsWith('edge://') ||
-        currentUrl.startsWith('about:'))
+        currentUrl.startsWith('about:') ||
+        currentUrl.startsWith('chrome-extension://') ||
+        currentUrl.startsWith('moz-extension://') ||
+        currentUrl.startsWith('view-source:'))
     ) {
       showError(
         'Decant cannot clip browser system pages. Open a normal website (e.g. news, article, docs) to clip.',
@@ -78,11 +81,16 @@ async function initPopup() {
       return;
     }
 
-    // Extract article
-    let response = await sendMessageToTab(tab.id, {
-      action: 'EXTRACT_MARKDOWN',
-      options: savedOptions,
-    });
+    // Extract article (attempt quick connect with 1 retry)
+    let response = await sendMessageToTab(
+      tab.id,
+      {
+        action: 'EXTRACT_MARKDOWN',
+        options: savedOptions,
+      },
+      1,
+      50,
+    );
 
     if (!response) {
       logger.info('Popup', 'Content script not responding — injecting dynamically…');
@@ -91,10 +99,16 @@ async function initPopup() {
           target: { tabId: tab.id },
           files: ['content/content.js'],
         });
-        response = await sendMessageToTab(tab.id, {
-          action: 'EXTRACT_MARKDOWN',
-          options: savedOptions,
-        });
+        // Retry polling to allow the dynamically injected content script to initialize its listeners
+        response = await sendMessageToTab(
+          tab.id,
+          {
+            action: 'EXTRACT_MARKDOWN',
+            options: savedOptions,
+          },
+          5,
+          100,
+        );
       } catch (injectErr) {
         logger.error('Popup', 'Dynamic script injection failed:', injectErr);
       }
@@ -137,13 +151,20 @@ function updateAppButtonLabel() {
 }
 
 // ── Messaging ─────────────────────────────────────────────────────
-async function sendMessageToTab(tabId, message) {
-  return new Promise((resolve) => {
-    chrome.tabs.sendMessage(tabId, message, (res) => {
-      if (chrome.runtime.lastError) resolve(null);
-      else resolve(res);
+async function sendMessageToTab(tabId, message, maxRetries = 0, retryDelay = 100) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const res = await new Promise((resolve) => {
+      chrome.tabs.sendMessage(tabId, message, (res) => {
+        if (chrome.runtime.lastError) resolve(null);
+        else resolve(res);
+      });
     });
-  });
+    if (res) return res;
+    if (attempt < maxRetries) {
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
+  }
+  return null;
 }
 
 // ── Views ─────────────────────────────────────────────────────────
