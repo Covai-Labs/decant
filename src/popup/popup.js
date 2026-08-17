@@ -9,6 +9,7 @@ import { initI18n } from '../shared/i18n.js';
 let currentMarkdown = '';
 let currentTitle = 'Clipped Note';
 let currentUrl = '';
+let currentTabId = null;
 let articleData = null; // full data object for session handoff
 let savedOptions = {};
 
@@ -32,11 +33,30 @@ const optionsBtn = document.getElementById('options-btn');
 const aiTipBanner = document.getElementById('ai-tip-banner');
 const pngWarningBanner = document.getElementById('png-warning-banner');
 
+async function loadCommandShortcuts() {
+  try {
+    if (typeof chrome === 'undefined' || !chrome.commands || !chrome.commands.getAll) return;
+    const commands = await new Promise((resolve) => chrome.commands.getAll(resolve));
+    if (!commands || !Array.isArray(commands)) return;
+
+    for (const cmd of commands) {
+      if (cmd.name === 'copy_tab_as_markdown' && cmd.shortcut && copyBtn) {
+        copyBtn.setAttribute('title', `Copy Markdown to clipboard (${cmd.shortcut})`);
+      } else if (cmd.name === 'clip_tab_as_markdown' && cmd.shortcut && downloadMdBtn) {
+        downloadMdBtn.setAttribute('title', `Download Markdown file (${cmd.shortcut})`);
+      }
+    }
+  } catch (err) {
+    logger.warn('Popup', 'Could not retrieve command shortcuts:', err);
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────
 async function initPopup() {
   logger.info('Popup', 'Initializing Decant popup UI…');
   try {
     await initI18n();
+    await loadCommandShortcuts();
     savedOptions = await getOptions();
 
     // PKM app target selection
@@ -57,6 +77,7 @@ async function initPopup() {
       return;
     }
 
+    currentTabId = tab.id;
     currentUrl = tab.url || '';
 
     // AI Chat tip banner
@@ -229,6 +250,14 @@ copyBtn.addEventListener('click', async () => {
   await navigator.clipboard.writeText(currentMarkdown);
   const orig = copyBtn.textContent;
   copyBtn.textContent = '✓ Copied';
+
+  if (currentTabId) {
+    sendMessageToTab(currentTabId, {
+      action: 'SHOW_TOAST',
+      message: 'Decanted to clipboard!',
+    }).catch(() => {});
+  }
+
   setTimeout(() => {
     copyBtn.textContent = orig;
   }, 1500);

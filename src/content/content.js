@@ -136,6 +136,90 @@ export async function checkAndInjectContinuation() {
   }
 }
 
+export function showDecantToast(message = 'Decanted to clipboard!') {
+  try {
+    if (!document.body) return;
+
+    let host = document.getElementById('decant-toast-root');
+    if (!host) {
+      host = document.createElement('div');
+      host.id = 'decant-toast-root';
+      host.style.position = 'fixed';
+      host.style.top = '24px';
+      host.style.right = '24px';
+      host.style.zIndex = '2147483647';
+      host.style.pointerEvents = 'none';
+      document.body.appendChild(host);
+    }
+
+    const shadow = host.shadowRoot || host.attachShadow({ mode: 'open' });
+
+    // Inject shared styles if not already present in shadowRoot
+    if (!shadow.querySelector('style')) {
+      const style = document.createElement('style');
+      style.textContent = `
+        .decant-toast {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: #0f172a;
+          color: #f8fafc;
+          border: 1px solid #334155;
+          border-left: 4px solid #8b5cf6;
+          padding: 12px 18px;
+          border-radius: 8px;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+          line-height: 1.4;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+          transform: translateY(-12px);
+          opacity: 0;
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+          pointer-events: auto;
+          margin-bottom: 8px;
+        }
+        .decant-toast.show {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        .decant-toast-icon {
+          font-size: 16px;
+        }
+        .decant-toast-msg {
+          color: #f8fafc;
+        }
+      `;
+      shadow.appendChild(style);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'decant-toast';
+    toast.innerHTML = `
+      <span class="decant-toast-icon">🍷</span>
+      <span class="decant-toast-msg">${message}</span>
+    `;
+
+    shadow.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        toast.remove();
+        if (shadow.querySelectorAll('.decant-toast').length === 0 && host.parentNode) {
+          host.remove();
+        }
+      }, 300);
+    }, 2200);
+  } catch (err) {
+    logger.warn('ContentScript', 'Failed to display toast:', err);
+  }
+}
+
 // Global flag to prevent duplicate event listener registrations on dynamic injection
 if (!window.__DECANT_LOADED__) {
   window.__DECANT_LOADED__ = true;
@@ -150,11 +234,20 @@ if (!window.__DECANT_LOADED__) {
         return true;
       }
 
+      if (request.action === 'SHOW_TOAST') {
+        showDecantToast(request.message || 'Decanted to clipboard!');
+        sendResponse({ status: 'success' });
+        return true;
+      }
+
       if (request.action === 'COPY_TO_CLIPBOARD') {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard
             .writeText(request.text || '')
-            .then(() => sendResponse({ status: 'success' }))
+            .then(() => {
+              showDecantToast(request.message || 'Decanted to clipboard!');
+              sendResponse({ status: 'success' });
+            })
             .catch((err) => sendResponse({ status: 'error', error: err?.message }));
         } else {
           sendResponse({ status: 'error', error: 'Clipboard API unavailable' });
