@@ -18,17 +18,20 @@ npm install
 
 ## Build
 
-Decant uses [esbuild](https://esbuild.github.io/) to bundle source files and a custom `build.js` script to assemble the extension.
+Decant uses [WXT](https://wxt.dev) (v0.21) as its build framework, powered by Vite under the hood.
 
 ```bash
-# Build for Chrome / Edge (outputs to dist/)
+# Dev server with hot reload (Chrome)
+npm run dev
+
+# Dev server (Firefox)
+npm run dev -b firefox
+
+# Production build (Chrome, outputs to .output/chrome-mv3/)
 npm run build
 
-# Build for Firefox (outputs to dist-firefox/)
+# Production build (Firefox, outputs to .output/firefox-mv3/)
 npm run build:firefox
-
-# Watch mode (Chrome, auto-rebuilds on file changes)
-npm run watch
 ```
 
 ## Package for Store Submission
@@ -41,9 +44,9 @@ npm run package
 
 This runs both browser builds then calls `package.py` to create:
 
-- `releases/decant-chrome-v{version}.zip` — Chrome / Edge
-- `releases/decant-firefox-v{version}.zip` — Firefox AMO
-- `releases/decant-source-v{version}.zip` — Source code (required by AMO)
+- `releases/decant-chromium.zip` — Chrome / Edge
+- `releases/decant-firefox.zip` — Firefox AMO
+- `releases/decant-source.zip` — Source code (required by AMO)
 
 ## Testing & Code Quality
 
@@ -72,40 +75,53 @@ All three checks run in CI on every push and pull request.
 
 1. Run `npm run build`
 2. Go to `chrome://extensions` → Enable Developer Mode
-3. Click **Load unpacked** → select the `dist/` folder
+3. Click **Load unpacked** → select the `.output/chrome-mv3/` folder
 
 **Firefox:**
 
 1. Run `npm run build:firefox`
 2. Go to `about:debugging` → This Firefox → Load Temporary Add-on
-3. Select `dist-firefox/manifest.json`
+3. Select `.output/firefox-mv3/manifest.json`
 
 ## Project Structure
 
 ```
 decant/
-├── src/
-│   ├── background/       # Service worker (background.js)
-│   ├── content/          # Content script (content.js) — article extraction
-│   ├── popup/            # Toolbar popup UI
+├── entrypoints/          # WXT entrypoints
+│   ├── background/       # Service worker (background/index.js)
+│   ├── content.js        # Content script — article extraction
+│   ├── popup/            # Toolbar popup UI (index.html + main.js + popup.css)
 │   ├── options/          # Settings/options page
-│   ├── sidepanel/        # Chrome side panel UI (Chrome only)
-│   ├── shared/           # Shared modules (storage, formatter, logger, AI/URI transfer)
+│   ├── sidepanel/        # Chrome side panel UI (Chrome only, excluded for Firefox)
+│   └── preview/          # Export preview page (unlisted, opens in new tab)
+├── src/
+│   ├── shared/           # Shared modules (storage, i18n, logger, formatter, exporters, AI/URI transfer)
+│   └── vendor/           # Vendored libraries (Readability)
+├── public/               # Static assets copied to build output
 │   ├── icons/            # Extension icons (16, 48, 128px)
-│   └── manifest.json     # Source manifest (Chrome/Chromium)
+│   ├── _locales/         # i18n translation files
+│   └── preview/lib/      # Vendored preview libs (KaTeX, PrismJS, html2canvas)
 ├── tests/                # Unit tests (Node built-in test runner)
-├── docs/                 # Extension website (decant.covai.org)
-├── build.js              # esbuild + manifest processing script
+├── wxt.config.ts         # WXT configuration (manifest, Vite config)
 ├── package.py            # ZIP packaging script for store submission
 ├── eslint.config.js      # ESLint flat config
 └── .prettierrc           # Prettier config
 ```
 
+## Build Output
+
+```
+.output/
+├── chrome-mv3/           # Chrome production build
+└── firefox-mv3/          # Firefox production build
+```
+
 ## Key Architectural Notes
 
-- **Source manifest** (`src/manifest.json`) is the Chromium source of truth. Firefox-specific fields (`browser_specific_settings`, `data_collection_permissions`, background script format, sidepanel removal) are injected at build time by `build.js`.
+- **WXT manifest config** (`wxt.config.ts`) is the single source of truth for the extension manifest. Browser-specific differences (sidePanel permission, background format, gecko settings) are handled via a manifest function that receives `{ browser }`.
 - **Content extraction** uses a vendored copy of [@mozilla/readability](https://github.com/mozilla/readability) (the same engine as Firefox Reader View), located in `src/vendor/readability/`. See the vendor README for version details and update instructions.
 - **Markdown conversion** uses [Turndown](https://github.com/mixmark-io/turndown) with the GFM plugin.
-- **No bundler config file** — all esbuild options are defined inline in `build.js`.
+- **Sidepanel iframe approach** — popup and options pages are loaded inside the side panel via iframes. The sidepanel entrypoint is excluded from Firefox builds via `manifest.exclude` meta tag.
+- **Custom i18n** — Decant uses its own i18n system (`src/shared/i18n.js`) rather than the WXT i18n module, with `_locales/` in `public/`.
 
 For contribution guidelines and CLA, see [CONTRIBUTING.md](./CONTRIBUTING.md).

@@ -1,6 +1,6 @@
 # Decant 🍷
 
-**Decant** is a fast, privacy-first, open-source browser extension that decants web content into clean, structured Markdown. Built natively for **Manifest V3**.
+**Decant** is a fast, privacy-first, open-source browser extension that decants web content into clean, structured Markdown. Built natively for **Manifest V3** using [WXT](https://wxt.dev).
 
 ## Features
 
@@ -10,20 +10,45 @@
 - 🎨 **Custom Frontmatter & Formatting:** Configurable templates for metadata tags, page URLs, titles, and dates.
 - 📝 **Obsidian / Logseq / Notion Ready:** Easy copying to clipboard or downloading as markdown files.
 
+## Development
+
+```bash
+npm install
+npm run dev          # Start dev server (Chrome)
+npm run dev -b firefox   # Start dev server (Firefox)
+npm run build        # Production build (Chrome)
+npm run build:firefox    # Production build (Firefox)
+npm run lint         # Lint with ESLint
+npm run format:check # Check formatting with Prettier
+npm test             # Run unit tests
+```
+
 ## Project Structure
 
 ```
 decant/
-├── .agents/            # Agent context & private local guidelines (gitignored)
-├── Scratch/            # Discussion notes, drafts, and experiments (gitignored)
-├── src/                # Manifest V3 extension source code
-├── README.md           # Public overview & vision
-└── LICENSE             # AGPL-3.0 License
+├── entrypoints/          # WXT entrypoints (background, content, popup, options, sidepanel, preview)
+├── src/
+│   ├── shared/           # Shared modules (storage, i18n, logger, formatter, exporters, AI/PKM transfer)
+│   └── vendor/           # Vendored libraries (Readability)
+├── public/               # Static assets copied to output (icons, _locales, preview libs)
+├── wxt.config.ts         # WXT configuration (manifest, build hooks, Vite config)
+├── .agents/              # Agent context & private local guidelines (gitignored)
+├── Scratch/              # Discussion notes, drafts, and experiments (gitignored)
+└── LICENSE               # AGPL-3.0 License
+```
+
+## Build Output
+
+```
+.output/
+├── chrome-mv3/           # Chrome production build
+└── firefox-mv3/          # Firefox production build
 ```
 
 ## License
 
-This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. See the [LICENSE](file:///home/anu/Workspace/Public/Add-ons/decant/LICENSE) file for details.
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. See the [LICENSE](LICENSE) file for details.
 
 ## Background
 
