@@ -2,12 +2,13 @@
   "name": "decant",
   "version": "1.4.0",
   "description": "Fast, privacy-first Manifest V3 web clipper that decants articles and web pages into clean Markdown.",
-  "main": "dist/background.js",
+  "main": ".output/chrome-mv3/background.js",
   "type": "module",
   "scripts": {
-    "build": "node build.js",
-    "build:firefox": "node build.js --target=firefox",
-    "watch": "node build.js --watch",
+    "dev": "wxt",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "postinstall": "wxt prepare",
     "test": "node --test tests/*.test.js",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -31,9 +32,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "esbuild": "^0.28.1",
     "eslint": "^10.8.0",
     "globals": "^17.9.0",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.6",
+    "wxt": "^0.21.4"
   }
 }

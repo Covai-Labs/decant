@@ -1,0 +1,94 @@
+{
+  "extName": {
+    "message": "Decant - வெப் டூ மார்க்டவுன் கிளிப்பர்",
+    "description": "The name of the extension"
+  },
+  "extDescription": {
+    "message": "கட்டுரைகள் மற்றும் வலைப்பக்கங்களை சுத்தமான மார்க்டவுனாக மாற்றும் வேகமான, தனியுரிமைக்கு முன்னுரிமை அளிக்கும் வெப் கிளிப்பர்.",
+    "description": "The description of the extension"
+  },
+  "actionTitle": {
+    "message": "மார்க்டவுனாக மாற்று",
+    "description": "Tooltip for the extension icon"
+  },
+  "cmdOpenPopup": {
+    "message": "Decant பாப்அப் திற",
+    "description": "Shortcut command description for opening popup"
+  },
+  "cmdClipTab": {
+    "message": "தற்போதைய தாவலை மார்க்டவுனாக சேமி",
+    "description": "Shortcut command description for clipping current tab"
+  },
+  "cmdCopyTab": {
+    "message": "தற்போதைய தாவலின் மார்க்டவுனை நகலெடு",
+    "description": "Shortcut command description for copying tab markdown"
+  },
+  "contextMenuPage": {
+    "message": "பக்கத்தை மார்க்டவுனாக மாற்று",
+    "description": "Context menu title for clipping entire page"
+  },
+  "contextMenuSelection": {
+    "message": "தேர்ந்தெடுத்ததை மார்க்டவுனாக மாற்று",
+    "description": "Context menu title for clipping selected text"
+  },
+  "optionsTitle": {
+    "message": "Decant அமைப்புகள்",
+    "description": "Title of the options page"
+  },
+  "generalSettings": {
+    "message": "பொதுவான அமைப்புகள்",
+    "description": "Section header for general settings"
+  },
+  "uiLanguage": {
+    "message": "பயனர் இடைமுக மொழி",
+    "description": "Label for UI language selection dropdown"
+  },
+  "uiLanguageAuto": {
+    "message": "தானியங்கி (கணினி மொழி)",
+    "description": "Option for system default language"
+  },
+  "saveSettings": {
+    "message": "அமைப்புகளை சேமி",
+    "description": "Button to save settings"
+  },
+  "settingsSaved": {
+    "message": "அமைப்புகள் வெற்றிகரமாக சேமிக்கப்பட்டன!",
+    "description": "Toast message when settings are saved"
+  },
+  "copyButton": {
+    "message": "📋 நகலெடு",
+    "description": "Copy button text"
+  },
+  "saveButton": {
+    "message": "⬇ சேமி",
+    "description": "Save button text"
+  },
+  "previewButton": {
+    "message": "🔍 புதிய தாவலில் முன்னோட்டம்",
+    "description": "Preview button text"
+  },
+  "sendToAi": {
+    "message": "🤖 AI-க்கு அனுப்பு",
+    "description": "Send to AI button text"
+  },
+  "openInObsidian": {
+    "message": "Obsidian-இல் திற",
+    "description": "Open in Obsidian button text"
+  },
+  "decantingPage": {
+    "message": "பக்கம் செயலாக்கப்படுகிறது…",
+    "description": "Loading message when processing article"
+  },
+  "couldNotExtract": {
+    "message": "இந்த பக்கத்திலிருந்து உள்ளடக்கத்தைப் பிரித்தெடுக்க முடியவில்லை.",
+    "description": "Error message when extraction fails"
+  },
+  "decantedReady": {
+    "message": "செயலாக்கப்பட்டது · ஏற்றுமதிக்கு தயார்",
+    "description": "Success subtitle when clipping is ready"
+  },
+  "pngWarning": {
+    "message": "⚠️ பெரிய கட்டுரைகளுக்கு PNG ஏற்றுமதி சில நிமிடங்கள் ஆகலாம். உடனடி ஏற்றுமதிக்கு PDF அல்லது மார்க்டவுனைப் பயன்படுத்தவும்.",
+    "description": "Warning message for PNG export"
+  }
+}

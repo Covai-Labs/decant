@@ -25,19 +25,19 @@ def main():
     source_zip = "releases/decant-source.zip"
 
     # 1. Package Chromium build
-    if os.path.exists('dist'):
-        create_zip('dist', chrome_zip)
+    if os.path.exists('.output/chrome-mv3'):
+        create_zip('.output/chrome-mv3', chrome_zip)
 
     # 2. Package Firefox build
-    if os.path.exists('dist-firefox'):
-        create_zip('dist-firefox', firefox_zip)
+    if os.path.exists('.output/firefox-mv3'):
+        create_zip('.output/firefox-mv3', firefox_zip)
 
     # 3. Package Source for Firefox AMO submission requirements
     print(f"Creating source archive: {source_zip}")
     with zipfile.ZipFile(source_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk('.'):
-            # Ignore node_modules, dist, dist-firefox, .git, releases, Scratch
-            dirs[:] = [d for d in dirs if d not in ['node_modules', 'dist', 'dist-firefox', '.git', 'releases', 'Scratch']]
+            # Ignore node_modules, dist, dist-firefox, .git, releases, Scratch, .output, .wxt
+            dirs[:] = [d for d in dirs if d not in ['node_modules', 'dist', 'dist-firefox', '.git', 'releases', 'Scratch', '.output', '.wxt']]
             for file in files:
                 file_path = os.path.join(root, file)
                 arcname = os.path.relpath(file_path, '.')

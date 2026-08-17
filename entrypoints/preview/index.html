@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="extName">Decant Export Preview</title>
+    <link rel="stylesheet" href="/preview/lib/katex/katex.min.css" />
+    <link rel="stylesheet" href="/preview/lib/prismjs/prism-tomorrow.min.css" />
+    <link rel="stylesheet" href="./preview.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <!-- ── Header ───────────────────────────────────────── -->
+      <header class="preview-header">
+        <div class="header-top">
+          <div class="header-brand">
+            <a
+              class="logo"
+              id="source-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="View original source"
+              >🍷 Decant</a
+            >
+            <h1 id="article-title" class="article-title" data-i18n="decantingPage">Loading…</h1>
+          </div>
+          <div class="header-actions">
+            <button id="theme-btn" class="btn btn-ghost" title="Toggle dark / light">🌙</button>
+            <select id="ai-select" class="btn btn-secondary" title="Select AI Platform">
+              <option value="chatgpt">ChatGPT</option>
+              <option value="claude">Claude</option>
+              <option value="gemini">Gemini</option>
+              <option value="deepseek">DeepSeek</option>
+              <option value="perplexity">Perplexity</option>
+            </select>
+            <button
+              id="ai-btn"
+              class="btn btn-secondary"
+              title="Send to AI Chat"
+              data-i18n="sendToAi"
+            >
+              🤖 Send to AI
+            </button>
+            <button id="copy-btn" class="btn btn-secondary" hidden data-i18n="copyButton">
+              Copy
+            </button>
+            <button id="png-btn" class="btn btn-secondary" hidden>🖼 Download PNG</button>
+            <button id="download-btn" class="btn btn-primary" hidden data-i18n="saveButton">
+              ⬇ Download Markdown
+            </button>
+            <button id="print-btn" class="btn btn-secondary" hidden>🖨 Print / PDF</button>
+          </div>
+        </div>
+
+        <div class="header-toolbar">
+          <nav id="format-tabs" class="tab-strip" role="tablist">
+            <button class="tab-btn active" data-tab="markdown" role="tab" aria-selected="true">
+              📝 Markdown
+            </button>
+            <button class="tab-btn" data-tab="html-live" role="tab">🎨 HTML</button>
+            <button class="tab-btn" data-tab="html-code" role="tab">⌨ HTML Code</button>
+            <button class="tab-btn" data-tab="json" role="tab">{ } JSON</button>
+            <button class="tab-btn" data-tab="doc" role="tab">📄 Word (.doc)</button>
+            <button class="tab-btn" data-tab="pdf" role="tab">🖨️ PDF</button>
+            <button class="tab-btn" data-tab="png" role="tab">🖼️ PNG</button>
+          </nav>
+        </div>
+        <div id="png-warning-banner" class="png-warning-banner hidden" data-i18n="pngWarning">
+          ⚠️ PNG export on long articles may take a few moments. Consider PDF or Markdown for
+          instant export.
+        </div>
+        <div id="png-options-bar" class="png-options-bar hidden">
+          <label class="checkbox-label">
+            <input type="checkbox" id="png-quality-checkbox" checked />
+            High Quality PNG (2x)
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="include-images-checkbox" checked />
+            Include Images
+          </label>
+        </div>
+      </header>
+
+      <!-- ── Main ─────────────────────────────────────────── -->
+      <main class="preview-main" id="preview-main">
+        <!-- Loading -->
+        <div id="loading-overlay" class="loading-overlay">
+          <div class="spinner"></div>
+          <span data-i18n="decantingPage">Loading article…</span>
+        </div>
+
+        <!-- HTML render pane -->
+        <div id="render-wrapper" class="pane hidden">
+          <iframe
+            id="html-iframe"
+            class="html-iframe"
+            sandbox="allow-scripts allow-modals allow-same-origin"
+            title="Rendered article preview"
+          ></iframe>
+        </div>
+
+        <!-- Code pane (markdown / html-code / json / doc) -->
+        <div id="code-wrapper" class="pane hidden code-pane">
+          <pre><code id="preview-code"></code></pre>
+        </div>
+
+        <!-- PNG tab reuses the HTML iframe — no separate pane needed -->
+      </main>
+    </div>
+
+    <!-- Vendored libs -->
+    <script src="/preview/lib/html2canvas.min.js"></script>
+    <script src="/preview/lib/prismjs/prism-bundle.js"></script>
+    <script src="/preview/lib/katex/katex.min.js"></script>
+    <script src="/preview/lib/katex/auto-render.min.js"></script>
+    <!-- Bundled by WXT -->
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
