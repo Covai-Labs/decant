@@ -60,27 +60,6 @@ body.in-iframe {
   cursor: pointer;
 }
 
-.ai-tip-banner {
-  background: linear-gradient(135deg, rgba(13, 148, 136, 0.2), rgba(139, 92, 246, 0.2));
-  border: 1px solid rgba(13, 148, 136, 0.4);
-  border-radius: 6px;
-  padding: 6px 10px;
-  margin-bottom: 8px;
-  font-size: 0.78rem;
-  color: #e2e8f0;
-  line-height: 1.3;
-}
-
-.ai-tip-banner a {
-  color: #2dd4bf;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.ai-tip-banner a:hover {
-  text-decoration: underline;
-}
-
 .content-container {
   flex: 1;
   display: flex;

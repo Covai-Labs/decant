@@ -2,7 +2,6 @@ import { browser } from 'wxt/browser';
 import { getOptions } from '../../src/shared/storage.js';
 import { buildAppUri } from '../../src/shared/uri-transfer.js';
 import { buildAiPrompt, getAiPlatformUrl } from '../../src/shared/ai-transfer.js';
-import { isAiChatUrl } from '../../src/shared/ai-detect.js';
 import { logger } from '../../src/shared/logger.js';
 import { initI18n } from '../../src/shared/i18n.js';
 
@@ -31,7 +30,6 @@ const formatSelect = document.getElementById('format-select');
 const mdActions = document.getElementById('md-actions');
 const exportBtn = document.getElementById('export-btn');
 const optionsBtn = document.getElementById('options-btn');
-const aiTipBanner = document.getElementById('ai-tip-banner');
 const pngWarningBanner = document.getElementById('png-warning-banner');
 
 async function loadCommandShortcuts() {
@@ -80,12 +78,6 @@ async function initPopup() {
 
     currentTabId = tab.id;
     currentUrl = tab.url || '';
-
-    // AI Chat tip banner
-    if (isAiChatUrl(currentUrl)) {
-      logger.info('Popup', 'AI Chat page detected — showing AI Chat Exporter tip.');
-      if (aiTipBanner) aiTipBanner.classList.remove('hidden');
-    }
 
     // Restricted pages
     if (

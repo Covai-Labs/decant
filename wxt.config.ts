@@ -15,6 +15,12 @@ export default defineConfig({
         ? ['activeTab', 'scripting', 'storage', 'contextMenus', 'clipboardWrite']
         : ['activeTab', 'scripting', 'storage', 'contextMenus', 'sidePanel', 'clipboardWrite'],
     host_permissions: ['<all_urls>'],
+    web_accessible_resources: [
+      {
+        resources: ['content/chatgpt_helper.js', 'content/claude_react_reader.js'],
+        matches: ['<all_urls>'],
+      },
+    ],
     action: {
       default_title: '__MSG_actionTitle__',
       default_icon: {

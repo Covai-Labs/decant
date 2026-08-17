@@ -5,6 +5,7 @@ import { gfm } from 'turndown-plugin-gfm';
 import { DEFAULT_OPTIONS } from '../src/shared/storage.js';
 import { formatMarkdown, sanitizeFilename } from '../src/shared/formatter.js';
 import { logger } from '../src/shared/logger.js';
+import { detectPlatform, parsers } from '@covai/parser-core';
 
 function createTurndownService(options = DEFAULT_OPTIONS) {
   const turndownService = new TurndownService({
@@ -16,6 +17,51 @@ function createTurndownService(options = DEFAULT_OPTIONS) {
 
   turndownService.use(gfm);
   return turndownService;
+}
+
+function extractAiChat() {
+  const platform = detectPlatform(window.location.href);
+  if (!platform) return null;
+
+  const ParserClass = parsers.find((p) => p.platform === platform);
+  if (!ParserClass) return null;
+
+  try {
+    const parser = new ParserClass();
+    if (!parser.canParse(window.location.href)) return null;
+
+    const result = parser.parse();
+    if (!result) return null;
+
+    const turndownService = createTurndownService();
+    const mdBody = result.messages
+      .map((m) => {
+        const role = m.role === 'user' ? 'User' : 'Assistant';
+        const content = turndownService.turndown(m.content || '');
+        return `**${role}:**\n\n${content}`;
+      })
+      .join('\n\n---\n\n');
+
+    const filename = sanitizeFilename(result.title || `${platform} Chat`);
+
+    return {
+      title: result.title || `${platform} Chat`,
+      byline: '',
+      dir: '',
+      excerpt: '',
+      siteName: platform,
+      publishedTime: '',
+      url: window.location.href,
+      content: mdBody,
+      htmlContent: '',
+      markdown: `# ${result.title || `${platform} Chat`}\n\n${mdBody}`,
+      filename: `${filename}.md`,
+      baseFilename: filename,
+    };
+  } catch (err) {
+    logger.error('ContentScript', 'AI chat extraction failed:', err);
+    return null;
+  }
 }
 
 export function extractArticle(options = DEFAULT_OPTIONS) {
@@ -268,7 +314,8 @@ export default defineContentScript({
 
           if (request.action === 'EXTRACT_MARKDOWN') {
             try {
-              const result = extractArticle(request.options || DEFAULT_OPTIONS);
+              const aiResult = extractAiChat();
+              const result = aiResult || extractArticle(request.options || DEFAULT_OPTIONS);
               logger.info('ContentScript', 'Extraction successful for:', result.title);
               sendResponse({ status: 'success', data: result });
             } catch (err) {
