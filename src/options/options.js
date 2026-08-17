@@ -31,7 +31,7 @@ async function loadSettings() {
 }
 
 uiLanguage.addEventListener('change', async () => {
-  await saveOptions({ ...await getOptions(), uiLanguage: uiLanguage.value });
+  await saveOptions({ ...(await getOptions()), uiLanguage: uiLanguage.value });
   await initI18n();
 });
 
