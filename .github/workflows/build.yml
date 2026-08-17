@@ -146,7 +146,7 @@ jobs:
           CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-          CHROME_ZIP_PATH: releases/decant-chrome-v${{ github.ref_name && github.ref_name || '1.0.0' }}.zip
+          CHROME_ZIP_PATH: releases/decant-chromium.zip
 
   publish-edge:
     name: Publish to Microsoft Edge Add-ons
@@ -174,4 +174,4 @@ jobs:
           EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
           EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
           EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
-          EDGE_ZIP_PATH: releases/decant-chrome-v${{ github.ref_name && github.ref_name || '1.0.0' }}.zip
+          EDGE_ZIP_PATH: releases/decant-chromium.zip
