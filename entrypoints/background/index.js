@@ -1,6 +1,7 @@
 import { defineBackground } from 'wxt/utils/define-background';
 import { browser } from 'wxt/browser';
 import { getOptions } from '../../src/shared/storage.js';
+import { getAiPlatformUrl } from '../../src/shared/ai-transfer.js';
 import { logger } from '../../src/shared/logger.js';
 import { getMessage } from '../../src/shared/i18n.js';
 
@@ -127,6 +128,88 @@ export default defineBackground({
         logger.error('Background', 'Error copying tab to clipboard:', err);
       }
     }
+
+    browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.action === 'TRANSFER_CHAT') {
+        const target = request.targetPlatform;
+
+        const uriAppTargets = ['obsidian', 'logseq', 'bear', 'noteplan', 'drafts'];
+        if (uriAppTargets.includes(target)) {
+          (async () => {
+            try {
+              const syncData = await browser.storage.sync.get('obsidianVault');
+              const vault = syncData.obsidianVault || '';
+              const title = request.title || 'Clipped Article';
+              const content = request.payload || '';
+
+              const cleanTitle =
+                title
+                  .replace(/[#|^[\]]/g, '')
+                  .replace(/[/\\?%*:|"<>]/g, '')
+                  .trim()
+                  .slice(0, 245) || 'Clipped Article';
+
+              let appUri = '';
+              if (target === 'obsidian') {
+                const params = new URLSearchParams();
+                params.append('name', cleanTitle);
+                if (vault && vault.trim().length > 0) params.append('vault', vault.trim());
+                if (content) params.append('content', content);
+                appUri = `obsidian://new?${params.toString()}`;
+              } else if (target === 'logseq') {
+                const params = new URLSearchParams();
+                params.append('page', cleanTitle);
+                if (content) params.append('content', content);
+                appUri = `logseq://x-callback-url/quickCapture?${params.toString()}`;
+              } else if (target === 'bear') {
+                const params = new URLSearchParams();
+                params.append('title', cleanTitle);
+                if (content) params.append('text', content);
+                appUri = `bear://x-callback-url/create?${params.toString()}`;
+              } else if (target === 'noteplan') {
+                const params = new URLSearchParams();
+                params.append('noteTitle', cleanTitle);
+                if (content) params.append('text', content);
+                appUri = `noteplan://x-callback-url/addText?${params.toString()}`;
+              } else if (target === 'drafts') {
+                const params = new URLSearchParams();
+                const fullText = cleanTitle ? `# ${cleanTitle}\n\n${content}` : content;
+                params.append('text', fullText);
+                appUri = `drafts://x-callback-url/create?${params.toString()}`;
+              }
+
+              await browser.tabs.create({ url: appUri });
+              sendResponse({ success: true, uri: appUri });
+            } catch (e) {
+              logger.error('Background', `${target} transfer failed:`, e);
+              sendResponse({ success: false, error: e.message });
+            }
+          })();
+          return true;
+        }
+
+        const url = getAiPlatformUrl(target);
+
+        (async () => {
+          try {
+            await browser.storage.local.set({
+              pendingContinuation: {
+                payload: request.payload,
+                targetPlatform: target,
+                timestamp: Date.now(),
+              },
+            });
+
+            await browser.tabs.create({ url });
+            sendResponse({ success: true });
+          } catch (e) {
+            logger.error('Background', 'Transfer failed:', e);
+            sendResponse({ success: false, error: e.message });
+          }
+        })();
+        return true;
+      }
+    });
 
     async function sendMessageToTab(tabId, message, maxRetries = 0, retryDelay = 100) {
       for (let attempt = 0; attempt <= maxRetries; attempt++) {

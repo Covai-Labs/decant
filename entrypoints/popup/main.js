@@ -301,19 +301,21 @@ aiBtn.addEventListener('click', async () => {
   }
 
   try {
-    await browser.storage.local.set({
-      pendingContinuation: {
-        payload: prompt,
-        targetPlatform: target,
-        timestamp: Date.now(),
-      },
+    const response = await browser.runtime.sendMessage({
+      action: 'TRANSFER_CHAT',
+      targetPlatform: target,
+      title: currentTitle,
+      payload: prompt,
     });
-  } catch (err) {
-    logger.error('Popup', 'Failed to save pendingContinuation:', err);
-  }
 
-  logger.info('Popup', 'Copied AI prompt and opening:', target);
-  browser.tabs.create({ url: getAiPlatformUrl(target) });
+    if (response && response.success) {
+      logger.info('Popup', 'Transfer initiated for:', target);
+    } else {
+      logger.error('Popup', 'Transfer failed:', response?.error);
+    }
+  } catch (err) {
+    logger.error('Popup', 'Failed to send TRANSFER_CHAT message:', err);
+  }
 });
 
 if (formatSelect) {

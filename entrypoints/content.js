@@ -268,6 +268,7 @@ export function showDecantToast(message = 'Decanted to clipboard!') {
 
 export default defineContentScript({
   matches: ['<all_urls>'],
+  allFrames: true,
   runAt: 'document_end',
   main(ctx) {
     logger.info('ContentScript', 'Decant content script loaded on:', window.location.href);

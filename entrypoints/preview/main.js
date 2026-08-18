@@ -529,18 +529,21 @@ if (aiBtn) {
     }
 
     try {
-      await browser.storage.local.set({
-        pendingContinuation: {
-          payload: prompt,
-          targetPlatform: target,
-          timestamp: Date.now(),
-        },
+      const response = await browser.runtime.sendMessage({
+        action: 'TRANSFER_CHAT',
+        targetPlatform: target,
+        title: articleData.title || 'Untitled',
+        payload: prompt,
       });
-    } catch (e) {
-      console.error('Failed to set pendingContinuation:', e);
-    }
 
-    browser.tabs.create({ url: getAiPlatformUrl(target) });
+      if (response && response.success) {
+        console.log('Preview: Transfer initiated for:', target);
+      } else {
+        console.error('Preview: Transfer failed:', response?.error);
+      }
+    } catch (e) {
+      console.error('Preview: Failed to send TRANSFER_CHAT message:', e);
+    }
   });
 }
 
