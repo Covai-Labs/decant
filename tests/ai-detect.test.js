@@ -12,6 +12,6 @@ test('isAiChatUrl detects AI chat platforms correctly', () => {
 
 test('isAiChatUrl returns false for non-AI websites', () => {
   assert.equal(isAiChatUrl('https://en.wikipedia.org/wiki/Teeline_Shorthand'), false);
-  assert.equal(isAiChatUrl('https://github.com/Rat-S/decant'), false);
+  assert.equal(isAiChatUrl('https://github.com/deadrat-in/decant'), false);
   assert.equal(isAiChatUrl('https://covai.org'), false);
 });

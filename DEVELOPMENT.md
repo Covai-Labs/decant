@@ -11,7 +11,7 @@ This guide covers local setup, build system, testing, and project structure for 
 ## Setup
 
 ```bash
-git clone https://github.com/Rat-S/decant.git
+git clone https://github.com/deadrat-in/decant.git
 cd decant
 npm install
 ```

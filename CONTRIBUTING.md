@@ -4,7 +4,7 @@ Thank you for your interest in contributing to Decant! We welcome bug reports, f
 
 ## Getting Started
 
-1. Check existing [Issues](https://github.com/Rat-S/decant/issues) and [Pull Requests](https://github.com/Rat-S/decant/pulls) before submitting new ones to avoid duplicates.
+1. Check existing [Issues](https://github.com/deadrat-in/decant/issues) and [Pull Requests](https://github.com/deadrat-in/decant/pulls) before submitting new ones to avoid duplicates.
 2. For local setup, prerequisites, build steps, and codebase architecture, refer to the [Development Guide](DEVELOPMENT.md).
 
 ## Submitting Pull Requests

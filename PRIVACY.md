@@ -25,10 +25,10 @@ Decant requests the minimum WebExtension permissions required to perform its cor
 
 ## 4. Open Source Transparency
 
-Decant is 100% open source under the **AGPL-3.0 License**. The full source code is publicly auditable at <https://github.com/Rat-S/decant>.
+Decant is 100% open source under the **AGPL-3.0 License**. The full source code is publicly auditable at <https://github.com/deadrat-in/decant>.
 
 The privacy policy itself is part of the source repository, so any changes are visible in the commit history.
 
 ---
 
-_Questions? Open an issue at <https://github.com/Rat-S/decant/issues>_
+_Questions? Open an issue at <https://github.com/deadrat-in/decant/issues>_
