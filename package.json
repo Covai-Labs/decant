@@ -1,6 +1,6 @@
 {
   "name": "decant",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Fast, privacy-first Manifest V3 web clipper that decants articles and web pages into clean Markdown.",
   "main": ".output/chrome-mv3/background.js",
   "type": "module",
@@ -27,7 +27,7 @@
   "author": "deadrat-in",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "decant-core": "file:../decant-core",
+    "decant-core": "latest",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2"
   },
