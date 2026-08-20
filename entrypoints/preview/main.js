@@ -1,7 +1,7 @@
 import { browser } from 'wxt/browser';
 import { toMarkdown, toHtml, toJson, toDoc } from '../../src/shared/exporters.js';
 import { getOptions } from '../../src/shared/storage.js';
-import { buildAiPrompt, getAiPlatformUrl } from '../../src/shared/ai-transfer.js';
+import { buildAiPrompt } from '../../src/shared/ai-transfer.js';
 import { initI18n } from '../../src/shared/i18n.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────

@@ -110,9 +110,59 @@ ${sections}
 }
 
 /**
- * Builds a ZIP archive as a base64 Data URL.
+ * Safely downloads a file or blob across Chrome MV3 service workers and Firefox.
+ * @param {string|Blob} content File text or Blob
+ * @param {string} filename Output filename
+ * @param {string} [mimeType='text/markdown'] MIME type
+ */
+export async function downloadFile(content, filename, mimeType = 'text/markdown') {
+  let downloadUrl;
+  let isObjectUrl = false;
+
+  // In Firefox and standard window contexts, URL.createObjectURL is supported and preferred
+  // (Firefox blocks downloads from raw data: URIs in downloads.download with "Access denied")
+  if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+    try {
+      const blob = content instanceof Blob ? content : new Blob([content], { type: mimeType });
+      downloadUrl = URL.createObjectURL(blob);
+      isObjectUrl = true;
+    } catch {
+      // Fallback below if blob creation fails
+    }
+  }
+
+  // Fallback for Chrome MV3 service workers where URL.createObjectURL is unavailable
+  if (!downloadUrl) {
+    if (typeof content === 'string' && content.startsWith('data:')) {
+      downloadUrl = content;
+    } else {
+      downloadUrl = `data:${mimeType};charset=utf-8,${encodeURIComponent(content)}`;
+    }
+  }
+
+  const downloadId = await browser.downloads.download({
+    url: downloadUrl,
+    filename,
+    saveAs: false,
+  });
+
+  if (isObjectUrl) {
+    setTimeout(() => {
+      try {
+        URL.revokeObjectURL(downloadUrl);
+      } catch (err) {
+        logger.warn('BatchClipper', 'Failed to revoke object URL:', err);
+      }
+    }, 60000);
+  }
+
+  return downloadId;
+}
+
+/**
+ * Builds a ZIP archive as a Blob or base64 Data URL depending on environment.
  * @param {Array<{ filename: string, markdown: string }>} results
- * @returns {Promise<string>} data URL of ZIP archive
+ * @returns {Promise<Blob|string>} Blob or data URL of ZIP archive
  */
 export async function generateZipArchive(results) {
   const zip = new JSZip();
@@ -122,6 +172,16 @@ export async function generateZipArchive(results) {
     zip.file(item.filename, item.markdown || '');
   }
 
+  // If URL.createObjectURL is available (e.g. Firefox background script), return a Blob
+  if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+    return await zip.generateAsync({
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 },
+    });
+  }
+
+  // Chrome MV3 service worker fallback
   const base64 = await zip.generateAsync({
     type: 'base64',
     compression: 'DEFLATE',
@@ -137,9 +197,15 @@ export async function generateZipArchive(results) {
 async function sendMessageToTab(tabId, message, maxRetries = 1, retryDelay = 60) {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const res = await new Promise((resolve) => {
-      browser.tabs.sendMessage(tabId, message, (response) => {
+      browser.tabs.sendMessage(tabId, message, { frameId: 0 }, (response) => {
         if (browser.runtime.lastError) {
-          resolve(null);
+          browser.tabs.sendMessage(tabId, message, (fallbackRes) => {
+            if (browser.runtime.lastError) {
+              resolve(null);
+            } else {
+              resolve(fallbackRes);
+            }
+          });
         } else {
           resolve(response);
         }
@@ -222,30 +288,16 @@ export async function clipAllTabs(options = {}, mode = 'zip', windowId = null, o
   const timestamp = new Date().toISOString().split('T')[0];
 
   if (mode === 'zip') {
-    const zipDataUrl = await generateZipArchive(results);
-    await browser.downloads.download({
-      url: zipDataUrl,
-      filename: `decanted-tabs-${timestamp}.zip`,
-      saveAs: false,
-    });
+    const zipData = await generateZipArchive(results);
+    await downloadFile(zipData, `decanted-tabs-${timestamp}.zip`, 'application/zip');
   } else if (mode === 'combined') {
     const combinedDoc = formatCombinedMarkdown(results, timestamp);
-    const dataUrl = `data:text/markdown;charset=utf-8,${encodeURIComponent(combinedDoc)}`;
-    await browser.downloads.download({
-      url: dataUrl,
-      filename: `decanted-all-tabs-${timestamp}.md`,
-      saveAs: false,
-    });
+    await downloadFile(combinedDoc, `decanted-all-tabs-${timestamp}.md`, 'text/markdown');
   } else {
     // Separate individual downloads with throttling
     const deduped = deduplicateFilenames(results);
     for (const item of deduped) {
-      const dataUrl = `data:text/markdown;charset=utf-8,${encodeURIComponent(item.markdown)}`;
-      await browser.downloads.download({
-        url: dataUrl,
-        filename: item.filename,
-        saveAs: false,
-      });
+      await downloadFile(item.markdown, item.filename, 'text/markdown');
       await new Promise((r) => setTimeout(r, 180));
     }
   }

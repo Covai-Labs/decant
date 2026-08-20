@@ -82,17 +82,23 @@ test('formatCombinedMarkdown creates a structured document with TOC and anchor t
   assert.match(combined, /Body of second\./);
 });
 
-test('generateZipArchive produces a valid base64 ZIP data URL containing all files', async () => {
+test('generateZipArchive produces a valid ZIP containing all files', async () => {
   const results = [
     { filename: 'page1.md', markdown: '# Page One' },
     { filename: 'page2.md', markdown: '# Page Two' },
   ];
 
-  const dataUrl = await generateZipArchive(results);
-  assert.ok(dataUrl.startsWith('data:application/zip;base64,'));
-
-  const base64Content = dataUrl.replace('data:application/zip;base64,', '');
-  const zip = await JSZip.loadAsync(base64Content, { base64: true });
+  const zipResult = await generateZipArchive(results);
+  let zip;
+  if (typeof zipResult === 'string') {
+    assert.ok(zipResult.startsWith('data:application/zip;base64,'));
+    const base64Content = zipResult.replace('data:application/zip;base64,', '');
+    zip = await JSZip.loadAsync(base64Content, { base64: true });
+  } else {
+    assert.ok(zipResult instanceof Blob);
+    const arrayBuffer = await zipResult.arrayBuffer();
+    zip = await JSZip.loadAsync(arrayBuffer);
+  }
 
   const file1 = await zip.file('page1.md')?.async('string');
   const file2 = await zip.file('page2.md')?.async('string');

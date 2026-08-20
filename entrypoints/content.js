@@ -84,7 +84,31 @@ export async function extractArticle(options = DEFAULT_OPTIONS) {
 
   const title = article?.title || document.title || 'Untitled';
   const htmlContent = article?.htmlContent || document.body?.innerHTML || '';
-  const markdownBody = article?.content || '';
+  let markdownBody = article?.content ? article.content.trim() : '';
+
+  // Fallback: If Readability stripped all content (e.g. job boards, app shells, catalogs),
+  // extract from main/article/body directly.
+  if (!markdownBody && document.body) {
+    logger.info(
+      'ContentScript',
+      'Intelligent extraction yielded empty content, falling back to main container…',
+    );
+    const container =
+      document.querySelector('main') ||
+      document.querySelector('article') ||
+      document.querySelector('#main-content, #content, [role="main"]') ||
+      document.body;
+
+    if (container) {
+      const clone = container.cloneNode(true);
+      const toRemove = clone.querySelectorAll(
+        'script, style, noscript, svg, nav, footer, header, iframe',
+      );
+      toRemove.forEach((el) => el.remove());
+      const fallbackHtml = clone.innerHTML || '';
+      markdownBody = convertToMarkdown(fallbackHtml, turndownOptions).trim();
+    }
+  }
 
   logger.log('ContentScript', 'Extracted title:', title, '| HTML length:', htmlContent?.length);
   logger.log('ContentScript', 'Converted Markdown body length:', markdownBody?.length);
@@ -322,6 +346,9 @@ export default defineContentScript({
           }
 
           if (request.action === 'EXTRACT_MARKDOWN') {
+            if (window !== window.top) {
+              return false;
+            }
             (async () => {
               try {
                 const aiResult = extractAiChat(request.options || DEFAULT_OPTIONS);

@@ -4,7 +4,7 @@ import { getOptions } from '../../src/shared/storage.js';
 import { getAiPlatformUrl } from '../../src/shared/ai-transfer.js';
 import { logger } from '../../src/shared/logger.js';
 import { getMessage } from '../../src/shared/i18n.js';
-import { clipAllTabs } from '../../src/shared/batch-clipper.js';
+import { clipAllTabs, downloadFile } from '../../src/shared/batch-clipper.js';
 
 const UNINSTALL_URL = 'https://decant.covai.org/uninstall-feedback.html';
 const WELCOME_URL = 'https://decant.covai.org/welcome.html';
@@ -297,16 +297,22 @@ export default defineBackground({
     async function sendMessageToTab(tabId, message, maxRetries = 0, retryDelay = 100) {
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         const res = await new Promise((resolve) => {
-          browser.tabs.sendMessage(tabId, message, (response) => {
+          browser.tabs.sendMessage(tabId, message, { frameId: 0 }, (response) => {
             if (browser.runtime.lastError) {
-              if (attempt === maxRetries) {
-                logger.warn(
-                  'Background',
-                  'sendMessage lastError:',
-                  browser.runtime.lastError.message,
-                );
-              }
-              resolve(null);
+              browser.tabs.sendMessage(tabId, message, (fallbackRes) => {
+                if (browser.runtime.lastError) {
+                  if (attempt === maxRetries) {
+                    logger.warn(
+                      'Background',
+                      'sendMessage lastError:',
+                      browser.runtime.lastError.message,
+                    );
+                  }
+                  resolve(null);
+                } else {
+                  resolve(fallbackRes);
+                }
+              });
             } else {
               resolve(response);
             }
@@ -320,13 +326,8 @@ export default defineBackground({
       return null;
     }
 
-    function downloadMarkdown(filename, content) {
-      const blobUrl = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(content);
-      browser.downloads.download({
-        url: blobUrl,
-        filename: filename,
-        saveAs: false,
-      });
+    async function downloadMarkdown(filename, content) {
+      await downloadFile(content, filename, 'text/markdown');
     }
   },
 });
