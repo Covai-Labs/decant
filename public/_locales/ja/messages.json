@@ -98,5 +98,48 @@
   "pngWarning": {
     "message": "⚠️ 長い記事のPNGエクスポートには少し時間がかかる場合があります。即時エクスポートにはPDFまたはMarkdownをご利用ください。",
     "description": "Warning message for PNG export"
+  },
+  "cmdClipAllTabs": {
+    "message": "ウィンドウ内のすべてのタブをMarkdownとして保存",
+    "description": "Shortcut command description for clipping all tabs"
+  },
+  "contextMenuClipAll": {
+    "message": "ウィンドウ内のすべてのタブをクリップ",
+    "description": "Context menu title for clipping all open tabs"
+  },
+  "clipAllTabs": {
+    "message": "すべてのタブをクリップ",
+    "description": "Button label for batch clipping all open tabs"
+  },
+  "batchModeZip": {
+    "message": "📦 ZIPアーカイブ (.zip)",
+    "description": "Option for batch export as ZIP archive"
+  },
+  "batchModeCombined": {
+    "message": "📑 結合ノート (.md)",
+    "description": "Option for batch export as a single combined Markdown note"
+  },
+  "batchModeSeparate": {
+    "message": "📂 個別ファイル (.md)",
+    "description": "Option for batch export as individual Markdown files"
+  },
+  "clippingTabsProgress": {
+    "message": "タブを抽出中…",
+    "description": "Initial loading text for batch clipping"
+  },
+  "clippingProgress": {
+    "message": "$2個中$1個のタブをクリップ中…",
+    "description": "Progress indicator for batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
+  },
+  "batchComplete": {
+    "message": "$1個のタブを正常にクリップしました！",
+    "description": "Completion message after batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" }
+    }
   }
 }

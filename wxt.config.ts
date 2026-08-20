@@ -12,8 +12,25 @@ export default defineConfig({
     homepage_url: 'https://decant.covai.org/',
     permissions:
       browser === 'firefox'
-        ? ['activeTab', 'scripting', 'storage', 'contextMenus', 'clipboardWrite']
-        : ['activeTab', 'scripting', 'storage', 'contextMenus', 'sidePanel', 'clipboardWrite'],
+        ? [
+            'activeTab',
+            'tabs',
+            'downloads',
+            'scripting',
+            'storage',
+            'contextMenus',
+            'clipboardWrite',
+          ]
+        : [
+            'activeTab',
+            'tabs',
+            'downloads',
+            'scripting',
+            'storage',
+            'contextMenus',
+            'sidePanel',
+            'clipboardWrite',
+          ],
     host_permissions: ['<all_urls>'],
     web_accessible_resources: [
       {
@@ -53,6 +70,12 @@ export default defineConfig({
         },
         description: '__MSG_cmdCopyTab__',
       },
+      clip_all_tabs: {
+        suggested_key: {
+          default: 'Alt+Shift+A',
+        },
+        description: '__MSG_cmdClipAllTabs__',
+      },
     },
     ...(browser === 'firefox'
       ? {
@@ -60,9 +83,6 @@ export default defineConfig({
             gecko: {
               id: 'decant@covai.org',
               strict_min_version: '142.0',
-              data_collection_permissions: {
-                required: ['none'],
-              },
             },
           },
         }
@@ -75,7 +95,7 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-      include: ['turndown', 'turndown-plugin-gfm'],
+      include: ['turndown', 'turndown-plugin-gfm', 'jszip'],
     },
   }),
 });

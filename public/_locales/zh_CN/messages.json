@@ -98,5 +98,48 @@
   "pngWarning": {
     "message": "⚠️ 导出长文章为 PNG 可能需要稍等片刻。如需即时导出，请选择 PDF 或 Markdown。",
     "description": "Warning message for PNG export"
+  },
+  "cmdClipAllTabs": {
+    "message": "将窗口中的所有标签页保存为 Markdown",
+    "description": "Shortcut command description for clipping all tabs"
+  },
+  "contextMenuClipAll": {
+    "message": "提取窗口中所有标签页",
+    "description": "Context menu title for clipping all open tabs"
+  },
+  "clipAllTabs": {
+    "message": "提取所有标签页",
+    "description": "Button label for batch clipping all open tabs"
+  },
+  "batchModeZip": {
+    "message": "📦 ZIP 压缩包 (.zip)",
+    "description": "Option for batch export as ZIP archive"
+  },
+  "batchModeCombined": {
+    "message": "📑 合并笔记 (.md)",
+    "description": "Option for batch export as a single combined Markdown note"
+  },
+  "batchModeSeparate": {
+    "message": "📂 独立文件 (.md)",
+    "description": "Option for batch export as individual Markdown files"
+  },
+  "clippingTabsProgress": {
+    "message": "正在提取标签页…",
+    "description": "Initial loading text for batch clipping"
+  },
+  "clippingProgress": {
+    "message": "正在提取第 $1 / $2 个标签页…",
+    "description": "Progress indicator for batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
+  },
+  "batchComplete": {
+    "message": "已成功提取 $1 个标签页！",
+    "description": "Completion message after batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" }
+    }
   }
 }

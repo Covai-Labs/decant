@@ -28,6 +28,7 @@
   "license": "AGPL-3.0-only",
   "dependencies": {
     "decant-core": "latest",
+    "jszip": "^3.10.1",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2"
   },

@@ -1,9 +1,10 @@
 import { browser } from 'wxt/browser';
 import { getOptions } from '../../src/shared/storage.js';
 import { buildAppUri } from '../../src/shared/uri-transfer.js';
-import { buildAiPrompt, getAiPlatformUrl } from '../../src/shared/ai-transfer.js';
+import { buildAiPrompt } from '../../src/shared/ai-transfer.js';
 import { logger } from '../../src/shared/logger.js';
-import { initI18n } from '../../src/shared/i18n.js';
+import { initI18n, getMessage } from '../../src/shared/i18n.js';
+import { isExtractableTab } from '../../src/shared/batch-clipper.js';
 
 // ── State ─────────────────────────────────────────────────────────
 let currentMarkdown = '';
@@ -32,6 +33,13 @@ const exportBtn = document.getElementById('export-btn');
 const optionsBtn = document.getElementById('options-btn');
 const pngWarningBanner = document.getElementById('png-warning-banner');
 
+const clipAllBtn = document.getElementById('clip-all-btn');
+const tabCountBadge = document.getElementById('tab-count-badge');
+const batchModeSelect = document.getElementById('batch-mode-select');
+const batchProgressContainer = document.getElementById('batch-progress-container');
+const batchProgressFill = document.getElementById('batch-progress-fill');
+const batchProgressText = document.getElementById('batch-progress-text');
+
 async function loadCommandShortcuts() {
   try {
     if (!browser.commands || !browser.commands.getAll) return;
@@ -43,6 +51,8 @@ async function loadCommandShortcuts() {
         copyBtn.setAttribute('title', `Copy Markdown to clipboard (${cmd.shortcut})`);
       } else if (cmd.name === 'clip_tab_as_markdown' && cmd.shortcut && downloadMdBtn) {
         downloadMdBtn.setAttribute('title', `Download Markdown file (${cmd.shortcut})`);
+      } else if (cmd.name === 'clip_all_tabs' && cmd.shortcut && clipAllBtn) {
+        clipAllBtn.setAttribute('title', `Clip all open tabs in this window (${cmd.shortcut})`);
       }
     }
   } catch (err) {
@@ -67,6 +77,20 @@ async function initPopup() {
     // AI target selection
     if (savedOptions.defaultAiTarget && savedOptions.defaultAiTarget !== 'none' && aiSelect) {
       aiSelect.value = savedOptions.defaultAiTarget;
+    }
+
+    // Update open tabs badge count
+    try {
+      const allTabs = await browser.tabs.query({ currentWindow: true });
+      const extractableTabs = allTabs.filter(isExtractableTab);
+      if (tabCountBadge) {
+        tabCountBadge.textContent = String(extractableTabs.length);
+      }
+      if (clipAllBtn && extractableTabs.length === 0) {
+        clipAllBtn.disabled = true;
+      }
+    } catch (tabErr) {
+      logger.warn('Popup', 'Could not query window tabs for batch badge:', tabErr);
     }
 
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -334,6 +358,65 @@ if (formatSelect) {
 }
 
 exportBtn.addEventListener('click', openExportPreview);
+
+// ── Batch Multi-Tab Clipping ──────────────────────────────────────
+if (clipAllBtn) {
+  clipAllBtn.addEventListener('click', async () => {
+    const mode = batchModeSelect ? batchModeSelect.value : 'zip';
+    clipAllBtn.disabled = true;
+    if (batchProgressContainer) batchProgressContainer.classList.remove('hidden');
+    if (batchProgressFill) batchProgressFill.style.width = '5%';
+    if (batchProgressText)
+      batchProgressText.textContent = getMessage('clippingTabsProgress', 'Extracting tabs…');
+
+    try {
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+      const windowId = tab?.windowId || null;
+      await browser.runtime.sendMessage({
+        action: 'BATCH_CLIP_TABS',
+        mode,
+        windowId,
+        options: savedOptions,
+      });
+    } catch (err) {
+      logger.error('Popup', 'Failed to trigger batch clip:', err);
+      if (batchProgressText) batchProgressText.textContent = 'Failed to start batch clipping.';
+      clipAllBtn.disabled = false;
+    }
+  });
+}
+
+browser.runtime.onMessage.addListener((request) => {
+  if (request.action === 'BATCH_PROGRESS') {
+    if (batchProgressContainer) batchProgressContainer.classList.remove('hidden');
+    const pct = Math.round((request.processed / request.total) * 100);
+    if (batchProgressFill) batchProgressFill.style.width = `${pct}%`;
+    if (batchProgressText) {
+      const msg = getMessage('clippingProgress', `Clipping $1 of $2 tabs…`, [
+        String(request.processed),
+        String(request.total),
+      ]);
+      batchProgressText.textContent = msg;
+    }
+  } else if (request.action === 'BATCH_COMPLETE') {
+    if (batchProgressFill) batchProgressFill.style.width = '100%';
+    if (batchProgressText) {
+      const msg = getMessage('batchComplete', `Successfully clipped $1 tabs!`, [
+        String(request.result?.extracted || 0),
+      ]);
+      batchProgressText.textContent = `✓ ${msg}`;
+    }
+    setTimeout(() => {
+      if (batchProgressContainer) batchProgressContainer.classList.add('hidden');
+      if (clipAllBtn) clipAllBtn.disabled = false;
+    }, 2500);
+  } else if (request.action === 'BATCH_ERROR') {
+    if (batchProgressText) {
+      batchProgressText.textContent = `Error: ${request.error || 'Failed to clip tabs'}`;
+    }
+    if (clipAllBtn) clipAllBtn.disabled = false;
+  }
+});
 
 optionsBtn.addEventListener('click', () => {
   if (browser.runtime.openOptionsPage) {

@@ -98,5 +98,48 @@
   "pngWarning": {
     "message": "⚠️ Der PNG-Export bei langen Artikeln kann einen Moment dauern. Nutzen Sie PDF oder Markdown für sofortigen Export.",
     "description": "Warning message for PNG export"
+  },
+  "cmdClipAllTabs": {
+    "message": "Alle geöffneten Tabs im Fenster als Markdown speichern",
+    "description": "Shortcut command description for clipping all tabs"
+  },
+  "contextMenuClipAll": {
+    "message": "Alle Tabs im Fenster decanten",
+    "description": "Context menu title for clipping all open tabs"
+  },
+  "clipAllTabs": {
+    "message": "Alle Tabs decanten",
+    "description": "Button label for batch clipping all open tabs"
+  },
+  "batchModeZip": {
+    "message": "📦 ZIP-Archiv (.zip)",
+    "description": "Option for batch export as ZIP archive"
+  },
+  "batchModeCombined": {
+    "message": "📑 Kombinierte Notiz (.md)",
+    "description": "Option for batch export as a single combined Markdown note"
+  },
+  "batchModeSeparate": {
+    "message": "📂 Einzelne Dateien (.md)",
+    "description": "Option for batch export as individual Markdown files"
+  },
+  "clippingTabsProgress": {
+    "message": "Tabs werden extrahiert…",
+    "description": "Initial loading text for batch clipping"
+  },
+  "clippingProgress": {
+    "message": "Extrahiere $1 von $2 Tabs…",
+    "description": "Progress indicator for batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
+  },
+  "batchComplete": {
+    "message": "$1 Tabs erfolgreich decanted!",
+    "description": "Completion message after batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" }
+    }
   }
 }

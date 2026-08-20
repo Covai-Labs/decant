@@ -4,6 +4,7 @@ import { getOptions } from '../../src/shared/storage.js';
 import { getAiPlatformUrl } from '../../src/shared/ai-transfer.js';
 import { logger } from '../../src/shared/logger.js';
 import { getMessage } from '../../src/shared/i18n.js';
+import { clipAllTabs } from '../../src/shared/batch-clipper.js';
 
 const UNINSTALL_URL = 'https://decant.covai.org/uninstall-feedback.html';
 const WELCOME_URL = 'https://decant.covai.org/welcome.html';
@@ -21,6 +22,7 @@ export default defineBackground({
       browser.contextMenus.removeAll(() => {
         const copyTitle = getMessage('contextMenuCopy', 'Copy to Markdown');
         const saveTitle = getMessage('contextMenuSave', 'Save to Markdown');
+        const clipAllTitle = getMessage('contextMenuClipAll', 'Clip All Tabs in Window');
 
         browser.contextMenus.create({
           id: 'decant-copy',
@@ -32,6 +34,12 @@ export default defineBackground({
           id: 'decant-save',
           title: saveTitle,
           contexts: ['page', 'selection'],
+        });
+
+        browser.contextMenus.create({
+          id: 'decant-clip-all',
+          title: clipAllTitle,
+          contexts: ['page'],
         });
       });
     }
@@ -63,6 +71,8 @@ export default defineBackground({
         copyTabToClipboard(tab.id, options);
       } else if (info.menuItemId === 'decant-save') {
         clipTab(tab.id, options);
+      } else if (info.menuItemId === 'decant-clip-all') {
+        handleBatchClip(tab.windowId, options, 'zip');
       }
     });
 
@@ -76,8 +86,48 @@ export default defineBackground({
         clipTab(tab.id, options);
       } else if (command === 'copy_tab_as_markdown') {
         copyTabToClipboard(tab.id, options);
+      } else if (command === 'clip_all_tabs') {
+        handleBatchClip(tab.windowId, options, 'zip');
       }
     });
+
+    async function handleBatchClip(windowId, options, mode = 'zip') {
+      try {
+        logger.info(
+          'Background',
+          `Starting batch tab clipping for window: ${windowId}, mode: ${mode}`,
+        );
+        const result = await clipAllTabs(options, mode, windowId, (processed, total, title) => {
+          browser.runtime
+            .sendMessage({
+              action: 'BATCH_PROGRESS',
+              processed,
+              total,
+              title,
+            })
+            .catch(() => {
+              // Popup might be closed, which is fine
+            });
+        });
+
+        browser.runtime
+          .sendMessage({
+            action: 'BATCH_COMPLETE',
+            result,
+          })
+          .catch(() => {});
+
+        logger.info('Background', 'Batch tab clipping completed successfully:', result);
+      } catch (err) {
+        logger.error('Background', 'Batch tab clipping failed:', err);
+        browser.runtime
+          .sendMessage({
+            action: 'BATCH_ERROR',
+            error: err.message,
+          })
+          .catch(() => {});
+      }
+    }
 
     async function clipTab(tabId, options) {
       try {
@@ -221,6 +271,22 @@ export default defineBackground({
             sendResponse({ success: true });
           } catch (e) {
             logger.error('Background', 'Transfer failed:', e);
+            sendResponse({ success: false, error: e.message });
+          }
+        })();
+        return true;
+      }
+
+      if (request.action === 'BATCH_CLIP_TABS') {
+        (async () => {
+          try {
+            const options = request.options || (await getOptions());
+            const mode = request.mode || 'zip';
+            const windowId = request.windowId || null;
+            await handleBatchClip(windowId, options, mode);
+            sendResponse({ success: true });
+          } catch (e) {
+            logger.error('Background', 'Batch clipping error:', e);
             sendResponse({ success: false, error: e.message });
           }
         })();

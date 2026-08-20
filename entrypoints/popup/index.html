@@ -121,6 +121,35 @@
       </button>
     </div>
 
+    <!-- Row 5: Batch Multi-Tab Clipping -->
+    <div class="batch-section">
+      <div class="batch-control-group">
+        <select
+          id="batch-mode-select"
+          class="select-dropdown batch-select"
+          title="Batch Export Mode"
+        >
+          <option value="zip" selected data-i18n="batchModeZip">📦 ZIP Archive (.zip)</option>
+          <option value="combined" data-i18n="batchModeCombined">📑 Combined Note (.md)</option>
+          <option value="separate" data-i18n="batchModeSeparate">📂 Separate Files (.md)</option>
+        </select>
+        <button
+          id="clip-all-btn"
+          class="btn batch-btn"
+          title="Clip all open tabs in this window (Alt+Shift+A)"
+        >
+          <span data-i18n="clipAllTabs">Clip All Tabs</span>
+          <span id="tab-count-badge" class="badge">...</span>
+        </button>
+      </div>
+      <div id="batch-progress-container" class="batch-progress-container hidden">
+        <div class="batch-progress-bar">
+          <div id="batch-progress-fill" class="batch-progress-fill" style="width: 0%"></div>
+        </div>
+        <span id="batch-progress-text" class="batch-progress-text">Clipping tabs...</span>
+      </div>
+    </div>
+
     <div id="png-warning-banner" class="png-warning-banner hidden" data-i18n="pngWarning">
       ⚠️ PNG export on long articles may take a few moments. Consider PDF or Markdown for instant
       export.

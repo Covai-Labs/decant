@@ -98,5 +98,48 @@
   "pngWarning": {
     "message": "⚠️ La exportación a PNG en artículos largos puede tardar unos momentos. Considere PDF o Markdown para exportación instantánea.",
     "description": "Warning message for PNG export"
+  },
+  "cmdClipAllTabs": {
+    "message": "Guardar todas las pestañas abiertas de la ventana como Markdown",
+    "description": "Shortcut command description for clipping all tabs"
+  },
+  "contextMenuClipAll": {
+    "message": "Guardar todas las pestañas de la ventana",
+    "description": "Context menu title for clipping all open tabs"
+  },
+  "clipAllTabs": {
+    "message": "Guardar todas las pestañas",
+    "description": "Button label for batch clipping all open tabs"
+  },
+  "batchModeZip": {
+    "message": "📦 Archivo ZIP (.zip)",
+    "description": "Option for batch export as ZIP archive"
+  },
+  "batchModeCombined": {
+    "message": "📑 Nota combinada (.md)",
+    "description": "Option for batch export as a single combined Markdown note"
+  },
+  "batchModeSeparate": {
+    "message": "📂 Archivos separados (.md)",
+    "description": "Option for batch export as individual Markdown files"
+  },
+  "clippingTabsProgress": {
+    "message": "Extrayendo pestañas…",
+    "description": "Initial loading text for batch clipping"
+  },
+  "clippingProgress": {
+    "message": "Guardando $1 de $2 pestañas…",
+    "description": "Progress indicator for batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
+  },
+  "batchComplete": {
+    "message": "¡$1 pestañas guardadas con éxito!",
+    "description": "Completion message after batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" }
+    }
   }
 }

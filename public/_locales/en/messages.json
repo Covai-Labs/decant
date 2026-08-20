@@ -98,5 +98,48 @@
   "pngWarning": {
     "message": "⚠️ PNG export on long articles may take a few moments. Consider PDF or Markdown for instant export.",
     "description": "Warning message for PNG export"
+  },
+  "cmdClipAllTabs": {
+    "message": "Clip all open tabs in window as Markdown",
+    "description": "Shortcut command description for clipping all tabs"
+  },
+  "contextMenuClipAll": {
+    "message": "Clip All Tabs in Window",
+    "description": "Context menu title for clipping all open tabs"
+  },
+  "clipAllTabs": {
+    "message": "Clip All Tabs",
+    "description": "Button label for batch clipping all open tabs"
+  },
+  "batchModeZip": {
+    "message": "📦 ZIP Archive (.zip)",
+    "description": "Option for batch export as ZIP archive"
+  },
+  "batchModeCombined": {
+    "message": "📑 Combined Note (.md)",
+    "description": "Option for batch export as a single combined Markdown note"
+  },
+  "batchModeSeparate": {
+    "message": "📂 Separate Files (.md)",
+    "description": "Option for batch export as individual Markdown files"
+  },
+  "clippingTabsProgress": {
+    "message": "Extracting tabs…",
+    "description": "Initial loading text for batch clipping"
+  },
+  "clippingProgress": {
+    "message": "Clipping $1 of $2 tabs…",
+    "description": "Progress indicator for batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
+  },
+  "batchComplete": {
+    "message": "Successfully clipped $1 tabs!",
+    "description": "Completion message after batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" }
+    }
   }
 }

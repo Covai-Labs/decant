@@ -16,11 +16,11 @@
     "description": "Shortcut command description for opening popup"
   },
   "cmdClipTab": {
-    "message": "தற்போதைய தாவலை மார்க்டவுனாக சேமி",
+    "message": "தற்போதைய கீற்றை மார்க்டவுனாக சேமி",
     "description": "Shortcut command description for clipping current tab"
   },
   "cmdCopyTab": {
-    "message": "தற்போதைய தாவலின் மார்க்டவுனை நகலெடு",
+    "message": "தற்போதைய கீற்றின் மார்க்டவுனை நகலெடு",
     "description": "Shortcut command description for copying tab markdown"
   },
   "contextMenuCopy": {
@@ -72,7 +72,7 @@
     "description": "Save button text"
   },
   "previewButton": {
-    "message": "🔍 புதிய தாவலில் முன்னோட்டம்",
+    "message": "🔍 புதிய கீற்றில் முன்னோட்டம்",
     "description": "Preview button text"
   },
   "sendToAi": {
@@ -98,5 +98,48 @@
   "pngWarning": {
     "message": "⚠️ பெரிய கட்டுரைகளுக்கு PNG ஏற்றுமதி சில நிமிடங்கள் ஆகலாம். உடனடி ஏற்றுமதிக்கு PDF அல்லது மார்க்டவுனைப் பயன்படுத்தவும்.",
     "description": "Warning message for PNG export"
+  },
+  "cmdClipAllTabs": {
+    "message": "சாளரத்திலுள்ள அனைத்து கீற்றுகளையும் மார்க்டவுனாக சேமி",
+    "description": "Shortcut command description for clipping all tabs"
+  },
+  "contextMenuClipAll": {
+    "message": "சாளரத்தின் அனைத்து கீற்றுகளையும் சேமி",
+    "description": "Context menu title for clipping all open tabs"
+  },
+  "clipAllTabs": {
+    "message": "அனைத்து கீற்றுகளையும் சேமி",
+    "description": "Button label for batch clipping all open tabs"
+  },
+  "batchModeZip": {
+    "message": "📦 ZIP காப்பகம் (.zip)",
+    "description": "Option for batch export as ZIP archive"
+  },
+  "batchModeCombined": {
+    "message": "📑 ஒருங்கிணைந்த குறிப்பு (.md)",
+    "description": "Option for batch export as a single combined Markdown note"
+  },
+  "batchModeSeparate": {
+    "message": "📂 தனித்தனி கோப்புகள் (.md)",
+    "description": "Option for batch export as individual Markdown files"
+  },
+  "clippingTabsProgress": {
+    "message": "கீற்றுகள் பிரித்தெடுக்கப்படுகின்றன…",
+    "description": "Initial loading text for batch clipping"
+  },
+  "clippingProgress": {
+    "message": "$2 கீற்றுகளில் $1 சேமிக்கப்படுகிறது…",
+    "description": "Progress indicator for batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" },
+      "2": { "content": "$2" }
+    }
+  },
+  "batchComplete": {
+    "message": "$1 கீற்றுகள் வெற்றிகரமாக சேமிக்கப்பட்டன!",
+    "description": "Completion message after batch clipping",
+    "placeholders": {
+      "1": { "content": "$1" }
+    }
   }
 }
