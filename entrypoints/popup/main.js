@@ -364,6 +364,23 @@ if (clipAllBtn) {
   clipAllBtn.addEventListener('click', async () => {
     const mode = batchModeSelect ? batchModeSelect.value : 'zip';
     clipAllBtn.disabled = true;
+
+    // Check & request host permissions if needed (e.g. Firefox MV3 optional permissions)
+    try {
+      if (browser.permissions && browser.permissions.contains) {
+        const hasPerm = await browser.permissions
+          .contains({ origins: ['<all_urls>'] })
+          .catch(() => false);
+        if (!hasPerm && browser.permissions.request) {
+          await browser.permissions.request({ origins: ['<all_urls>'] }).catch((err) => {
+            logger.warn('Popup', 'User declined or error requesting permissions:', err);
+          });
+        }
+      }
+    } catch (permErr) {
+      logger.warn('Popup', 'Permission verification error:', permErr);
+    }
+
     if (batchProgressContainer) batchProgressContainer.classList.remove('hidden');
     if (batchProgressFill) batchProgressFill.style.width = '5%';
     if (batchProgressText)

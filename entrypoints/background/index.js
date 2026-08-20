@@ -44,8 +44,26 @@ export default defineBackground({
       });
     }
 
+    async function injectContentScriptIntoOpenTabs() {
+      try {
+        const tabs = await browser.tabs.query({ url: ['http://*/*', 'https://*/*'] });
+        for (const tab of tabs) {
+          if (tab.id && !tab.discarded) {
+            browser.scripting
+              ?.executeScript({
+                target: { tabId: tab.id },
+                files: ['content-scripts/content.js'],
+              })
+              .catch(() => {});
+          }
+        }
+      } catch (err) {
+        logger.debug('Background', 'Could not pre-inject content scripts:', err);
+      }
+    }
+
     // Setup Context Menus & Onboarding
-    browser.runtime.onInstalled.addListener((details) => {
+    browser.runtime.onInstalled.addListener(async (details) => {
       logger.info('Background', 'Extension event details:', details.reason);
 
       if (details.reason === 'install') {
@@ -53,6 +71,7 @@ export default defineBackground({
       }
 
       setupContextMenus();
+      await injectContentScriptIntoOpenTabs();
     });
 
     if (browser.runtime.onStartup) {

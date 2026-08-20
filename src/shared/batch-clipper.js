@@ -23,6 +23,7 @@ export const RESTRICTED_HOSTS = ['chromewebstore.google.com', 'addons.mozilla.or
  */
 export function isExtractableTab(tab) {
   if (!tab || !tab.url || typeof tab.url !== 'string') return false;
+  if (tab.discarded) return false;
   const url = tab.url.trim();
   if (RESTRICTED_SCHEMES.some((scheme) => url.startsWith(scheme))) {
     return false;
@@ -194,7 +195,7 @@ export async function generateZipArchive(results) {
 /**
  * Helper to safely send message to a tab with retries.
  */
-async function sendMessageToTab(tabId, message, maxRetries = 1, retryDelay = 60) {
+async function sendMessageToTab(tabId, message, maxRetries = 2, retryDelay = 100) {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const res = await new Promise((resolve) => {
       browser.tabs.sendMessage(tabId, message, { frameId: 0 }, (response) => {
@@ -247,7 +248,7 @@ export async function clipAllTabs(options = {}, mode = 'zip', windowId = null, o
 
   async function processTab(tab) {
     try {
-      let res = await sendMessageToTab(tab.id, { action: 'EXTRACT_MARKDOWN', options }, 1, 50);
+      let res = await sendMessageToTab(tab.id, { action: 'EXTRACT_MARKDOWN', options }, 2, 120);
 
       if (!res) {
         // Dynamically inject content script if not already responding
@@ -256,7 +257,7 @@ export async function clipAllTabs(options = {}, mode = 'zip', windowId = null, o
             target: { tabId: tab.id },
             files: ['content-scripts/content.js'],
           });
-          res = await sendMessageToTab(tab.id, { action: 'EXTRACT_MARKDOWN', options }, 3, 100);
+          res = await sendMessageToTab(tab.id, { action: 'EXTRACT_MARKDOWN', options }, 4, 150);
         } catch (injectErr) {
           logger.warn('BatchClipper', `Script injection failed for tab ${tab.id}:`, injectErr);
         }
