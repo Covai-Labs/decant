@@ -9,6 +9,7 @@ test('DEFAULT_OPTIONS contains expected default settings', () => {
   assert.equal(DEFAULT_OPTIONS.codeBlockStyle, 'fenced');
   assert.equal(DEFAULT_OPTIONS.defaultAppTarget, 'obsidian');
   assert.equal(DEFAULT_OPTIONS.defaultAiTarget, 'chatgpt');
+  assert.equal(DEFAULT_OPTIONS.promptSaveLocation, true);
 });
 
 test('getOptions returns DEFAULT_OPTIONS when chrome.storage is unavailable', async () => {

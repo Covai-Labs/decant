@@ -11,6 +11,7 @@ export const DEFAULT_OPTIONS = {
   aiPromptTemplate:
     'Please analyze and summarize the key takeaways from this web article:\n\nTitle: {{title}}\nSource: {{url}}\n\n{{content}}',
   downloadImages: false,
+  promptSaveLocation: true,
   uiLanguage: 'auto',
 };
 

@@ -115,8 +115,9 @@ ${sections}
  * @param {string|Blob} content File text or Blob
  * @param {string} filename Output filename
  * @param {string} [mimeType='text/markdown'] MIME type
+ * @param {boolean} [saveAs=false] Whether to prompt user with Save As dialog
  */
-export async function downloadFile(content, filename, mimeType = 'text/markdown') {
+export async function downloadFile(content, filename, mimeType = 'text/markdown', saveAs = false) {
   let downloadUrl;
   let isObjectUrl = false;
 
@@ -144,7 +145,7 @@ export async function downloadFile(content, filename, mimeType = 'text/markdown'
   const downloadId = await browser.downloads.download({
     url: downloadUrl,
     filename,
-    saveAs: false,
+    saveAs: Boolean(saveAs),
   });
 
   if (isObjectUrl) {
@@ -287,18 +288,19 @@ export async function clipAllTabs(options = {}, mode = 'zip', windowId = null, o
   }
 
   const timestamp = new Date().toISOString().split('T')[0];
+  const shouldSaveAs = options.promptSaveLocation !== false;
 
   if (mode === 'zip') {
     const zipData = await generateZipArchive(results);
-    await downloadFile(zipData, `decanted-tabs-${timestamp}.zip`, 'application/zip');
+    await downloadFile(zipData, `decanted-tabs-${timestamp}.zip`, 'application/zip', shouldSaveAs);
   } else if (mode === 'combined') {
     const combinedDoc = formatCombinedMarkdown(results, timestamp);
-    await downloadFile(combinedDoc, `decanted-all-tabs-${timestamp}.md`, 'text/markdown');
+    await downloadFile(combinedDoc, `decanted-all-tabs-${timestamp}.md`, 'text/markdown', shouldSaveAs);
   } else {
     // Separate individual downloads with throttling
     const deduped = deduplicateFilenames(results);
     for (const item of deduped) {
-      await downloadFile(item.markdown, item.filename, 'text/markdown');
+      await downloadFile(item.markdown, item.filename, 'text/markdown', shouldSaveAs);
       await new Promise((r) => setTimeout(r, 180));
     }
   }

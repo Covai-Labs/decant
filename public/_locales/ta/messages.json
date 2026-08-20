@@ -55,6 +55,10 @@
     "message": "தானியங்கி (கணினி மொழி)",
     "description": "Option for system default language"
   },
+  "promptSaveLocation": {
+    "message": "பதிவிறக்கம் செய்யும்போது சேமிக்கும் இடத்தை கேட்கவும் (Save As)",
+    "description": "Checkbox label to prompt for save destination"
+  },
   "saveSettings": {
     "message": "அமைப்புகளை சேமி",
     "description": "Button to save settings"

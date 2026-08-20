@@ -55,6 +55,10 @@
     "message": "自動 (システム言語)",
     "description": "Option for system default language"
   },
+  "promptSaveLocation": {
+    "message": "ダウンロードごとに保存先を確認する (名前を付けて保存)",
+    "description": "Checkbox label to prompt for save destination"
+  },
   "saveSettings": {
     "message": "設定を保存",
     "description": "Button to save settings"

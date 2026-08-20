@@ -52,8 +52,12 @@
     "description": "Label for UI language selection dropdown"
   },
   "uiLanguageAuto": {
-    "message": "自动 (跟随系统)",
+    "message": "自动 (系统语言)",
     "description": "Option for system default language"
+  },
+  "promptSaveLocation": {
+    "message": "每次下载前询问保存位置 (另存为对话框)",
+    "description": "Checkbox label to prompt for save destination"
   },
   "saveSettings": {
     "message": "保存设置",

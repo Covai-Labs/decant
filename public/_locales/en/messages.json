@@ -55,6 +55,10 @@
     "message": "Auto (System Language)",
     "description": "Option for system default language"
   },
+  "promptSaveLocation": {
+    "message": "Ask where to save each download (Save As dialog)",
+    "description": "Checkbox label to prompt for save destination"
+  },
   "saveSettings": {
     "message": "Save Settings",
     "description": "Button to save settings"

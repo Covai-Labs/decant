@@ -55,6 +55,10 @@
     "message": "Automatique (Langue du système)",
     "description": "Option for system default language"
   },
+  "promptSaveLocation": {
+    "message": "Demander où enregistrer chaque téléchargement (Enregistrer sous)",
+    "description": "Checkbox label to prompt for save destination"
+  },
   "saveSettings": {
     "message": "Enregistrer les paramètres",
     "description": "Button to save settings"

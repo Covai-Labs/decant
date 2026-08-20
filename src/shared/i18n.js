@@ -26,20 +26,37 @@ async function loadCustomMessages(lang) {
 }
 
 /**
- * Gets localized message for a key, respecting custom language setting if selected.
+ * Gets localized message for a key, respecting custom language setting if selected and applying substitutions.
  * @param {string} key
- * @param {string} [fallback]
+ * @param {string} [fallback='']
+ * @param {string[]|string} [substitutions=[]]
  * @returns {string}
  */
-export function getMessage(key, fallback = '') {
+export function getMessage(key, fallback = '', substitutions = []) {
+  const subs = Array.isArray(substitutions)
+    ? substitutions
+    : substitutions !== undefined && substitutions !== null && substitutions !== ''
+      ? [substitutions]
+      : [];
+
+  let msg = '';
   if (customMessagesCache && customMessagesCache[key]) {
-    return customMessagesCache[key].message;
+    msg = customMessagesCache[key].message;
+  } else if (typeof chrome !== 'undefined' && chrome.i18n && chrome.i18n.getMessage) {
+    msg = chrome.i18n.getMessage(key, subs);
   }
-  if (typeof chrome !== 'undefined' && chrome.i18n && chrome.i18n.getMessage) {
-    const msg = chrome.i18n.getMessage(key);
-    if (msg) return msg;
+
+  if (!msg) {
+    msg = fallback;
   }
-  return fallback;
+
+  if (msg && subs.length > 0) {
+    subs.forEach((sub, i) => {
+      msg = msg.replaceAll(`$${i + 1}`, String(sub));
+    });
+  }
+
+  return msg;
 }
 
 /**
