@@ -27,7 +27,7 @@
   "author": "deadrat-in",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@covai/parser-core": "file:../parser-core",
+    "decant-core": "file:../decant-core",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2"
   },

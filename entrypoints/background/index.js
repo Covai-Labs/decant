@@ -15,6 +15,27 @@ export default defineBackground({
 
     browser.runtime.setUninstallURL(UNINSTALL_URL);
 
+    function setupContextMenus() {
+      if (!browser.contextMenus) return;
+
+      browser.contextMenus.removeAll(() => {
+        const copyTitle = getMessage('contextMenuCopy', 'Copy to Markdown');
+        const saveTitle = getMessage('contextMenuSave', 'Save to Markdown');
+
+        browser.contextMenus.create({
+          id: 'decant-copy',
+          title: copyTitle,
+          contexts: ['page', 'selection'],
+        });
+
+        browser.contextMenus.create({
+          id: 'decant-save',
+          title: saveTitle,
+          contexts: ['page', 'selection'],
+        });
+      });
+    }
+
     // Setup Context Menus & Onboarding
     browser.runtime.onInstalled.addListener((details) => {
       logger.info('Background', 'Extension event details:', details.reason);
@@ -23,18 +44,14 @@ export default defineBackground({
         browser.tabs.create({ url: WELCOME_URL });
       }
 
-      browser.contextMenus.create({
-        id: 'decant-page',
-        title: getMessage('contextMenuPage', 'Decant page to Markdown'),
-        contexts: ['page'],
-      });
-
-      browser.contextMenus.create({
-        id: 'decant-selection',
-        title: getMessage('contextMenuSelection', 'Decant selection to Markdown'),
-        contexts: ['selection'],
-      });
+      setupContextMenus();
     });
+
+    if (browser.runtime.onStartup) {
+      browser.runtime.onStartup.addListener(() => {
+        setupContextMenus();
+      });
+    }
 
     // Handle Context Menu clicks
     browser.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -42,9 +59,9 @@ export default defineBackground({
       logger.info('Background', 'Context menu clicked:', info.menuItemId, '| Tab:', tab.id);
       const options = await getOptions();
 
-      if (info.menuItemId === 'decant-page') {
-        clipTab(tab.id, options);
-      } else if (info.menuItemId === 'decant-selection') {
+      if (info.menuItemId === 'decant-copy') {
+        copyTabToClipboard(tab.id, options);
+      } else if (info.menuItemId === 'decant-save') {
         clipTab(tab.id, options);
       }
     });

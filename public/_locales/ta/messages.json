@@ -23,6 +23,14 @@
     "message": "தற்போதைய தாவலின் மார்க்டவுனை நகலெடு",
     "description": "Shortcut command description for copying tab markdown"
   },
+  "contextMenuCopy": {
+    "message": "Markdown ஆக நகலெடு",
+    "description": "Context menu title for copying page or selection to Markdown"
+  },
+  "contextMenuSave": {
+    "message": "Markdown ஆக சேமி",
+    "description": "Context menu title for saving page or selection to Markdown file"
+  },
   "contextMenuPage": {
     "message": "பக்கத்தை மார்க்டவுனாக மாற்று",
     "description": "Context menu title for clipping entire page"

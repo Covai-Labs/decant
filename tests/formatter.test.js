@@ -30,6 +30,23 @@ test('formatMarkdown includes YAML frontmatter when enabled', () => {
   assert.match(formatted, /This is the main body\./);
 });
 
+test('formatMarkdown formats default frontmatter template with extracted_with', () => {
+  const article = {
+    title: 'Hello World',
+    byline: 'Jane Doe',
+    url: 'https://example.com/hello',
+    siteName: 'Example Blog',
+    excerpt: 'An example article',
+    content: 'This is the main body.',
+    publishedTime: '2026-08-20T10:00:00Z',
+  };
+
+  const formatted = formatMarkdown(article, DEFAULT_OPTIONS);
+  assert.match(formatted, /extracted_with: "decant\.covai\.org"/);
+  assert.match(formatted, /title: "Hello World"/);
+  assert.match(formatted, /source: "https:\/\/example\.com\/hello"/);
+});
+
 test('formatMarkdown omits frontmatter when disabled', () => {
   const article = {
     title: 'No Frontmatter Test',

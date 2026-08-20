@@ -23,6 +23,14 @@
     "message": "复制当前标签页的 Markdown",
     "description": "Shortcut command description for copying tab markdown"
   },
+  "contextMenuCopy": {
+    "message": "复制为 Markdown",
+    "description": "Context menu title for copying page or selection to Markdown"
+  },
+  "contextMenuSave": {
+    "message": "保存为 Markdown",
+    "description": "Context menu title for saving page or selection to Markdown file"
+  },
   "contextMenuPage": {
     "message": "将页面剪藏为 Markdown",
     "description": "Context menu title for clipping entire page"

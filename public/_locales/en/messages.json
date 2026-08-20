@@ -23,6 +23,14 @@
     "message": "Copy current tab Markdown to clipboard",
     "description": "Shortcut command description for copying tab markdown"
   },
+  "contextMenuCopy": {
+    "message": "Copy to Markdown",
+    "description": "Context menu title for copying page or selection to Markdown"
+  },
+  "contextMenuSave": {
+    "message": "Save to Markdown",
+    "description": "Context menu title for saving page or selection to Markdown file"
+  },
   "contextMenuPage": {
     "message": "Decant page to Markdown",
     "description": "Context menu title for clipping entire page"

@@ -1,6 +1,6 @@
 export const DEFAULT_OPTIONS = {
   includeFrontmatter: true,
-  frontmatterTemplate: `---\ntitle: "{{title}}"\nsource: "{{url}}"\nauthor: "{{author}}"\npublished: {{published}}\nclipped: {{clipped}}\ntags:\n  - web-clip\n---`,
+  frontmatterTemplate: `---\ntitle: "{{title}}"\nsource: "{{url}}"\nauthor: "{{author}}"\npublished: {{published}}\nclipped: {{clipped}}\nextracted_with: "decant.covai.org"\ntags:\n  - web-clip\n---`,
   headingStyle: 'atx', // 'atx' (#) or 'setext' (===)
   bulletListMarker: '-', // '-', '*', '+'
   codeBlockStyle: 'fenced', // 'fenced' or 'indented'

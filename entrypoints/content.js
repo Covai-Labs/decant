@@ -1,25 +1,17 @@
 import { defineContentScript } from 'wxt/utils/define-content-script';
-import { Readability } from '../src/vendor/readability/index.js';
-import TurndownService from 'turndown';
-import { gfm } from 'turndown-plugin-gfm';
+import {
+  detectPlatform,
+  parsers,
+  isAiChatUrl,
+  extractArticleIntelligent,
+  convertToMarkdown,
+} from 'decant-core';
 import { DEFAULT_OPTIONS } from '../src/shared/storage.js';
 import { formatMarkdown, sanitizeFilename } from '../src/shared/formatter.js';
 import { logger } from '../src/shared/logger.js';
-import { detectPlatform, parsers } from '@covai/parser-core';
 
-function createTurndownService(options = DEFAULT_OPTIONS) {
-  const turndownService = new TurndownService({
-    headingStyle: options.headingStyle || 'atx',
-    bulletListMarker: options.bulletListMarker || '-',
-    codeBlockStyle: options.codeBlockStyle || 'fenced',
-    fence: options.fenceSymbol || '```',
-  });
-
-  turndownService.use(gfm);
-  return turndownService;
-}
-
-function extractAiChat() {
+function extractAiChat(options = DEFAULT_OPTIONS) {
+  if (!isAiChatUrl(window.location.href)) return null;
   const platform = detectPlatform(window.location.href);
   if (!platform) return null;
 
@@ -33,18 +25,22 @@ function extractAiChat() {
     const result = parser.parse();
     if (!result) return null;
 
-    const turndownService = createTurndownService();
+    const turndownOptions = {
+      headingStyle: options.headingStyle || 'atx',
+      bulletListMarker: options.bulletListMarker || '-',
+      codeBlockStyle: options.codeBlockStyle || 'fenced',
+      fence: options.fenceSymbol || '```',
+    };
+
     const mdBody = result.messages
       .map((m) => {
         const role = m.role === 'user' ? 'User' : 'Assistant';
-        const content = turndownService.turndown(m.content || '');
+        const content = convertToMarkdown(m.content || '', turndownOptions);
         return `**${role}:**\n\n${content}`;
       })
       .join('\n\n---\n\n');
 
-    const filename = sanitizeFilename(result.title || `${platform} Chat`);
-
-    return {
+    const parsedArticle = {
       title: result.title || `${platform} Chat`,
       byline: '',
       dir: '',
@@ -54,9 +50,16 @@ function extractAiChat() {
       url: window.location.href,
       content: mdBody,
       htmlContent: '',
-      markdown: `# ${result.title || `${platform} Chat`}\n\n${mdBody}`,
-      filename: `${filename}.md`,
-      baseFilename: filename,
+    };
+
+    const formattedMarkdown = formatMarkdown(parsedArticle, options);
+    const baseFilename = sanitizeFilename(parsedArticle.title);
+
+    return {
+      ...parsedArticle,
+      markdown: formattedMarkdown,
+      filename: `${baseFilename}.md`,
+      baseFilename,
     };
   } catch (err) {
     logger.error('ContentScript', 'AI chat extraction failed:', err);
@@ -64,31 +67,36 @@ function extractAiChat() {
   }
 }
 
-export function extractArticle(options = DEFAULT_OPTIONS) {
+export async function extractArticle(options = DEFAULT_OPTIONS) {
   logger.log('ContentScript', 'Starting article extraction with options:', options);
 
-  const documentClone = document.cloneNode(true);
-  const reader = new Readability(documentClone);
-  const article = reader.parse();
+  const turndownOptions = {
+    headingStyle: options.headingStyle || 'atx',
+    bulletListMarker: options.bulletListMarker || '-',
+    codeBlockStyle: options.codeBlockStyle || 'fenced',
+    fence: options.fenceSymbol || '```',
+  };
+
+  const article = await extractArticleIntelligent(document, {
+    url: window.location.href,
+    turndownOptions,
+  });
 
   const title = article?.title || document.title || 'Untitled';
-  const htmlContent = article?.content || document.body?.innerHTML || '';
+  const htmlContent = article?.htmlContent || document.body?.innerHTML || '';
+  const markdownBody = article?.content || '';
 
   logger.log('ContentScript', 'Extracted title:', title, '| HTML length:', htmlContent?.length);
-
-  const turndownService = createTurndownService(options);
-  const markdownBody = turndownService.turndown(htmlContent);
-
   logger.log('ContentScript', 'Converted Markdown body length:', markdownBody?.length);
 
   const parsedArticle = {
     title,
-    byline: article?.byline || '',
-    dir: article?.dir || '',
-    excerpt: article?.excerpt || '',
+    byline: article?.author || '',
+    dir: '',
+    excerpt: article?.description || '',
     siteName: article?.siteName || '',
-    publishedTime: article?.publishedTime || '',
-    url: window.location.href,
+    publishedTime: article?.published || '',
+    url: article?.url || window.location.href,
     content: markdownBody,
     htmlContent,
   };
@@ -314,15 +322,18 @@ export default defineContentScript({
           }
 
           if (request.action === 'EXTRACT_MARKDOWN') {
-            try {
-              const aiResult = extractAiChat();
-              const result = aiResult || extractArticle(request.options || DEFAULT_OPTIONS);
-              logger.info('ContentScript', 'Extraction successful for:', result.title);
-              sendResponse({ status: 'success', data: result });
-            } catch (err) {
-              logger.error('ContentScript', 'Extraction failed:', err);
-              sendResponse({ status: 'error', error: err.message });
-            }
+            (async () => {
+              try {
+                const aiResult = extractAiChat(request.options || DEFAULT_OPTIONS);
+                const result =
+                  aiResult || (await extractArticle(request.options || DEFAULT_OPTIONS));
+                logger.info('ContentScript', 'Extraction successful for:', result.title);
+                sendResponse({ status: 'success', data: result });
+              } catch (err) {
+                logger.error('ContentScript', 'Extraction failed:', err);
+                sendResponse({ status: 'error', error: err.message });
+              }
+            })();
             return true;
           }
         });
