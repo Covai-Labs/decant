@@ -92,7 +92,7 @@ decant/
 │   ├── content.js        # Content script — article extraction
 │   ├── popup/            # Toolbar popup UI (index.html + main.js + popup.css)
 │   ├── options/          # Settings/options page
-│   ├── sidepanel/        # Chrome side panel UI (Chrome only, excluded for Firefox)
+│   ├── sidepanel/        # Side panel / Firefox sidebar UI
 │   └── preview/          # Export preview page (unlisted, opens in new tab)
 ├── src/
 │   ├── shared/           # Shared modules (storage, i18n, logger, formatter, exporters, AI/URI transfer)
@@ -121,7 +121,7 @@ decant/
 - **WXT manifest config** (`wxt.config.ts`) is the single source of truth for the extension manifest. Browser-specific differences (sidePanel permission, background format, gecko settings) are handled via a manifest function that receives `{ browser }`.
 - **Content extraction** uses a vendored copy of [@mozilla/readability](https://github.com/mozilla/readability) (the same engine as Firefox Reader View), located in `src/vendor/readability/`. See the vendor README for version details and update instructions.
 - **Markdown conversion** uses [Turndown](https://github.com/mixmark-io/turndown) with the GFM plugin.
-- **Sidepanel iframe approach** — popup and options pages are loaded inside the side panel via iframes. The sidepanel entrypoint is excluded from Firefox builds via `manifest.exclude` meta tag.
+- **Sidepanel iframe approach** — popup and options pages are loaded inside the side panel / sidebar via iframes. Supports Chrome side panel and Firefox sidebar_action with matching icon assets.
 - **Custom i18n** — Decant uses its own i18n system (`src/shared/i18n.js`) rather than the WXT i18n module, with `_locales/` in `public/`.
 
 For contribution guidelines and CLA, see [CONTRIBUTING.md](./CONTRIBUTING.md).

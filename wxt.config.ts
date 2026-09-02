@@ -4,6 +4,18 @@ import path from 'node:path';
 export default defineConfig({
   manifestVersion: 3,
   modules: [],
+  hooks: {
+    'build:manifestGenerated': (wxt, manifest) => {
+      if (wxt.config.browser === 'firefox' && manifest.sidebar_action) {
+        manifest.sidebar_action.default_icon = {
+          '16': 'icons/icon16.png',
+          '48': 'icons/icon48.png',
+          '128': 'icons/icon128.png',
+        };
+        manifest.sidebar_action.default_title = '__MSG_extName__';
+      }
+    },
+  },
   manifest: ({ browser }) => ({
     default_locale: 'en',
     name: '__MSG_extName__',
