@@ -295,7 +295,12 @@ export async function clipAllTabs(options = {}, mode = 'zip', windowId = null, o
     await downloadFile(zipData, `decanted-tabs-${timestamp}.zip`, 'application/zip', shouldSaveAs);
   } else if (mode === 'combined') {
     const combinedDoc = formatCombinedMarkdown(results, timestamp);
-    await downloadFile(combinedDoc, `decanted-all-tabs-${timestamp}.md`, 'text/markdown', shouldSaveAs);
+    await downloadFile(
+      combinedDoc,
+      `decanted-all-tabs-${timestamp}.md`,
+      'text/markdown',
+      shouldSaveAs,
+    );
   } else {
     // Separate individual downloads with throttling
     const deduped = deduplicateFilenames(results);
