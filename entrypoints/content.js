@@ -10,7 +10,7 @@ import { DEFAULT_OPTIONS } from '../src/shared/storage.js';
 import { formatMarkdown, sanitizeFilename } from '../src/shared/formatter.js';
 import { logger } from '../src/shared/logger.js';
 
-function extractAiChat(options = DEFAULT_OPTIONS) {
+async function extractAiChat(options = DEFAULT_OPTIONS) {
   if (!isAiChatUrl(window.location.href)) return null;
   const platform = detectPlatform(window.location.href);
   if (!platform) return null;
@@ -22,20 +22,13 @@ function extractAiChat(options = DEFAULT_OPTIONS) {
     const parser = new ParserClass();
     if (!parser.canParse(window.location.href)) return null;
 
-    const result = parser.parse();
+    const result = await parser.parse();
     if (!result) return null;
 
-    const turndownOptions = {
-      headingStyle: options.headingStyle || 'atx',
-      bulletListMarker: options.bulletListMarker || '-',
-      codeBlockStyle: options.codeBlockStyle || 'fenced',
-      fence: options.fenceSymbol || '```',
-    };
-
-    const mdBody = result.messages
+    const mdBody = (result.messages || [])
       .map((m) => {
         const role = m.role === 'user' ? 'User' : 'Assistant';
-        const content = convertToMarkdown(m.content || '', turndownOptions);
+        const content = typeof m.content === 'string' ? m.content.trim() : '';
         return `**${role}:**\n\n${content}`;
       })
       .join('\n\n---\n\n');
@@ -351,7 +344,7 @@ export default defineContentScript({
             }
             (async () => {
               try {
-                const aiResult = extractAiChat(request.options || DEFAULT_OPTIONS);
+                const aiResult = await extractAiChat(request.options || DEFAULT_OPTIONS);
                 const result =
                   aiResult || (await extractArticle(request.options || DEFAULT_OPTIONS));
                 logger.info('ContentScript', 'Extraction successful for:', result.title);
