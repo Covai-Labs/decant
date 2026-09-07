@@ -14,7 +14,11 @@ export default defineBackground({
   main() {
     logger.info('Background', 'Decant Background Service Worker initialized.');
 
-    browser.runtime.setUninstallURL(UNINSTALL_URL);
+    const extVersion = browser.runtime.getManifest?.()?.version;
+    const uninstallUrl = extVersion
+      ? `${UNINSTALL_URL}?v=${extVersion}`
+      : UNINSTALL_URL;
+    browser.runtime.setUninstallURL(uninstallUrl);
 
     function setupContextMenus() {
       if (!browser.contextMenus) return;
