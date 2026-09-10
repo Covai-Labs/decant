@@ -4,6 +4,9 @@
   "description": "Fast, privacy-first Manifest V3 web clipper that decants articles and web pages into clean Markdown.",
   "main": ".output/chrome-mv3/background.js",
   "type": "module",
+  "engines": {
+    "node": ">=26.0.0"
+  },
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
