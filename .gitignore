@@ -1,6 +1,7 @@
 # Build outputs & dependencies
 node_modules/
 dist/
+.astro/
 dist-firefox/
 .output/
 .wxt/
