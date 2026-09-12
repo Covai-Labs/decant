@@ -50,8 +50,8 @@ Key differentiators:
 
 ## Quick Install
 
-- **Chrome / Brave / Edge:** [Add to Chrome](https://chromewebstore.google.com) (keyword: _Decant — Privacy-First Web Clipper_) or load the unpacked build (`dist/`).
-- **Firefox:** Load the temporary add-on from `dist-firefox/manifest.json` at `about:debugging#/runtime/this-firefox`.
+- **Chrome / Brave / Edge:** [Add to Chrome](https://chromewebstore.google.com) (keyword: _Decant — Privacy-First Web Clipper_) or load the unpacked build (`.output/chrome-mv3`).
+- **Firefox:** Load the temporary add-on from `.output/firefox-mv3/manifest.json` at `about:debugging#/runtime/this-firefox`.
 
 > [!NOTE]
 > Store listings are rolling out; if the store build isn't available in your region yet, the unpacked builds below work identically.
@@ -60,8 +60,8 @@ Key differentiators:
 <summary><b>📦 Manual / Unpacked Installation</b></summary>
 
 1. Run `npm run build` (Chrome) or `npm run build:firefox` (Firefox).
-2. **Chrome/Edge/Brave:** open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select the `.output/chrome-mv3` (or repo `dist/`) folder.
-3. **Firefox:** open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…**, and select `manifest.json` inside the built folder.
+2. **Chrome/Edge/Brave:** open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select the `.output/chrome-mv3` folder.
+3. **Firefox:** open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…**, and select `manifest.json` inside `.output/firefox-mv3`.
 
 </details>
 

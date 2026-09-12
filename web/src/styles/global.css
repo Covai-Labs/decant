@@ -314,7 +314,12 @@ em {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 50% 35%, var(--accent-glow) 0, var(--accent-glow) 28%, transparent 29%),
+    radial-gradient(
+      circle at 50% 35%,
+      var(--accent-glow) 0,
+      var(--accent-glow) 28%,
+      transparent 29%
+    ),
     var(--bg-secondary);
   border-radius: 48% 48% 18px 18px;
   border: 1px solid var(--line);
@@ -715,6 +720,7 @@ em {
   nav {
     gap: 12px;
     font-size: 0.82rem;
+    flex-wrap: wrap;
   }
   .theme-toggle {
     order: -1;
@@ -739,4 +745,17 @@ em {
   .trust-strip {
     gap: 13px;
   }
+}
+
+.feedback-frame {
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+}
+
+.feedback-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
