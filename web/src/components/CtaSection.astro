@@ -1,0 +1,31 @@
+---
+// Closing call-to-action callout used at the bottom of landing sections.
+import { SITE } from '../data/site';
+
+interface Props {
+  heading: string;
+  body: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+
+const { heading, body, primaryLabel, primaryHref, secondaryLabel, secondaryHref } = Astro.props;
+---
+
+<section class="cta shell">
+  <p class="eyebrow">Make the web yours</p>
+  <h2>{heading}</h2>
+  <p>{body}</p>
+  <div class="actions center">
+    <a class="button button-primary" href={primaryHref} target="_blank" rel="noopener noreferrer">
+      {primaryLabel} <span>&#8599;</span>
+    </a>
+    {secondaryLabel && secondaryHref && (
+      <a class="button button-ghost" href={secondaryHref}>
+        {secondaryLabel}
+      </a>
+    )}
+  </div>
+</section>

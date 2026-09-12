@@ -43,9 +43,6 @@ jobs:
         working-directory: web
         run: npm run build
 
-      - name: Overlay generated pages
-        run: cp -R web/dist/. docs/
-
       - name: Generate IndexNow key file
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}

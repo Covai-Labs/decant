@@ -1,0 +1,26 @@
+---
+// FAQ accordion — native <details>/<summary> keeps it zero-JS and accessible.
+interface Item {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="faq-section shell">
+  <p class="eyebrow">Questions, answered</p>
+  <h2 class="faq-title">Frequently asked</h2>
+  <div class="faq-list">
+    {items.map((item, i) => (
+      <details class="faq-item" name="faq" open={i === 0}>
+        <summary>{item.q}</summary>
+        <p>{item.a}</p>
+      </details>
+    ))}
+  </div>
+</section>

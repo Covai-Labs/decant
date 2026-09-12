@@ -3,660 +3,1058 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Decant - Fast, Privacy-First Web to Markdown Clipper</title>
-    <script defer src="https://covai.org/analytics.js"></script>
+    <title>Decant — Turn the web into clean, local Markdown</title>
     <meta
       name="description"
-      content="Decant web articles and pages into clean, structured Markdown. 100% private, open source, with 1-click export to Obsidian, Logseq, ChatGPT, Claude, and Gemini."
+      content="Decant articles and web pages into clean, structured Markdown. Multi-tab batch clipping, one-click PKM hand-off, and strict local privacy — no telemetry, no accounts."
     />
     <link rel="canonical" href="https://decant.covai.org/" />
-
-    <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://decant.covai.org/" />
-    <meta property="og:title" content="Decant - Fast, Privacy-First Web to Markdown Clipper" />
+    <meta property="og:title" content="Decant — Turn the web into clean, local Markdown" />
     <meta
       property="og:description"
-      content="Decant web articles and pages into clean, structured Markdown. 100% private, open source, with 1-click export to Obsidian, Logseq, ChatGPT, Claude, and Gemini."
+      content="Decant articles and web pages into clean, structured Markdown. Multi-tab batch clipping, one-click PKM hand-off, and strict local privacy — no telemetry, no accounts."
     />
     <meta property="og:image" content="https://decant.covai.org/og-image.png" />
     <meta property="og:image:width" content="1280" />
     <meta property="og:image:height" content="640" />
     <meta property="og:site_name" content="Decant" />
     <meta property="og:locale" content="en_US" />
-
-    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://decant.covai.org/" />
-    <meta name="twitter:title" content="Decant - Fast, Privacy-First Web to Markdown Clipper" />
+    <meta name="twitter:title" content="Decant — Turn the web into clean, local Markdown" />
     <meta
       name="twitter:description"
-      content="Decant web articles and pages into clean, structured Markdown. 100% private, open source, with 1-click export to Obsidian, Logseq, ChatGPT, Claude, and Gemini."
+      content="Decant articles and web pages into clean, structured Markdown. Multi-tab batch clipping, one-click PKM hand-off, and strict local privacy — no telemetry, no accounts."
     />
     <meta name="twitter:image" content="https://decant.covai.org/og-image.png" />
-
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-    <link rel="manifest" href="site.webmanifest" />
-
+    <!-- Theme bootstrap (pre-paint — prevents flash) -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('decant-theme');
+          if (t === 'dark' || t === 'light') {
+            document.documentElement.setAttribute('data-theme', t);
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Fira+Code:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-
-    <style>
-      :root {
-        --bg: #0b0f19;
-        --card-bg: rgba(30, 41, 59, 0.7);
-        --card-border: rgba(255, 255, 255, 0.1);
-        --text: #f8fafc;
-        --muted: #94a3b8;
-        --accent-purple: #8b5cf6;
-        --accent-purple-glow: rgba(139, 92, 246, 0.35);
-        --accent-teal: #0d9488;
-        --accent-teal-glow: rgba(13, 148, 136, 0.35);
-        --radius: 12px;
-        --max-w: 1140px;
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/android-chrome-512x512.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <!-- Styles -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Decant",
+        "operatingSystem": "Chrome, Firefox, Edge",
+        "applicationCategory": "UtilitiesApplication",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "url": "https://decant.covai.org",
+        "downloadUrl": "https://github.com/Covai-Labs/decant"
       }
-
+    </script>
+    <script defer src="https://covai.org/analytics.js"></script>
+    <style>
+      :root,
+      :root[data-theme='light'] {
+        --bg-primary: #fbf7f3;
+        --bg-surface: #fff;
+        --bg-secondary: #f3eae1;
+        --wine: #7e2037;
+        --wine-dark: #4d1427;
+        --wine-soft: #b75b70;
+        --text-primary: #26161b;
+        --text-muted: #735e63;
+        --border: #4d14271f;
+        --accent-glow: #7e203726;
+        --line: var(--border);
+        --shadow: #4d142754;
+        --on-wine: #fff5f7;
+        --chip-bg: #7e203712;
+      }
+      :root[data-theme='dark'] {
+        --bg-primary: #12090d;
+        --bg-surface: #1d1016;
+        --bg-secondary: #26161e;
+        --wine: #c44d67;
+        --wine-dark: #e8859b;
+        --wine-soft: #8f2d43;
+        --text-primary: #f8eff2;
+        --text-muted: #b09ba2;
+        --border: #e2728d2e;
+        --accent-glow: #c44d6740;
+        --line: var(--border);
+        --shadow: #00000073;
+        --on-wine: #12090d;
+        --chip-bg: #c44d6724;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+          --bg-primary: #12090d;
+          --bg-surface: #1d1016;
+          --bg-secondary: #26161e;
+          --wine: #c44d67;
+          --wine-dark: #e8859b;
+          --wine-soft: #8f2d43;
+          --text-primary: #f8eff2;
+          --text-muted: #b09ba2;
+          --border: #e2728d2e;
+          --accent-glow: #c44d6740;
+          --line: var(--border);
+          --shadow: #00000073;
+          --on-wine: #12090d;
+          --chip-bg: #c44d6724;
+        }
+      }
       * {
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
       }
-
+      html {
+        scroll-behavior: smooth;
+      }
       body {
-        background-color: var(--bg);
-        color: var(--text);
-        font-family:
-          'Inter',
-          -apple-system,
-          BlinkMacSystemFont,
-          sans-serif;
-        line-height: 1.6;
-        overflow-x: hidden;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        margin: 0;
+        font-family: Outfit, sans-serif;
+        line-height: 1.65;
+        transition:
+          background-color 0.25s,
+          color 0.25s;
       }
-
-      /* Ambient Background Glows */
-      .glow-bg {
-        position: absolute;
-        top: -150px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 800px;
-        height: 450px;
-        background: radial-gradient(
-          circle,
-          var(--accent-purple-glow) 0%,
-          rgba(13, 148, 136, 0.15) 50%,
-          transparent 70%
-        );
-        filter: blur(80px);
-        z-index: -1;
-        pointer-events: none;
+      a {
+        color: inherit;
       }
-
-      /* Header Navigation */
-      header {
-        width: 100%;
-        border-bottom: 1px solid var(--card-border);
-        backdrop-filter: blur(12px);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: rgba(11, 15, 25, 0.8);
+      ::selection {
+        background: var(--accent-glow);
       }
-
-      .nav-container {
-        max-width: var(--max-w);
+      .shell {
+        width: min(calc(100% - 48px), var(--shell, 1120px));
         margin: 0 auto;
-        padding: 16px 24px;
-        display: flex;
+      }
+      .site-header {
+        width: min(calc(100% - 48px), var(--shell, 1120px));
+        border-bottom: 1px solid var(--line);
+        z-index: 50;
+        background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+        backdrop-filter: blur(8px);
         justify-content: space-between;
         align-items: center;
-      }
-
-      .brand {
+        gap: 20px;
+        margin: 0 auto;
+        padding: 24px 0;
         display: flex;
+        position: sticky;
+        top: 0;
+      }
+      .brand {
+        color: var(--text-primary);
+        letter-spacing: -0.03em;
         align-items: center;
         gap: 10px;
-        text-decoration: none;
-        color: var(--text);
-        font-family: 'Outfit', sans-serif;
+        font-size: 1.25rem;
         font-weight: 800;
-        font-size: 1.4rem;
-      }
-
-      .brand span {
-        background: linear-gradient(135deg, #a78bfa, #2dd4bf);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .nav-links {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        list-style: none;
-      }
-
-      .nav-links a {
-        color: var(--muted);
         text-decoration: none;
-        font-weight: 500;
-        font-size: 0.95rem;
-        transition: color 0.2s ease;
-      }
-
-      .nav-links a:hover {
-        color: var(--text);
-      }
-
-      .nav-actions {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .btn-covai {
-        opacity: 0.85;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-family: monospace;
-        font-size: 0.85rem;
-        text-decoration: none;
-        color: var(--text);
-        transition: all 0.2s ease;
-      }
-
-      .btn-covai:hover {
-        opacity: 1;
-        border-color: rgba(255, 255, 255, 0.4);
-        background: rgba(255, 255, 255, 0.05);
-      }
-
-      .btn-github {
         display: inline-flex;
+      }
+      .brand-mark {
+        background: var(--wine);
+        width: 32px;
+        height: 32px;
+        color: var(--on-wine);
+        box-shadow: 0 4px 14px var(--accent-glow);
+        border-radius: 50% 50% 45% 45%;
+        place-items: center;
+        font-family: Georgia, serif;
+        font-size: 1.15rem;
+        display: grid;
+      }
+      .brand:hover .brand-mark {
+        box-shadow: 0 4px 20px var(--accent-glow);
+      }
+      .header-right {
         align-items: center;
-        gap: 8px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid var(--card-border);
-        color: var(--text) !important;
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-      }
-
-      .btn-github:hover {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.25);
-      }
-
-      /* Hero Section */
-      .hero {
-        max-width: var(--max-w);
-        margin: 80px auto 60px;
-        padding: 0 24px;
-        text-align: center;
-      }
-
-      .badge {
-        display: inline-block;
-        padding: 6px 14px;
-        border-radius: 50px;
-        background: rgba(139, 92, 246, 0.15);
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        color: #c084fc;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        letter-spacing: 0.5px;
-      }
-
-      .hero h1 {
-        font-family: 'Outfit', sans-serif;
-        font-size: 3.5rem;
-        font-weight: 800;
-        line-height: 1.15;
-        margin-bottom: 20px;
-        background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .hero p {
-        max-width: 680px;
-        margin: 0 auto 36px;
-        font-size: 1.2rem;
-        color: var(--muted);
-      }
-
-      .cta-group {
+        gap: 22px;
         display: flex;
-        justify-content: center;
-        gap: 16px;
-        flex-wrap: wrap;
       }
-
-      .btn-primary {
-        background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
-        color: white;
-        padding: 14px 28px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 1rem;
+      nav {
+        color: var(--text-muted);
+        gap: 22px;
+        font-size: 0.92rem;
+        display: flex;
+      }
+      .nav-link {
+        align-items: center;
+        gap: 6px;
         text-decoration: none;
-        box-shadow: 0 10px 25px var(--accent-purple-glow);
+        display: inline-flex;
+      }
+      .nav-link:hover {
+        color: var(--wine);
+      }
+      .theme-toggle {
+        border: 1px solid var(--line);
+        background: var(--bg-surface);
+        border-radius: 999px;
+        gap: 2px;
+        padding: 3px;
+        display: inline-flex;
+      }
+      .theme-toggle button {
+        width: 28px;
+        height: 28px;
+        color: var(--text-muted);
+        cursor: pointer;
+        background: 0 0;
+        border: 0;
+        border-radius: 999px;
+        place-items: center;
         transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
+          background 0.2s,
+          color 0.2s;
+        display: grid;
       }
-
-      .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 30px var(--accent-purple-glow);
+      .theme-toggle button:hover {
+        color: var(--wine);
       }
-
-      .btn-secondary {
-        background: rgba(30, 41, 59, 0.8);
-        border: 1px solid var(--card-border);
-        color: var(--text);
-        padding: 14px 28px;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 1rem;
-        text-decoration: none;
-        transition: background 0.2s ease;
+      .theme-toggle button[aria-pressed='true'] {
+        background: var(--chip-bg);
+        color: var(--wine);
       }
-
-      .btn-secondary:hover {
-        background: rgba(51, 65, 85, 0.8);
-      }
-
-      .store-btn {
-        display: inline-flex;
+      .hero {
+        grid-template-columns: 1fr 0.92fr;
         align-items: center;
-        gap: 12px;
-        text-decoration: none;
-        padding: 12px 22px;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid var(--card-border);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        color: var(--text);
-        text-align: left;
+        gap: 70px;
+        min-height: 620px;
+        padding-top: 76px;
+        padding-bottom: 80px;
+        display: grid;
       }
-
-      .store-btn img,
-      .store-btn svg {
-        width: 24px;
-        height: 24px;
-        display: block;
-        flex-shrink: 0;
-      }
-
-      .btn-label-sub {
-        display: block;
-        font-size: 0.7rem;
-        font-weight: 500;
+      .eyebrow {
+        color: var(--wine);
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        opacity: 0.8;
-        line-height: 1.1;
-      }
-
-      .btn-label-main {
-        display: block;
-        font-size: 0.98rem;
+        letter-spacing: 0.16em;
+        margin: 0 0 18px;
+        font-size: 0.72rem;
         font-weight: 700;
+      }
+      h1,
+      h2,
+      h3 {
+        letter-spacing: -0.05em;
+        margin-top: 0;
+        line-height: 1.05;
+      }
+      h1 {
+        margin-bottom: 25px;
+        font-size: clamp(3rem, 7vw, 6.2rem);
+      }
+      h2 {
+        font-size: clamp(2.4rem, 5vw, 4.4rem);
+      }
+      h3 {
+        font-size: 1.25rem;
+      }
+      em {
+        color: var(--wine);
+        font-family: Georgia, serif;
+        font-weight: 400;
+      }
+      .lede {
+        max-width: 570px;
+        color: var(--text-muted);
+        font-size: 1.18rem;
+      }
+      .actions {
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 30px 0 12px;
+        display: flex;
+      }
+      .actions.center {
+        justify-content: center;
+      }
+      .button {
+        border-radius: 999px;
+        align-items: center;
+        gap: 14px;
+        padding: 13px 22px;
+        font-weight: 600;
+        text-decoration: none;
+        transition:
+          transform 0.2s,
+          background 0.2s,
+          box-shadow 0.2s;
+        display: inline-flex;
+      }
+      .button:hover {
+        transform: translateY(-2px);
+      }
+      .button-primary {
+        background: var(--wine);
+        color: var(--on-wine);
+        box-shadow: 0 8px 22px var(--accent-glow);
+      }
+      .button-primary:hover {
+        background: var(--wine-dark);
+        color: var(--on-wine);
+      }
+      .button-ghost {
+        border: 1px solid var(--line);
+        color: var(--wine);
+        background: var(--bg-surface);
+      }
+      .button-ghost:hover {
+        border-color: var(--wine-soft);
+      }
+      .microcopy {
+        color: var(--text-muted);
+        font-size: 0.83rem;
+      }
+      .hero-art {
+        background:
+          radial-gradient(
+            circle at 50% 35%,
+            var(--accent-glow) 0,
+            var(--accent-glow) 28%,
+            transparent 29%
+          ),
+          var(--bg-secondary);
+        border: 1px solid var(--line);
+        border-radius: 48% 48% 18px 18px;
+        place-items: center;
+        min-height: 440px;
+        display: grid;
+        position: relative;
+        transform: rotate(2deg);
+      }
+      .bottle {
+        filter: drop-shadow(0 16px 12px var(--shadow));
+        font-size: 3.6rem;
+        position: absolute;
+        top: 9%;
+        right: 17%;
+        transform: rotate(10deg);
+      }
+      .paper-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--line);
+        width: min(80%, 350px);
+        box-shadow:
+          15px 20px 0 var(--accent-glow),
+          0 20px 50px var(--shadow);
+        padding: 28px;
+        transform: rotate(-5deg);
+      }
+      .paper-top {
+        border-bottom: 1px solid var(--line);
+        color: var(--text-muted);
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        font:
+          0.7rem JetBrains Mono,
+          monospace;
+        display: flex;
+      }
+      .paper-top span {
+        background: var(--wine-soft);
+        border-radius: 50%;
+        width: 7px;
+        height: 7px;
+      }
+      .paper-top b {
+        margin-left: auto;
+        font-weight: 400;
+      }
+      .paper-card p {
+        font-size: 1.25rem;
+        font-weight: 600;
         line-height: 1.2;
       }
-
-      .store-btn.chrome {
-        background: linear-gradient(
-          135deg,
-          rgba(66, 133, 244, 0.1) 0%,
-          rgba(66, 133, 244, 0.03) 100%
-        );
-        border-color: rgba(66, 133, 244, 0.25);
-        color: #93c5fd;
+      .paper-card .paper-kicker {
+        color: var(--wine);
+        font:
+          0.78rem JetBrains Mono,
+          monospace;
       }
-
-      .store-btn.chrome:hover {
-        background: linear-gradient(
-          135deg,
-          rgba(66, 133, 244, 0.2) 0%,
-          rgba(66, 133, 244, 0.08) 100%
-        );
-        border-color: rgba(66, 133, 244, 0.6);
-        box-shadow: 0 0 25px rgba(66, 133, 244, 0.35);
-        transform: translateY(-2px);
-        color: #bfdbfe;
+      .paper-card hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 28px 0 12px;
       }
-
-      .store-btn.firefox {
-        background: linear-gradient(
-          135deg,
-          rgba(255, 113, 57, 0.1) 0%,
-          rgba(255, 113, 57, 0.03) 100%
-        );
-        border-color: rgba(255, 113, 57, 0.25);
-        color: #ff9166;
+      .paper-card small {
+        color: var(--text-muted);
+        font-size: 0.68rem;
       }
-
-      .store-btn.firefox:hover {
-        background: linear-gradient(
-          135deg,
-          rgba(255, 113, 57, 0.2) 0%,
-          rgba(255, 113, 57, 0.08) 100%
-        );
-        border-color: rgba(255, 113, 57, 0.6);
-        box-shadow: 0 0 25px rgba(255, 113, 57, 0.35);
-        transform: translateY(-2px);
-        color: #ffa480;
+      .trust-strip {
+        padding: 18px max(24px, calc((100% - var(--shell, 1120px)) / 2));
+        background: var(--wine-dark);
+        color: var(--on-wine);
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 22px;
+        font-size: 0.9rem;
+        display: flex;
       }
-
-      .store-btn.edge {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 120, 212, 0.1) 0%,
-          rgba(0, 120, 212, 0.03) 100%
-        );
-        border-color: rgba(0, 120, 212, 0.25);
-        color: #4da6ff;
+      .trust-strip span {
+        color: var(--wine-soft);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        margin-right: 12px;
+        font-size: 0.7rem;
+        font-weight: 700;
       }
-
-      .store-btn.edge:hover {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 120, 212, 0.2) 0%,
-          rgba(0, 120, 212, 0.08) 100%
-        );
-        border-color: rgba(0, 120, 212, 0.6);
-        box-shadow: 0 0 25px rgba(0, 120, 212, 0.35);
-        transform: translateY(-2px);
-        color: #80c1ff;
+      .trust-strip b {
+        font-weight: 500;
       }
-
-      .store-btn.github {
-        background: rgba(30, 41, 59, 0.8);
-        border-color: var(--card-border);
-        color: var(--text);
+      .integrations {
+        padding: 100px 0 40px;
       }
-
-      .store-btn.github:hover {
-        background: rgba(51, 65, 85, 0.9);
-        border-color: rgba(255, 255, 255, 0.25);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
-        color: #ffffff;
+      .integration-chips {
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 30px;
+        display: flex;
       }
-
-      /* Features Grid */
-      .features {
-        max-width: var(--max-w);
-        margin: 100px auto;
-        padding: 0 24px;
+      .integration-chip {
+        border: 1px solid var(--line);
+        background: var(--chip-bg);
+        color: var(--text-primary);
+        border-radius: 999px;
+        padding: 9px 16px;
+        font-size: 0.86rem;
+        font-weight: 500;
       }
-
-      .section-title {
-        text-align: center;
-        font-family: 'Outfit', sans-serif;
-        font-size: 2.2rem;
-        margin-bottom: 48px;
+      .section {
+        padding: 110px 0;
       }
-
-      .grid {
+      .feature-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 55px;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 24px;
       }
-
       .feature-card {
-        background: var(--card-bg);
-        border: 1px solid var(--card-border);
-        border-radius: var(--radius);
-        padding: 28px;
+        border-top: 2px solid var(--wine);
+        background: var(--bg-surface);
+        border-radius: 0 0 14px 14px;
+        min-height: 250px;
+        padding: 22px 16px 28px;
         transition:
-          transform 0.2s ease,
-          border-color 0.2s ease;
+          transform 0.2s,
+          box-shadow 0.2s;
+        position: relative;
       }
-
       .feature-card:hover {
+        box-shadow: 0 18px 40px var(--accent-glow);
         transform: translateY(-4px);
-        border-color: rgba(139, 92, 246, 0.4);
       }
-
+      .feature-tag {
+        color: var(--wine-soft);
+        font:
+          0.68rem JetBrains Mono,
+          monospace;
+        position: absolute;
+        top: 14px;
+        right: 14px;
+      }
+      .feature-number {
+        color: var(--wine-soft);
+        font:
+          0.75rem JetBrains Mono,
+          monospace;
+      }
       .feature-icon {
-        font-size: 2rem;
-        margin-bottom: 16px;
+        margin: 14px 0 4px;
+        font-size: 1.7rem;
       }
-
-      .feature-card h3 {
-        font-family: 'Outfit', sans-serif;
+      .feature-grid p,
+      .quote-card span,
+      .reading-page p {
+        color: var(--text-muted);
+      }
+      .split-section {
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: 80px;
+        display: grid;
+      }
+      .quote-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--line);
+        color: var(--text-primary);
+        border-radius: 4px 60px;
+        padding: 42px;
+      }
+      .quote-card p {
+        font:
+          1.6rem/1.35 Georgia,
+          serif;
+      }
+      .quote-card span {
+        font-size: 0.84rem;
+      }
+      .cta {
+        text-align: center;
+        padding: 90px 0 115px;
+      }
+      .cta p:not(.eyebrow) {
+        max-width: 520px;
+        color: var(--text-muted);
+        margin: 0 auto 27px;
+      }
+      .faq-section {
+        padding: 40px 0 110px;
+      }
+      .faq-title {
+        margin-bottom: 40px;
+      }
+      .faq-list {
+        gap: 12px;
+        display: grid;
+      }
+      .faq-item {
+        border: 1px solid var(--line);
+        background: var(--bg-surface);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .faq-item summary {
+        cursor: pointer;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 22px;
+        font-weight: 600;
+        list-style: none;
+        display: flex;
+      }
+      .faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+      .faq-item summary:after {
+        content: '+';
+        color: var(--wine);
+        font-family:
+          JetBrains Mono,
+          monospace;
         font-size: 1.3rem;
-        margin-bottom: 10px;
+        line-height: 1;
+        transition: transform 0.2s;
       }
-
-      .feature-card p {
-        color: var(--muted);
+      .faq-item[open] summary:after {
+        transform: rotate(45deg);
+      }
+      .faq-item p {
+        color: var(--text-muted);
+        margin: 0;
+        padding: 0 22px 20px;
         font-size: 0.95rem;
       }
-
-      /* Footer */
-      footer {
-        border-top: 1px solid var(--card-border);
-        padding: 40px 24px;
-        text-align: center;
-        color: var(--muted);
-        font-size: 0.9rem;
+      .site-footer {
+        width: min(calc(100% - 48px), var(--shell, 1120px));
+        border-top: 1px solid var(--line);
+        color: var(--text-muted);
+        margin: 0 auto;
+        padding: 30px 0 45px;
+        font-size: 0.85rem;
       }
-
-      footer a {
-        color: var(--text);
-        text-decoration: none;
-        margin: 0 8px;
-      }
-
-      footer a:hover {
-        text-decoration: underline;
-      }
-
       .footer-links {
-        margin-bottom: 16px;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        display: flex;
       }
-
-      @media (max-width: 768px) {
-        .hero h1 {
-          font-size: 2.5rem;
+      .site-footer a {
+        text-decoration: none;
+      }
+      .site-footer a:hover {
+        color: var(--wine);
+      }
+      .footer-sep {
+        opacity: 0.5;
+      }
+      .site-footer p {
+        margin-bottom: 0;
+      }
+      .reading-page {
+        max-width: 800px;
+        padding-top: 90px;
+        padding-bottom: 100px;
+      }
+      .reading-page.legal {
+        max-width: 760px;
+      }
+      .reading-page h1 {
+        font-size: clamp(3rem, 7vw, 5.5rem);
+      }
+      .reading-page h2 {
+        letter-spacing: -0.03em;
+        margin-top: 52px;
+        font-size: 1.8rem;
+      }
+      .reading-page a:not(.button) {
+        color: var(--wine);
+        font-weight: 600;
+      }
+      .steps {
+        margin: 0;
+        padding: 20px 0 0;
+        list-style: none;
+      }
+      .steps li {
+        border-top: 1px solid var(--line);
+        grid-template-columns: 70px 1fr;
+        gap: 18px;
+        padding: 28px 0;
+        display: grid;
+      }
+      .steps li > span {
+        color: var(--wine);
+        font:
+          0.8rem JetBrains Mono,
+          monospace;
+      }
+      .steps h2 {
+        margin: 0 0 8px;
+      }
+      .steps p {
+        margin: 0;
+      }
+      .callout {
+        border-left: 3px solid var(--wine);
+        background: var(--bg-secondary);
+        border-radius: 0 12px 12px 0;
+        margin-top: 46px;
+        padding: 24px;
+      }
+      .callout p {
+        margin: 6px 0 0;
+      }
+      .updated {
+        margin-top: 48px;
+        font-size: 0.85rem;
+      }
+      @media (width<=760px) {
+        .site-header {
+          flex-wrap: wrap;
+          align-items: flex-start;
+          gap: 16px;
         }
-        .nav-links {
-          display: none;
+        .header-right {
+          flex-wrap: wrap;
+          gap: 12px;
         }
+        nav {
+          flex-wrap: wrap;
+          gap: 12px;
+          font-size: 0.82rem;
+        }
+        .theme-toggle {
+          order: -1;
+        }
+        .hero,
+        .split-section {
+          grid-template-columns: 1fr;
+          gap: 35px;
+        }
+        .hero {
+          padding-top: 55px;
+        }
+        .hero-art {
+          min-height: 350px;
+        }
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+        .section {
+          padding: 75px 0;
+        }
+        .trust-strip {
+          gap: 13px;
+        }
+      }
+      .feedback-frame {
+        width: 100%;
+        height: 100vh;
+        min-height: 600px;
+        display: flex;
+      }
+      .feedback-frame iframe {
+        border: none;
+        width: 100%;
+        height: 100%;
       }
     </style>
-    <meta name="google-site-verification" content="SCGLHsx5ozVebW4zQDfCN1uApU51Qt1zvMkef0p026U" />
   </head>
   <body>
-    <div class="glow-bg"></div>
-
-    <!-- Header -->
-    <header>
-      <div class="nav-container">
-        <a href="#" class="brand"> 🍷 <span>Decant</span> </a>
-
-        <div class="nav-actions">
-          <ul class="nav-links">
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="license.html">License</a></li>
-          </ul>
-          <a href="https://covai.org" class="btn-covai">← covai.org</a>
-          <a href="https://github.com/deadrat-in/decant" target="_blank" class="btn-github"
-            >GitHub</a
+    <header class="site-header">
+      <a href="/index.html" class="brand" aria-label="Decant home"
+        ><span class="brand-mark">D</span><span class="brand-name">Decant</span></a
+      >
+      <div class="header-right">
+        <nav aria-label="Main navigation">
+          <a href="/index.html" class="nav-link">Home</a
+          ><a href="/welcome.html" class="nav-link">Getting started</a
+          ><a href="/privacy.html" class="nav-link">Privacy</a
+          ><a href="/index.html#features" class="nav-link">Features</a
+          ><a href="/index.html#faq" class="nav-link">FAQ</a
+          ><a
+            href="https://github.com/Covai-Labs/decant"
+            class="nav-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub<svg
+              height="12"
+              width="12"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+              ></path></svg
+          ></a>
+        </nav>
+        <div class="theme-toggle" role="group" aria-label="Theme switcher">
+          <button
+            type="button"
+            data-theme="light"
+            aria-label="Light theme"
+            title="Light"
+            aria-pressed="false"
           >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="5"></circle>
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+              ></path>
+            </svg></button
+          ><button
+            type="button"
+            data-theme="dark"
+            aria-label="Dark theme"
+            title="Dark"
+            aria-pressed="false"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg></button
+          ><button
+            type="button"
+            data-theme="system"
+            aria-label="System theme (follow OS)"
+            title="System"
+            aria-pressed="false"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </button>
         </div>
+        <script>
+          (function () {
+            const root = document.documentElement;
+            const buttons = Array.from(
+              document.querySelectorAll('.theme-toggle button[data-theme]'),
+            );
+            if (!buttons.length) return;
+
+            function getStored() {
+              try {
+                const t = localStorage.getItem('decant-theme');
+                return t === 'dark' || t === 'light' ? t : 'system';
+              } catch (e) {
+                return 'system';
+              }
+            }
+
+            function apply(theme) {
+              if (theme === 'light' || theme === 'dark') {
+                root.dataset.theme = theme;
+              } else {
+                delete root.dataset.theme; // fall back to prefers-color-scheme in CSS
+              }
+              try {
+                localStorage.setItem('decant-theme', theme);
+              } catch (e) {
+                /* private mode */
+              }
+              buttons.forEach((b) => {
+                b.setAttribute('aria-pressed', String(b.dataset.theme === theme));
+              });
+            }
+
+            apply(getStored());
+
+            buttons.forEach((b) => {
+              b.addEventListener('click', () => apply(b.dataset.theme));
+            });
+          })();
+        </script>
       </div>
     </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="badge">✨ Manifest V3 • 100% Private & Open Source</div>
-      <h1>Decant Any Webpage into Clean Markdown</h1>
-      <p>
-        Fast, privacy-first web clipper that decants articles and web pages into beautifully
-        structured Markdown for Obsidian, Logseq, ChatGPT, Claude, and Gemini.
-      </p>
-
-      <div class="cta-group">
-        <a
-          href="https://chromewebstore.google.com/detail/decant-web-to-markdown-cl/gaedmbipeogpcddnoedpmjcemgcoboaa"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="store-btn chrome"
-        >
-          <img src="icons/chrome-logo.svg" alt="Chrome Logo" width="24" height="24" />
-          <div>
-            <span class="btn-label-sub">Get it for</span>
-            <span class="btn-label-main">Chrome</span>
+    <main>
+      <section class="hero shell">
+        <div class="hero-copy">
+          <p class="eyebrow">Your web, properly decanted</p>
+          <h1>Save the good stuff.<br /><em>Leave the clutter behind.</em></h1>
+          <p class="lede">
+            Decant turns articles and web pages into clean, structured Markdown you can actually use
+            — without sending your reading history or page content to a server.
+          </p>
+          <div class="actions">
+            <a
+              class="button button-primary"
+              href="https://github.com/Covai-Labs/decant"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Get Decant on GitHub <span>&#8599;</span></a
+            ><a class="button button-ghost" href="/welcome.html">See how it works</a>
           </div>
-        </a>
-        <a
-          href="https://addons.mozilla.org/en-US/firefox/addon/decant/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="store-btn firefox"
-        >
-          <img src="icons/firefox-logo.svg" alt="Firefox Logo" width="24" height="24" />
-          <div>
-            <span class="btn-label-sub">Get it for</span>
-            <span class="btn-label-main">Firefox</span>
+          <p class="microcopy">Free · Open source · AGPL-3.0 · Runs locally in your browser</p>
+        </div>
+        <div class="hero-art" aria-label="Decant Markdown preview">
+          <div class="bottle" aria-hidden="true">🍷</div>
+          <div class="paper-card">
+            <div class="paper-top">
+              <span></span><span></span><span></span><b>research-notes.md</b>
+            </div>
+            <p class="paper-kicker"># A better way to read the web</p>
+            <p>Keep the words that matter.<br />Drop everything else.</p>
+            <hr />
+            <small>20 tabs → one clean ZIP · clipped locally with Decant</small>
           </div>
-        </a>
-        <a
-          href="https://microsoftedge.microsoft.com/addons/detail/decant-web-to-markdown-/liblfjjapkmnmodjcgnippidoachmlpi"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="store-btn edge"
-        >
-          <img src="icons/edge-logo.svg" alt="Edge Logo" width="24" height="24" />
-          <div>
-            <span class="btn-label-sub">Get it for</span>
-            <span class="btn-label-main">Edge</span>
+        </div>
+      </section>
+      <section class="trust-strip" aria-label="Supported integrations">
+        <span>Made for</span><b>Obsidian</b><b>Logseq</b><b>Notion</b><b>Bear</b><b>Drafts</b
+        ><b>NotePlan</b><b>ChatGPT</b><b>Claude</b><b>Gemini</b><b>Joplin</b>
+      </section>
+      <section class="section shell" id="features">
+        <p class="eyebrow">The good kind of simple</p>
+        <h2>From noisy page to<br /><em>useful note.</em></h2>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-tag">Alt+Shift+A</span><span class="feature-number">01</span>
+            <div class="feature-icon" aria-hidden="true">🗂️</div>
+            <h3>Multi-tab batch clipper</h3>
+            <p>
+              Ingest every open research tab into a single organized ZIP archive of structured
+              Markdown files.
+            </p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-tag">1-click</span><span class="feature-number">02</span>
+            <div class="feature-icon" aria-hidden="true">🔄</div>
+            <h3>PKM note hand-off</h3>
+            <p>
+              Send clipped pages straight into Obsidian, Logseq, Bear, NotePlan, or Drafts with
+              custom frontmatter.
+            </p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-tag">Reader view</span><span class="feature-number">03</span>
+            <div class="feature-icon" aria-hidden="true">👁️</div>
+            <h3>Live preview studio</h3>
+            <p>
+              Review decanted content with KaTeX math and Prism code highlighting across dark,
+              light, and solarized themes.
+            </p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-tag">Math &amp; code</span><span class="feature-number">04</span>
+            <div class="feature-icon" aria-hidden="true">🧮</div>
+            <h3>LaTeX that survives</h3>
+            <p>
+              Equations and code blocks stay intact — the Markdown works in Obsidian, Logseq,
+              Notion, and your AI tools.
+            </p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-tag">MD · HTML · DOC · JSON</span
+            ><span class="feature-number">05</span>
+            <div class="feature-icon" aria-hidden="true">📄</div>
+            <h3>Formats you own</h3>
+            <p>
+              Download Markdown, self-contained HTML, Word-compatible documents, or structured JSON.
+            </p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-tag">Zero telemetry</span><span class="feature-number">06</span>
+            <div class="feature-icon" aria-hidden="true">🔒</div>
+            <h3>Strictly local</h3>
+            <p>
+              Mozilla Readability runs on-device. Clipped pages never leave your browser or touch a
+              server.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="section split-section shell">
+        <div>
+          <p class="eyebrow">A calmer reading workflow</p>
+          <h2>Clip once.<br /><em>Use it everywhere.</em></h2>
+        </div>
+        <div class="quote-card">
+          <p>
+            “The best web clipper is the one that leaves you with something you can still understand
+            six months later.”
+          </p>
+          <span>— Decant’s design brief</span>
+        </div>
+      </section>
+      <section class="integrations shell" id="integrations">
+        <p class="eyebrow">Plug straight into your workflow</p>
+        <h2>Your notes app,<br /><em>without the friction.</em></h2>
+        <div class="integration-chips">
+          <span class="integration-chip">Obsidian</span><span class="integration-chip">Logseq</span
+          ><span class="integration-chip">Notion</span><span class="integration-chip">Bear</span
+          ><span class="integration-chip">Drafts</span><span class="integration-chip">NotePlan</span
+          ><span class="integration-chip">ChatGPT</span><span class="integration-chip">Claude</span
+          ><span class="integration-chip">Gemini</span><span class="integration-chip">Joplin</span>
+        </div>
+      </section>
+      <section class="section shell split-section" id="privacy">
+        <div class="quote-card">
+          <p>“No analytics. No telemetry. No server round-trips.”</p>
+          <span>— Decant’s privacy promise</span>
+        </div>
+        <div>
+          <p class="eyebrow">Private by design</p>
+          <h2>Your pages stay <em>yours</em>.</h2>
+          <p class="lede">
+            Extraction runs entirely in your browser through local Mozilla Readability. Clipped
+            pages are processed on-device and only ever written to your clipboard, downloads, or
+            your own note apps. The extension ships with a minimal, auditable permission set.
+          </p>
+          <div class="actions">
+            <a class="button button-ghost" href="/privacy.html">Read the privacy policy</a>
           </div>
-        </a>
-        <a
-          href="https://github.com/deadrat-in/decant"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="store-btn github"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path
-              d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
-            ></path>
-          </svg>
-          <div>
-            <span class="btn-label-sub">Source Code</span>
-            <span class="btn-label-main">GitHub</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- Features Grid -->
-    <section id="features" class="features">
-      <h2 class="section-title">Why Use Decant?</h2>
-
-      <div class="grid">
-        <div class="feature-card">
-          <div class="feature-icon">🔒</div>
-          <h3>100% Private & Client-Side</h3>
-          <p>
-            All DOM parsing, HTML extraction, and Markdown formatting happen 100% locally in your
-            browser. Zero tracking, zero telemetry.
-          </p>
         </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Manifest V3 Native</h3>
-          <p>
-            Built with background service workers, content script dynamic loaders, and side panels
-            for maximum speed and browser compatibility.
-          </p>
+      </section>
+      <section class="faq-section shell">
+        <p class="eyebrow">Questions, answered</p>
+        <h2 class="faq-title">Frequently asked</h2>
+        <div class="faq-list">
+          <details class="faq-item" name="faq" open>
+            <summary>
+              How is Decant different from Firefox’s / Safari’s built-in Reader Mode?
+            </summary>
+            <p>
+              Reader Mode reformats for reading but does not give you the content. Decant extracts
+              the article into clean, reusable Markdown and hands it to your note-taking app,
+              clipboard, or downloads.
+            </p>
+          </details>
+          <details class="faq-item" name="faq">
+            <summary>How does Decant compare to MarkDownload or MarkDownload forks?</summary>
+            <p>
+              Decant adds multi-tab batch clipping to ZIP, one-click PKM URI hand-off with
+              frontmatter, a preview studio with math and code highlighting, and multiple export
+              formats — all behind the same zero-telemetry, local-only architecture.
+            </p>
+          </details>
+          <details class="faq-item" name="faq">
+            <summary>How is Decant different from SingleFile?</summary>
+            <p>
+              SingleFile preserves a pixel-faithful snapshot by inlining the whole page. Decant is
+              the opposite by design: it strips the chrome and exports the extractable content as
+              structured Markdown you can reuse, tag, and search.
+            </p>
+          </details>
+          <details class="faq-item" name="faq">
+            <summary>Does Decant send my clipped pages anywhere?</summary>
+            <p>
+              No. Extraction runs entirely in your browser via local Mozilla Readability. Nothing
+              you clip is uploaded; the extension requests only the permissions it needs to read,
+              copy, download, and hand content to local apps.
+            </p>
+          </details>
+          <details class="faq-item" name="faq">
+            <summary>Which browsers are supported?</summary>
+            <p>
+              Decant is a Manifest V3 extension built with WXT, available for Chrome, Edge, Brave,
+              and Firefox.
+            </p>
+          </details>
         </div>
-
-        <div class="feature-card" id="pkm">
-          <div class="feature-icon">🟣</div>
-          <h3>1-Click PKM Handoff</h3>
-          <p>
-            Export directly to Obsidian, Logseq, Bear, NotePlan, or Drafts using native URI protocol
-            schemes with customizable vaults.
-          </p>
+      </section>
+      <section class="cta shell">
+        <p class="eyebrow">Make the web yours</p>
+        <h2>Make the web yours.</h2>
+        <p>Start with Decant, keep your content local, and build a library that belongs to you.</p>
+        <div class="actions center">
+          <a
+            class="button button-primary"
+            href="https://github.com/Covai-Labs/decant"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Explore the project <span>&#8599;</span></a
+          ><a class="button button-ghost" href="/welcome.html">Getting started</a>
         </div>
-
-        <div class="feature-card" id="ai">
-          <div class="feature-icon">🤖</div>
-          <h3>AI Handoff Integration</h3>
-          <p>
-            Send decanted articles directly to ChatGPT, Claude, Gemini, DeepSeek, or Perplexity with
-            pre-formatted summary prompts.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">⚙️</div>
-          <h3>Custom YAML Templates</h3>
-          <p>
-            Tailor your frontmatter variables (title, author, source URL, date, tags) and configure
-            Turndown Markdown rules.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">⌨️</div>
-          <h3>Keyboard & Context Menus</h3>
-          <p>
-            Use hotkeys (<kbd>Alt+Shift+D</kbd> or <kbd>Alt+Shift+C</kbd>) or right-click context
-            menu options to clip tabs or selections instantly.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
+      </section>
+    </main>
+    <footer class="site-footer">
       <div class="footer-links">
-        <a href="privacy.html">Privacy Policy</a> • <a href="license.html">License (AGPL-3.0)</a> •
-        <a href="https://github.com/deadrat-in/decant" target="_blank" rel="noopener noreferrer"
+        <a href="/privacy.html">Privacy</a><span class="footer-sep" aria-hidden="true">|</span
+        ><a href="/license.html">License (AGPL-3.0)</a
+        ><span class="footer-sep" aria-hidden="true">|</span
+        ><a href="/feedback.html">Feedback &amp; Issues</a
+        ><span class="footer-sep" aria-hidden="true">|</span
+        ><a href="https://github.com/Covai-Labs/decant" target="_blank" rel="noopener noreferrer"
           >GitHub Repository</a
         >
-        •
-        <a href="https://covai.org" target="_blank" rel="noopener noreferrer">Covai Labs</a>
       </div>
-      <p>
-        &copy; 2026 Decant Project. Licensed under GNU Affero General Public License v3.0
-        (AGPL-3.0).
-      </p>
+      <p>&copy; 2026 Decant. Released under AGPL-3.0.</p>
     </footer>
   </body>
 </html>

@@ -4,17 +4,63 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<BaseLayout title="Getting started with Decant" description="Learn how to turn any article or web page into a clean Markdown note with Decant." canonicalPath="/welcome.html">
+<BaseLayout
+  title="Getting started with Decant"
+  description="Learn how to turn any article, web page, or research-browsing session into clean local Markdown with Decant."
+  canonicalPath="/welcome.html"
+>
   <Header />
   <main class="reading-page shell">
-    <p class="eyebrow">Getting started</p><h1>Three steps to a<br /><em>better reading habit.</em></h1>
-    <p class="lede">Decant is designed to stay out of your way. Install it, open a page, and keep the useful part.</p>
+    <p class="eyebrow">Getting started</p>
+    <h1>
+      Clip once.
+      <br />
+      <em>Keep it forever.</em>
+    </h1>
+    <p class="lede">
+      Decant is designed to stay out of your way. Install it, open a page — or a whole research
+      session — and keep the useful part.
+    </p>
     <ol class="steps">
-      <li><span>01</span><div><h2>Install the extension</h2><p>Install Decant from the browser store or build it from the open-source repository. Pin it to your toolbar for easy access.</p></div></li>
-      <li><span>02</span><div><h2>Open something worth keeping</h2><p>Visit an article, guide, recipe, paper, or documentation page. Decant works on the page you are already reading.</p></div></li>
-      <li><span>03</span><div><h2>Decant it into Markdown</h2><p>Click the extension, review the extracted content, and export a clean note to your downloads or knowledge base.</p></div></li>
+      <li>
+        <span>01</span>
+        <div>
+          <h2>Install the extension</h2>
+          <p>
+            Build Decant from the open-source repository or grab it from the browser store when it
+            lands. Pin it to your toolbar for easy access.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span>02</span>
+        <div>
+          <h2>Open something worth keeping</h2>
+          <p>
+            Visit an article, guide, recipe, paper, or documentation page. Decant works on the page
+            you are already reading — or slap <b>Alt+Shift+A</b> to batch-clip every open tab into a
+            research ZIP.
+          </p>
+        </div>
+      </li>
+      <li>
+        <span>03</span>
+        <div>
+          <h2>Decant it into Markdown</h2>
+          <p>
+            Review the extracted content, then send the note to Obsidian, Logseq, Bear, NotePlan, or
+            Drafts — or download it as Markdown, HTML, Word, or JSON.
+          </p>
+        </div>
+      </li>
     </ol>
-    <div class="callout"><strong>Privacy note</strong><p>Decant performs extraction in your browser. The website uses lightweight analytics, but the extension does not upload the pages you clip.</p></div>
+    <div class="callout">
+      <strong>Privacy note</strong>
+      <p>
+        Decant performs extraction in your browser. The website uses lightweight analytics, but the
+        extension does not upload the pages you clip — ever.
+      </p>
+    </div>
   </main>
   <Footer />
 </BaseLayout>

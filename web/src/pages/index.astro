@@ -2,54 +2,154 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, softwareApplicationJsonLd } from '../data/site';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import FAQ from '../components/FAQ.astro';
+import CtaSection from '../components/CtaSection.astro';
+import { SITE, softwareApplicationJsonLd, FEATURES, INTEGRATIONS, FAQ_ITEMS } from '../data/site';
 
-const description = 'Decant articles and web pages into clean, structured Markdown. A fast, private, open-source browser extension for your notes and AI tools.';
+const description =
+  'Decant articles and web pages into clean, structured Markdown. Multi-tab batch clipping, one-click PKM hand-off, and strict local privacy — no telemetry, no accounts.';
 ---
 
-<BaseLayout title="Decant — Turn the web into clean Markdown" description={description} jsonLd={softwareApplicationJsonLd()}>
+<BaseLayout
+  title="Decant — Turn the web into clean, local Markdown"
+  description={description}
+  jsonLd={softwareApplicationJsonLd()}
+>
   <Header />
   <main>
     <section class="hero shell">
       <div class="hero-copy">
-        <p class="eyebrow"><span>✦</span> Your web, properly decanted</p>
-        <h1>Save the good stuff.<br /><em>Leave the clutter behind.</em></h1>
-        <p class="lede">Decant turns articles and web pages into clean, structured Markdown you can actually use—without sending your reading history or page content to a server.</p>
+        <p class="eyebrow">Your web, properly decanted</p>
+        <h1>
+          Save the good stuff.
+          <br />
+          <em>Leave the clutter behind.</em>
+        </h1>
+        <p class="lede">
+          Decant turns articles and web pages into clean, structured Markdown you can actually use —
+          without sending your reading history or page content to a server.
+        </p>
         <div class="actions">
-          <a class="button button-primary" href={SITE.github} target="_blank" rel="noopener noreferrer">Get Decant on GitHub <span>↗</span></a>
-          <a class="button button-ghost" href="/welcome.html">See how it works</a>
+          <a
+            class="button button-primary"
+            href={SITE.github}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Get Decant on GitHub <span>&#8599;</span>
+          </a>
+          <a class="button button-ghost" href="/welcome.html">
+            See how it works
+          </a>
         </div>
-        <p class="microcopy">Free · Open source · Runs locally in your browser</p>
+        <p class="microcopy">Free · Open source · AGPL-3.0 · Runs locally in your browser</p>
       </div>
       <div class="hero-art" aria-label="Decant Markdown preview">
-        <div class="bottle">🍷</div>
+        <div class="bottle" aria-hidden="true">
+          🍷
+        </div>
         <div class="paper-card">
-          <div class="paper-top"><span></span><span></span><span></span><b>article.md</b></div>
+          <div class="paper-top">
+            <span></span>
+            <span></span>
+            <span></span>
+            <b>research-notes.md</b>
+          </div>
           <p class="paper-kicker"># A better way to read the web</p>
-          <p>Keep the words that matter.<br />Drop everything else.</p>
-          <hr /><small>source: your browser · clipped with Decant</small>
+          <p>
+            Keep the words that matter.
+            <br />
+            Drop everything else.
+          </p>
+          <hr />
+          <small>20 tabs → one clean ZIP · clipped locally with Decant</small>
         </div>
       </div>
     </section>
 
-    <section class="trust-strip"><span>Made for</span><b>Obsidian</b><b>Logseq</b><b>Notion</b><b>ChatGPT</b><b>Claude</b><b>anywhere Markdown works</b></section>
+    <section class="trust-strip" aria-label="Supported integrations">
+      <span>Made for</span>
+      {INTEGRATIONS.map((name) => (
+        <b>{name}</b>
+      ))}
+    </section>
 
     <section class="section shell" id="features">
       <p class="eyebrow">The good kind of simple</p>
-      <h2>From noisy page to<br /><em>useful note.</em></h2>
-      <div class="feature-grid">
-        <article><span class="feature-number">01</span><h3>Clean extraction</h3><p>Decant finds the article and removes ads, navigation, cookie walls, and visual noise—leaving the content you came to read.</p></article>
-        <article><span class="feature-number">02</span><h3>Markdown that travels</h3><p>Headings, links, lists, code, images, and metadata stay structured and portable across your favourite tools.</p></article>
-        <article><span class="feature-number">03</span><h3>Private by design</h3><p>Extraction happens locally in your browser. Your pages and notes do not pass through a Covai server.</p></article>
-      </div>
+      <h2>
+        From noisy page to
+        <br />
+        <em>useful note.</em>
+      </h2>
+      <FeatureGrid features={FEATURES} />
     </section>
 
     <section class="section split-section shell">
-      <div><p class="eyebrow">A calmer reading workflow</p><h2>Clip once.<br /><em>Use it everywhere.</em></h2></div>
-      <div class="quote-card"><p>“The best web clipper is the one that leaves you with something you can still understand six months later.”</p><span>— Decant’s design brief</span></div>
+      <div>
+        <p class="eyebrow">A calmer reading workflow</p>
+        <h2>
+          Clip once.
+          <br />
+          <em>Use it everywhere.</em>
+        </h2>
+      </div>
+      <div class="quote-card">
+        <p>
+          “The best web clipper is the one that leaves you with something you can still understand
+          six months later.”
+        </p>
+        <span>— Decant’s design brief</span>
+      </div>
     </section>
 
-    <section class="cta shell"><p class="eyebrow">Open a bottle</p><h2>Make the web yours.</h2><p>Start with Decant, keep your content local, and build a library that belongs to you.</p><a class="button button-primary" href={SITE.github} target="_blank" rel="noopener noreferrer">Explore the project <span>↗</span></a></section>
+    <section class="integrations shell" id="integrations">
+      <p class="eyebrow">Plug straight into your workflow</p>
+      <h2>
+        Your notes app,
+        <br />
+        <em>without the friction.</em>
+      </h2>
+      <div class="integration-chips">
+        {INTEGRATIONS.map((name) => (
+          <span class="integration-chip">{name}</span>
+        ))}
+      </div>
+    </section>
+
+    <section class="section shell split-section" id="privacy">
+      <div class="quote-card">
+        <p>“No analytics. No telemetry. No server round-trips.”</p>
+        <span>— Decant’s privacy promise</span>
+      </div>
+      <div>
+        <p class="eyebrow">Private by design</p>
+        <h2>
+          Your pages stay <em>yours</em>.
+        </h2>
+        <p class="lede">
+          Extraction runs entirely in your browser through local Mozilla Readability. Clipped pages
+          are processed on-device and only ever written to your clipboard, downloads, or your own
+          note apps. The extension ships with a minimal, auditable permission set.
+        </p>
+        <div class="actions">
+          <a class="button button-ghost" href="/privacy.html">
+            Read the privacy policy
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <FAQ items={FAQ_ITEMS} />
+
+    <CtaSection
+      heading="Make the web yours."
+      body="Start with Decant, keep your content local, and build a library that belongs to you."
+      primaryLabel="Explore the project"
+      primaryHref={SITE.github}
+      secondaryLabel="Getting started"
+      secondaryHref="/welcome.html"
+    />
   </main>
   <Footer />
 </BaseLayout>
