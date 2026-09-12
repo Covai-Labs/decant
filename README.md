@@ -10,7 +10,7 @@ _Decant articles and web content into clean, structured Markdown, Word, HTML, an
 [![GitHub](https://img.shields.io/github/stars/Covai-Labs/decant?logo=github&logoColor=white&color=yellow&label=Stars)](https://github.com/Covai-Labs/decant)
 [![Made with WXT](https://img.shields.io/badge/WXT-0.21-ff90e8)](https://wxt.dev)
 
-[Quick Install](#quick-install) • [Features](#key-features) • [Privacy](#privacy) • [Local Development](#local-development)
+[Quick Install](#quick-install) • [Features](#key-features) • [Privacy](#privacy) • [Development](#development) • [Contributing](#contributing)
 
 ---
 
@@ -95,42 +95,15 @@ No third-party APIs. No analytics. No telemetry endpoints. No server round-trips
 
 ---
 
-## Local Development
+## Development
 
-```bash
-npm install
-npm run dev             # Start dev server (Chrome)
-npm run dev -b firefox  # Dev server (Firefox)
-npm run build           # Production build (Chrome)  -> .output/chrome-mv3
-npm run build:firefox   # Production build (Firefox) -> .output/firefox-mv3
-npm run test            # Unit tests
-npm run lint            # ESLint
-npm run format:check    # Prettier
-```
+Local setup, build commands (WXT dev/build for Chrome & Firefox), store packaging, project
+structure, and architecture notes live in [DEVELOPMENT.md](DEVELOPMENT.md).
 
-## Project Structure
+## Contributing
 
-```
-decant/
-├── entrypoints/          # WXT entrypoints (background, content, popup, options, sidepanel, preview)
-├── src/
-│   ├── shared/           # Formatter, exporters (MD/HTML/DOC/JSON/ZIP), batch clipper, URI transfer
-│   └── vendor/           # Vendored libraries (Readability)
-├── public/               # Static assets (icons, _locales)
-├── wxt.config.ts         # WXT configuration (manifest, commands, build hooks)
-└── web/                  # Marketing site (Astro) -> ../docs for GitHub Pages
-```
-
----
-
-## Background
-
-Decant started as a quick personal tool to extract web page content and chat with articles. When preparing it for extension stores, two things became clear:
-
-1. **Privacy matters:** nobody wants an extension sending their browsed content to random third-party servers.
-2. **Simplicity wins:** why force API keys or cloud middleman servers when you can extract crisp, clean Markdown locally and drop it into ChatGPT, Claude, your favorite AI chat, or your own notes?
-
-While browsers ship increasingly built-in AI, Decant keeps things gloriously simple: fast, private, local extraction that gives you clean Markdown to use anywhere — no telemetry, no lock-in, no accounts.
+Bug reports, feature ideas, and code contributions are welcome. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the workflow, parser/extraction guidelines, and CLA.
 
 ---
 
