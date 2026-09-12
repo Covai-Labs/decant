@@ -4,6 +4,38 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<BaseLayout title="Feedback and issues — Decant" description="Send feedback or report an issue with Decant." canonicalPath="/feedback.html">
-  <Header /><main class="reading-page shell"><p class="eyebrow">Feedback</p><h1>Help us make<br /><em>the pour smoother.</em></h1><p class="lede">Found a page Decant struggles with? Have an idea for a better workflow? Open an issue or start a discussion on GitHub.</p><a class="button button-primary" href="https://github.com/Covai-Labs/decant/issues/new/choose" target="_blank" rel="noopener noreferrer">Report an issue <span>↗</span></a><div class="callout"><strong>When reporting an extraction issue</strong><p>Include the public URL or site type, browser, and what content was missing. Please do not include private pages or sensitive data.</p></div></main><Footer />
+<BaseLayout
+  title="Feedback and issues — Decant"
+  description="Send feedback or report an issue with Decant."
+  canonicalPath="/feedback.html"
+>
+  <Header />
+  <main class="reading-page shell">
+    <p class="eyebrow">Feedback</p>
+    <h1>
+      Help us make
+      <br />
+      <em>the pour smoother.</em>
+    </h1>
+    <p class="lede">
+      Found a page Decant struggles with? Have an idea for a better workflow? Open an issue or start
+      a discussion on GitHub.
+    </p>
+    <a
+      class="button button-primary"
+      href="https://github.com/Covai-Labs/decant/issues/new/choose"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Report an issue <span>↗</span>
+    </a>
+    <div class="callout">
+      <strong>When reporting an extraction issue</strong>
+      <p>
+        Include the public URL or site type, browser, and what content was missing. Please do not
+        include private pages or sensitive data.
+      </p>
+    </div>
+  </main>
+  <Footer />
 </BaseLayout>

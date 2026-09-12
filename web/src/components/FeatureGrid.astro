@@ -1,0 +1,29 @@
+---
+// Feature showcase grid — props-driven cards for the landing page.
+interface Feature {
+  icon: string;
+  title: string;
+  body: string;
+  tag?: string;
+}
+
+interface Props {
+  features: Feature[];
+}
+
+const { features } = Astro.props;
+---
+
+<div class="feature-grid">
+  {features.map((feature, i) => (
+    <article class="feature-card">
+      {feature.tag && <span class="feature-tag">{feature.tag}</span>}
+      <span class="feature-number">{String(i + 1).padStart(2, '0')}</span>
+      <div class="feature-icon" aria-hidden="true">
+        {feature.icon}
+      </div>
+      <h3>{feature.title}</h3>
+      <p>{feature.body}</p>
+    </article>
+  ))}
+</div>

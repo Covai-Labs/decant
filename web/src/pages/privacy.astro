@@ -4,11 +4,48 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<BaseLayout title="Privacy Policy — Decant" description="How Decant handles your data." canonicalPath="/privacy.html">
-  <Header /><main class="reading-page legal shell"><p class="eyebrow">Privacy</p><h1>Your pages stay <em>yours.</em></h1><p class="lede">Decant is built to extract content locally, without a backend that receives your reading or clipping history.</p>
-    <h2>Browser extension</h2><p>When you use Decant, the extension reads the active page only after you ask it to. It processes the page in your browser and creates the export locally. Page content, extracted text, and exported files are not sent to Covai servers.</p>
-    <h2>Local preferences</h2><p>The extension may use browser storage for settings such as export preferences. This data remains in your browser profile and is not transmitted to us.</p>
-    <h2>Website analytics</h2><p>Decant’s public website uses privacy-friendly analytics to understand aggregate visits and navigation. The extension itself contains no advertising, telemetry, or third-party tracking beacons.</p>
-    <h2>Changes and contact</h2><p>We may update this policy when the product changes. Questions or concerns can be raised through the <a href="/feedback.html">feedback page</a> or the <a href="https://github.com/Covai-Labs/decant" target="_blank" rel="noopener noreferrer">GitHub repository</a>.</p>
-    <p class="updated">Last updated: September 10, 2026</p></main><Footer />
+<BaseLayout
+  title="Privacy Policy — Decant"
+  description="How Decant handles your data."
+  canonicalPath="/privacy.html"
+>
+  <Header />
+  <main class="reading-page legal shell">
+    <p class="eyebrow">Privacy</p>
+    <h1>
+      Your pages stay <em>yours.</em>
+    </h1>
+    <p class="lede">
+      Decant is built to extract content locally, without a backend that receives your reading or
+      clipping history.
+    </p>
+    <h2>Browser extension</h2>
+    <p>
+      When you use Decant, the extension reads the active page only after you ask it to. It
+      processes the page in your browser and creates the export locally. Page content, extracted
+      text, and exported files are not sent to Covai servers.
+    </p>
+    <h2>Local preferences</h2>
+    <p>
+      The extension may use browser storage for settings such as export preferences. This data
+      remains in your browser profile and is not transmitted to us.
+    </p>
+    <h2>Website analytics</h2>
+    <p>
+      Decant’s public website uses privacy-friendly analytics to understand aggregate visits and
+      navigation. The extension itself contains no advertising, telemetry, or third-party tracking
+      beacons.
+    </p>
+    <h2>Changes and contact</h2>
+    <p>
+      We may update this policy when the product changes. Questions or concerns can be raised
+      through the <a href="/feedback.html">feedback page</a> or the{' '}
+      <a href="https://github.com/Covai-Labs/decant" target="_blank" rel="noopener noreferrer">
+        GitHub repository
+      </a>
+      .
+    </p>
+    <p class="updated">Last updated: September 10, 2026</p>
+  </main>
+  <Footer />
 </BaseLayout>
