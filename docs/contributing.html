@@ -29,6 +29,19 @@
       name="twitter:description"
       content="How to add or fix a platform parser in decant-core."
     />
+    <!-- Theme bootstrap (pre-paint — prevents flash) -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("decant-core-theme");
+          if (t === "dark" || t === "light") {
+            document.documentElement.setAttribute("data-theme", t);
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -36,7 +49,25 @@
       rel="stylesheet"
     />
     <style>
-      :root {
+      :root,
+      :root[data-theme="light"] {
+        --bg: #fbf7f3;
+        --bg-surface: #fff;
+        --bg-elev: #f3eae1;
+        --border: #4d14271f;
+        --wine: #7e2037;
+        --wine-dim: #b75b70;
+        --text: #26161b;
+        --muted: #735e63;
+        --on-wine: #fff5f7;
+        --code-text: #3f2a31;
+        --chip: #7e203714;
+        --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        --sans: "Inter", system-ui, sans-serif;
+        --shell: 1080px;
+        color-scheme: light;
+      }
+      :root[data-theme="dark"] {
         --bg: #0d0a0c;
         --bg-surface: #161214;
         --bg-elev: #1c1719;
@@ -45,9 +76,29 @@
         --wine-dim: #8f2d43;
         --text: #efe6e9;
         --muted: #a99ba1;
+        --on-wine: #12090d;
+        --code-text: #e6d5da;
+        --chip: #c44d6729;
         --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
         --sans: "Inter", system-ui, sans-serif;
         --shell: 1080px;
+        color-scheme: dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+          --bg: #0d0a0c;
+          --bg-surface: #161214;
+          --bg-elev: #1c1719;
+          --border: #2c2427;
+          --wine: #c44d67;
+          --wine-dim: #8f2d43;
+          --text: #efe6e9;
+          --muted: #a99ba1;
+          --on-wine: #12090d;
+          --code-text: #e6d5da;
+          --chip: #c44d6729;
+          color-scheme: dark;
+        }
       }
       * {
         box-sizing: border-box;
@@ -90,9 +141,9 @@
       }
       .brand-mark {
         background: linear-gradient(135deg, var(--wine), var(--wine-dim));
-        color: #12090d;
         width: 30px;
         height: 30px;
+        color: var(--on-wine);
         font: 800 0.95rem var(--mono);
         border-radius: 7px;
         place-items: center;
@@ -108,6 +159,41 @@
         text-decoration: none;
       }
       .site-nav a:hover {
+        color: var(--wine);
+      }
+      .header-actions {
+        align-items: center;
+        gap: 14px;
+        display: flex;
+      }
+      .theme-toggle {
+        border: 1px solid var(--border);
+        background: var(--bg-surface);
+        border-radius: 999px;
+        flex-shrink: 0;
+        gap: 2px;
+        padding: 3px;
+        display: inline-flex;
+      }
+      .theme-toggle button {
+        width: 28px;
+        height: 28px;
+        color: var(--muted);
+        cursor: pointer;
+        background: 0 0;
+        border: 0;
+        border-radius: 999px;
+        place-items: center;
+        transition:
+          background 0.2s,
+          color 0.2s;
+        display: grid;
+      }
+      .theme-toggle button:hover {
+        color: var(--wine);
+      }
+      .theme-toggle button[aria-pressed="true"] {
+        background: var(--chip);
         color: var(--wine);
       }
       main {
@@ -179,7 +265,7 @@
       }
       .button-primary {
         background: var(--wine);
-        color: #12090d;
+        color: var(--on-wine);
       }
       .button-ghost {
         border: 1px solid var(--border);
@@ -201,7 +287,7 @@
       }
       .code code {
         font: 0.86rem/1.7 var(--mono);
-        color: #e6d5da;
+        color: var(--code-text);
       }
       .card {
         background: var(--bg-surface);
@@ -336,12 +422,24 @@
       }
       .fixed-bg-grid[data-astro-cid-q2427xuc] {
         background-image:
-          linear-gradient(90deg, #efe6e90f 1px, #0000 1px),
-          linear-gradient(#efe6e90f 1px, #0000 1px);
+          linear-gradient(90deg, #4d14271a 1px, #0000 1px),
+          linear-gradient(#4d14271a 1px, #0000 1px);
         background-position: top;
         background-size: 40px 40px;
         position: absolute;
         inset: 0;
+      }
+      :root[data-theme="dark"] .fixed-bg-grid[data-astro-cid-q2427xuc] {
+        background-image:
+          linear-gradient(90deg, #efe6e90f 1px, #0000 1px),
+          linear-gradient(#efe6e90f 1px, #0000 1px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) .fixed-bg-grid[data-astro-cid-q2427xuc] {
+          background-image:
+            linear-gradient(90deg, #efe6e90f 1px, #0000 1px),
+            linear-gradient(#efe6e90f 1px, #0000 1px);
+        }
       }
       .fixed-bg-wave[data-astro-cid-q2427xuc] {
         opacity: 0.7;
@@ -381,20 +479,37 @@
     </div>
     <script>
       (function () {
-        var SECONDARIES = [
-          "rgba(143, 45, 67, 0.38)",
-          "rgba(232, 133, 155, 0.35)",
-        ];
+        var SECONDARIES = {
+          dim: {
+            light: "rgba(126, 32, 55, 0.3)",
+            dark: "rgba(143, 45, 67, 0.38)",
+          },
+          rose: {
+            light: "rgba(183, 91, 112, 0.28)",
+            dark: "rgba(232, 133, 155, 0.35)",
+          },
+        };
+
+        function isDark() {
+          var el = document.documentElement;
+          var attr = el.getAttribute("data-theme");
+          if (attr === "dark") return true;
+          if (attr === "light") return false;
+          try {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches;
+          } catch (e) {
+            return true;
+          }
+        }
 
         function pickSecondary() {
           try {
             var q = new URLSearchParams(window.location.search).get("wave");
-            if (q === "dim") return SECONDARIES[0];
-            if (q === "rose") return SECONDARIES[1];
+            if (q === "dim" || q === "rose") return q;
           } catch (e) {
             /* ignore */
           }
-          return SECONDARIES[Math.floor(Math.random() * SECONDARIES.length)];
+          return Math.random() < 0.5 ? "dim" : "rose";
         }
 
         function setupCoreWave() {
@@ -431,15 +546,20 @@
 
           function drawFrame() {
             ctx.clearRect(0, 0, width, height);
+            var dark = isDark();
 
-            ctx.strokeStyle = "rgba(239, 230, 233, 0.08)";
+            ctx.strokeStyle = dark
+              ? "rgba(239, 230, 233, 0.08)"
+              : "rgba(77, 20, 39, 0.09)";
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(0, height / 2);
             ctx.lineTo(width, height / 2);
             ctx.stroke();
 
-            ctx.strokeStyle = secondary;
+            ctx.strokeStyle = dark
+              ? SECONDARIES[secondary].dark
+              : SECONDARIES[secondary].light;
             ctx.lineWidth = 1.2;
             ctx.beginPath();
             for (var x = 0; x <= width; x += 3) {
@@ -452,7 +572,9 @@
             }
             ctx.stroke();
 
-            ctx.strokeStyle = "rgba(196, 77, 103, 0.65)";
+            ctx.strokeStyle = dark
+              ? "rgba(196, 77, 103, 0.65)"
+              : "rgba(126, 32, 55, 0.55)";
             ctx.lineWidth = 1.8;
             ctx.beginPath();
             for (var x2 = 0; x2 <= width; x2 += 2) {
@@ -502,12 +624,123 @@
       <a href="./index.html" class="brand"
         ><span class="brand-mark">dc</span><span>decant-core</span></a
       >
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="./index.html">Home</a><a href="./quickstart.html">Quickstart</a
-        ><a href="./platforms.html">Platforms</a
-        ><a href="./contributing.html">Contributing</a
-        ><a href="./license.html">License</a>
-      </nav>
+      <div class="header-actions">
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="./index.html">Home</a
+          ><a href="./quickstart.html">Quickstart</a
+          ><a href="./platforms.html">Platforms</a
+          ><a href="./contributing.html">Contributing</a
+          ><a href="./license.html">License</a>
+        </nav>
+        <div class="theme-toggle" role="group" aria-label="Theme switcher">
+          <button
+            type="button"
+            data-theme="light"
+            aria-label="Light theme"
+            title="Light"
+            aria-pressed="false"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="5"></circle>
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+              ></path>
+            </svg></button
+          ><button
+            type="button"
+            data-theme="dark"
+            aria-label="Dark theme"
+            title="Dark"
+            aria-pressed="false"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg></button
+          ><button
+            type="button"
+            data-theme="system"
+            aria-label="System theme (follow OS)"
+            title="System"
+            aria-pressed="false"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </button>
+        </div>
+        <script>
+          (function () {
+            const root = document.documentElement;
+            const buttons = Array.from(
+              document.querySelectorAll(".theme-toggle button[data-theme]"),
+            );
+            if (!buttons.length) return;
+
+            function getStored() {
+              try {
+                const t = localStorage.getItem("decant-core-theme");
+                return t === "dark" || t === "light" ? t : "system";
+              } catch (e) {
+                return "system";
+              }
+            }
+
+            function apply(theme) {
+              if (theme === "light" || theme === "dark") {
+                root.dataset.theme = theme;
+              } else {
+                delete root.dataset.theme; // fall back to prefers-color-scheme in CSS
+              }
+              try {
+                localStorage.setItem("decant-core-theme", theme);
+              } catch (e) {
+                /* private mode */
+              }
+              buttons.forEach((b) => {
+                b.setAttribute(
+                  "aria-pressed",
+                  String(b.dataset.theme === theme),
+                );
+              });
+            }
+
+            apply(getStored());
+
+            buttons.forEach((b) => {
+              b.addEventListener("click", () => apply(b.dataset.theme));
+            });
+          })();
+        </script>
+      </div>
     </header>
     <main class="page-section shell">
       <span class="eyebrow">Contributing</span>
