@@ -1,0 +1,174 @@
+---
+// Wave background — cloned geometry/animation from JobFoundry BackgroundGrid.
+// Colour-only adaptation for decant-core docs (dark-only wine cellar).
+// Secondary wave picked randomly per page load: wine-dim or rose highlight.
+// Override deterministically with ?wave=dim or ?wave=rose for screenshots/tests.
+---
+
+<div class="fixed-bg-layer" aria-hidden="true">
+  <div class="fixed-bg-grid"></div>
+  <div class="fixed-bg-wave">
+    <canvas id="core-wave" class="bg-telemetry-canvas"></canvas>
+  </div>
+</div>
+
+<style>
+  .fixed-bg-layer {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .fixed-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(239, 230, 233, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(239, 230, 233, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center top;
+  }
+
+  .fixed-bg-wave {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    transform: translateY(-50%);
+    opacity: 0.7;
+  }
+
+  .bg-telemetry-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  :global(body) {
+    position: relative;
+  }
+
+  :global(header),
+  :global(main),
+  :global(footer) {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var SECONDARIES = ['rgba(143, 45, 67, 0.38)', 'rgba(232, 133, 155, 0.35)'];
+
+    function pickSecondary() {
+      try {
+        var q = new URLSearchParams(window.location.search).get('wave');
+        if (q === 'dim') return SECONDARIES[0];
+        if (q === 'rose') return SECONDARIES[1];
+      } catch (e) {
+        /* ignore */
+      }
+      return SECONDARIES[Math.floor(Math.random() * SECONDARIES.length)];
+    }
+
+    function setupCoreWave() {
+      var canvas = document.getElementById('core-wave');
+      if (!canvas) return;
+      if (canvas.dataset.waveInit === '1') return;
+      canvas.dataset.waveInit = '1';
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      var secondary = pickSecondary();
+      var width = 0;
+      var height = 0;
+      var time = 0;
+      var animId = 0;
+
+      function resize() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = canvas.offsetWidth;
+        height = canvas.offsetHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function drawFrame() {
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.strokeStyle = 'rgba(239, 230, 233, 0.08)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, height / 2);
+        ctx.lineTo(width, height / 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = secondary;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        for (var x = 0; x <= width; x += 3) {
+          var y =
+            height / 2 +
+            Math.sin(x * 0.005 - time * 0.8) * 22 +
+            Math.cos(x * 0.012 + time * 1.2) * 10;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(196, 77, 103, 0.65)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        for (var x2 = 0; x2 <= width; x2 += 2) {
+          var y2 =
+            height / 2 +
+            Math.sin(x2 * 0.007 + time) * 26 +
+            Math.sin(x2 * 0.018 + time * 1.5) * 12;
+          if (x2 === 0) ctx.moveTo(x2, y2);
+          else ctx.lineTo(x2, y2);
+        }
+        ctx.stroke();
+      }
+
+      function animate() {
+        if (!document.hidden) {
+          drawFrame();
+          time += 0.035;
+        }
+        animId = requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', resize);
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && !animId) animate();
+      });
+      document.addEventListener('astro:page-load', function () {
+        resize();
+      });
+      resize();
+
+      try {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          drawFrame();
+          return;
+        }
+      } catch (e) {
+        /* ignore */
+      }
+      animate();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupCoreWave);
+    } else {
+      setupCoreWave();
+    }
+    document.addEventListener('astro:page-load', setupCoreWave);
+  })();
+</script>

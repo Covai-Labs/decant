@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import WaveBackground from '../components/WaveBackground.astro';
 
 interface Props {
   title: string;
@@ -46,6 +47,7 @@ const canonical = new URL(
     />
   </head>
   <body>
+    <WaveBackground />
     <slot />
   </body>
 </html>
