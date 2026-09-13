@@ -328,9 +328,179 @@
           padding-top: 60px;
         }
       }
+      .fixed-bg-layer[data-astro-cid-q2427xuc] {
+        z-index: 0;
+        pointer-events: none;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+      }
+      .fixed-bg-grid[data-astro-cid-q2427xuc] {
+        background-image:
+          linear-gradient(90deg, #efe6e90f 1px, #0000 1px),
+          linear-gradient(#efe6e90f 1px, #0000 1px);
+        background-position: top;
+        background-size: 40px 40px;
+        position: absolute;
+        inset: 0;
+      }
+      .fixed-bg-wave[data-astro-cid-q2427xuc] {
+        opacity: 0.7;
+        width: 100%;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+      }
+      .bg-telemetry-canvas[data-astro-cid-q2427xuc] {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      body {
+        position: relative;
+      }
+      header,
+      main,
+      footer {
+        z-index: 1;
+        position: relative;
+      }
     </style>
   </head>
   <body>
+    <div class="fixed-bg-layer" aria-hidden="true" data-astro-cid-q2427xuc>
+      <div class="fixed-bg-grid" data-astro-cid-q2427xuc></div>
+      <div class="fixed-bg-wave" data-astro-cid-q2427xuc>
+        <canvas
+          id="core-wave"
+          class="bg-telemetry-canvas"
+          data-astro-cid-q2427xuc
+        ></canvas>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var SECONDARIES = [
+          "rgba(143, 45, 67, 0.38)",
+          "rgba(232, 133, 155, 0.35)",
+        ];
+
+        function pickSecondary() {
+          try {
+            var q = new URLSearchParams(window.location.search).get("wave");
+            if (q === "dim") return SECONDARIES[0];
+            if (q === "rose") return SECONDARIES[1];
+          } catch (e) {
+            /* ignore */
+          }
+          return SECONDARIES[Math.floor(Math.random() * SECONDARIES.length)];
+        }
+
+        function setupCoreWave() {
+          var canvas = document.getElementById("core-wave");
+          if (!canvas) return;
+          if (canvas.dataset.waveInit === "1") return;
+          canvas.dataset.waveInit = "1";
+          var ctx = canvas.getContext("2d");
+          if (!ctx) return;
+
+          var secondary = pickSecondary();
+          var width = 0;
+          var height = 0;
+          var time = 0;
+          var animId = 0;
+          var reducedMotion = false;
+          try {
+            reducedMotion = window.matchMedia(
+              "(prefers-reduced-motion: reduce)",
+            ).matches;
+          } catch (e) {
+            /* ignore */
+          }
+
+          function resize() {
+            var dpr = Math.min(window.devicePixelRatio || 1, 2);
+            width = canvas.offsetWidth;
+            height = canvas.offsetHeight;
+            canvas.width = Math.floor(width * dpr);
+            canvas.height = Math.floor(height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            if (reducedMotion) drawFrame();
+          }
+
+          function drawFrame() {
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.strokeStyle = "rgba(239, 230, 233, 0.08)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, height / 2);
+            ctx.lineTo(width, height / 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = secondary;
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            for (var x = 0; x <= width; x += 3) {
+              var y =
+                height / 2 +
+                Math.sin(x * 0.005 - time * 0.8) * 22 +
+                Math.cos(x * 0.012 + time * 1.2) * 10;
+              if (x === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            ctx.strokeStyle = "rgba(196, 77, 103, 0.65)";
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            for (var x2 = 0; x2 <= width; x2 += 2) {
+              var y2 =
+                height / 2 +
+                Math.sin(x2 * 0.007 + time) * 26 +
+                Math.sin(x2 * 0.018 + time * 1.5) * 12;
+              if (x2 === 0) ctx.moveTo(x2, y2);
+              else ctx.lineTo(x2, y2);
+            }
+            ctx.stroke();
+          }
+
+          function animate() {
+            if (!document.hidden) {
+              drawFrame();
+              time += 0.035;
+            }
+            animId = requestAnimationFrame(animate);
+          }
+
+          window.addEventListener("resize", resize);
+          document.addEventListener("visibilitychange", function () {
+            if (!reducedMotion && !document.hidden && !animId) animate();
+          });
+          document.addEventListener("astro:page-load", function () {
+            resize();
+          });
+          resize();
+
+          if (reducedMotion) {
+            drawFrame();
+            return;
+          }
+          animate();
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", setupCoreWave);
+        } else {
+          setupCoreWave();
+        }
+        document.addEventListener("astro:page-load", setupCoreWave);
+      })();
+    </script>
     <header class="site-header">
       <a href="./index.html" class="brand"
         ><span class="brand-mark">dc</span><span>decant-core</span></a
