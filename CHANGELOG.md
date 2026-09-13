@@ -1,3 +1,15 @@
+# [1.7.0](https://github.com/Covai-Labs/decant-core/compare/v1.6.0...v1.7.0) (2026-09-13)
+
+
+### Bug Fixes
+
+* apply CodeRabbit auto-fixes ([d5896dc](https://github.com/Covai-Labs/decant-core/commit/d5896dc6946468ed9edf9f7d5df3daee723bd6d0))
+
+
+### Features
+
+* **web-docs:** add JobFoundry-style wave background ([b9a533a](https://github.com/Covai-Labs/decant-core/commit/b9a533a63350c80c37dc253708be3eac7d05f7a6))
+
 # [1.6.0](https://github.com/Covai-Labs/decant-core/compare/v1.5.0...v1.6.0) (2026-09-12)
 
 
