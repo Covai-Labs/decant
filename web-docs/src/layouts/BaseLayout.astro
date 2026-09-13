@@ -39,6 +39,19 @@ const canonical = new URL(
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
 
+    <!-- Theme bootstrap (pre-paint — prevents flash) -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('decant-core-theme');
+          if (t === 'dark' || t === 'light') {
+            document.documentElement.setAttribute('data-theme', t);
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
