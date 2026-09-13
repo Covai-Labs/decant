@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/Covai-Labs/decant-core/compare/v1.7.0...v1.8.0) (2026-09-13)
+
+
+### Features
+
+* **web-docs:** add light/dark/system theme support ([af4be7f](https://github.com/Covai-Labs/decant-core/commit/af4be7f4cc77bffb228c084a87a1b8217f041965))
+
 # [1.7.0](https://github.com/Covai-Labs/decant-core/compare/v1.6.0...v1.7.0) (2026-09-13)
 
 
