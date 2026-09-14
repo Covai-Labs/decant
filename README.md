@@ -12,13 +12,11 @@ And every time one of those platforms changes its UI, seriously re-renders a mes
 
 `decant-core` provides reusable parsers, platform detection, and web article extraction so developers don't have to build and maintain the same fragile parsing layer over and over again.
 
-### Why I built this
+### Origin & Purpose
 
-I kept wanting to export conversations from Claude and ChatGPT, so I tried quite a few browser extensions. Many broke every time the platforms changed — and some sent conversation data to servers I didn't know or trust.
+Existing chat exporters often suffer from two major flaws: they break whenever platform DOMs update, and many route user conversations through third-party servers.
 
-So I built [AI Chat Exporter](https://ai-chat-exporter.covai.org/), which extracts locally in the browser. While building it, I realised why these extensions keep breaking: keeping up with the constantly changing DOM, rendering, and features of AI chat apps is genuinely hard, and every exporter ends up solving the same problem alone.
-
-So I extracted the parsing work into `decant-core`. It already powers two shipping extensions — AI Chat Exporter and [Decant](https://decant.covai.org/) — and it's AGPL-3.0 for anyone building an exporter, clipper, archiver, or research tool on the same shared layer.
+`decant-core` was created to solve both at the foundation. Originally built to power local-first extensions like [AI Chat Exporter](https://ai-chat-exporter.covai.org/) and [Decant](https://decant.covai.org/), it decouples fragile platform parsing from presentation. By sharing this engine under AGPL-3.0, any browser extension, web clipper, archiver, or research tool can rely on a maintained, local-first extraction layer instead of reverse-engineering AI platforms in isolation.
 
 ```bash
 npm install decant-core

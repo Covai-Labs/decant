@@ -53,18 +53,12 @@ if (isAiChatUrl(location.href)) &#123;
     </section>
 
     <section class="page-section shell">
-      <h2>Why this exists.</h2>
+      <h2>Local-first. Open foundation.</h2>
       <p class="lede">
-        I kept wanting to export conversations from Claude and ChatGPT, so I tried quite a few
-        browser extensions. Many broke every time the platforms changed — and some sent
-        conversation data to servers I didn't know or trust.
+        <code>decant-core</code> was created to end the cycle of fragile chat exporters and opaque server-side data collection. Built as the extraction engine behind <a href="https://ai-chat-exporter.covai.org/" target="_blank" rel="noopener noreferrer">AI Chat Exporter</a> and <a href="https://decant.covai.org/" target="_blank" rel="noopener noreferrer">Decant</a>, it provides local-first, zero-telemetry parsing across major AI chat platforms.
       </p>
       <p class="lede">
-        So I built an exporter that extracts locally in the browser. While building it, I realised
-        why these extensions keep breaking: keeping up with the constantly changing DOM, rendering,
-        and features of AI chat apps is genuinely hard, and every exporter ends up solving the same
-        problem alone. decant-core is that shared solution — fix platform parsing once, and let the
-        ecosystem benefit from the fix.
+        Rather than having every project reverse-engineer evolving DOM structures independently, <code>decant-core</code> centralizes platform maintenance into a single open-source layer.
       </p>
     </section>
 
@@ -135,8 +129,7 @@ if (isAiChatUrl(location.href)) &#123;
         </div>
       </div>
       <p class="lede" style="margin-top: 24px">
-        Your project can be next — see <a href="./contributing.html">Contributing</a> to add or fix
-        a parser.
+        Building a browser extension, clipper, or research tool? See <a href="./contributing.html">Contributing</a> to integrate <code>decant-core</code> or improve a parser.
       </p>
     </section>
   </main>
