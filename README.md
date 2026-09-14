@@ -133,6 +133,10 @@ normalized `parse()` contract. For the extraction-strategy breakdown and mainten
 
 That choice is deliberate. AI platforms change constantly, and parser fixes belong in a shared commons so the whole ecosystem benefits — not siloed in a proprietary fork. If you use `decant-core`, network-based deployments that serve modified versions must also offer the corresponding source. Please review [`LICENSE`](LICENSE) before incorporating it into your project.
 
+### Third-Party Test Fixtures Notice
+
+Sample test fixtures located in [`tests/fixtures/`](tests/fixtures/) consist of third-party DOM snapshots and API response excerpts retained solely for automated regression testing and platform interoperability under fair use principles. They are excluded from the project's AGPL-3.0 license. See [`tests/fixtures/README.md`](tests/fixtures/README.md) for details.
+
 ---
 
 ## Used by
