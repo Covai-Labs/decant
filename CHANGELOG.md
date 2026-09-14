@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/Covai-Labs/decant-core/compare/v1.9.0...v1.9.1) (2026-09-14)
+
+
+### Bug Fixes
+
+* explicit whitespace in release-notes prose ([ff8bd65](https://github.com/Covai-Labs/decant-core/commit/ff8bd6565ef628854bdedadbb7e607569e6b1d78))
+
 # [1.9.0](https://github.com/Covai-Labs/decant-core/compare/v1.8.0...v1.9.0) (2026-09-14)
 
 

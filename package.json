@@ -1,6 +1,6 @@
 {
   "name": "decant-core",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "A shared web extraction layer for AI conversations and regular web pages.",
   "type": "module",
   "engines": {
