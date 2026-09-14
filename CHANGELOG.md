@@ -1,3 +1,11 @@
+## [1.9.2](https://github.com/Covai-Labs/decant-core/compare/v1.9.1...v1.9.2) (2026-09-14)
+
+
+### Bug Fixes
+
+* **ci:** deploy Pages on every main push, not just website changes ([24738d7](https://github.com/Covai-Labs/decant-core/commit/24738d7042eb908a17d8ebc6d3a5aa0d6299ff2b))
+* **ci:** skip npm release on docs/website-only pushes ([7875777](https://github.com/Covai-Labs/decant-core/commit/78757775c7516ebda1343cb7627938841638ac52))
+
 ## [1.9.1](https://github.com/Covai-Labs/decant-core/compare/v1.9.0...v1.9.1) (2026-09-14)
 
 
