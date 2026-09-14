@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Covai-Labs/decant-core/compare/v1.8.0...v1.9.0) (2026-09-14)
+
+
+### Features
+
+* **web-docs:** add release-notes page generated from CHANGELOG ([274c4c0](https://github.com/Covai-Labs/decant-core/commit/274c4c0a9d7fa9a362865bd55c76bd90cf2d2ae9))
+
 # [1.8.0](https://github.com/Covai-Labs/decant-core/compare/v1.7.0...v1.8.0) (2026-09-13)
 
 
