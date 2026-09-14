@@ -3,31 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quickstart — decant-core</title>
+    <title>Release notes — decant-core</title>
     <meta
       name="description"
-      content="Install decant-core and parse AI chats or web articles in a few lines."
+      content="Release notes for decant-core — every published version, generated from the changelog."
     />
     <link
       rel="canonical"
-      href="https://covai-labs.github.io/decant-core/quickstart.html"
+      href="https://covai-labs.github.io/decant-core/release-notes.html"
     />
     <meta property="og:type" content="website" />
     <meta
       property="og:url"
-      content="https://covai-labs.github.io/decant-core/quickstart.html"
+      content="https://covai-labs.github.io/decant-core/release-notes.html"
     />
-    <meta property="og:title" content="Quickstart — decant-core" />
+    <meta property="og:title" content="Release notes — decant-core" />
     <meta
       property="og:description"
-      content="Install decant-core and parse AI chats or web articles in a few lines."
+      content="Release notes for decant-core — every published version, generated from the changelog."
     />
     <meta property="og:site_name" content="decant-core" />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Quickstart — decant-core" />
+    <meta name="twitter:title" content="Release notes — decant-core" />
     <meta
       name="twitter:description"
-      content="Install decant-core and parse AI chats or web articles in a few lines."
+      content="Release notes for decant-core — every published version, generated from the changelog."
     />
     <!-- Theme bootstrap (pre-paint — prevents flash) -->
     <script>
@@ -464,6 +464,63 @@
         z-index: 1;
         position: relative;
       }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        h2[data-astro-cid-kvvzjfuj] {
+        border-top: 1px solid var(--border);
+        margin-top: 56px;
+        padding-top: 26px;
+        font-size: clamp(1.4rem, 3vw, 2rem);
+      }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        h3[data-astro-cid-kvvzjfuj] {
+        color: var(--wine);
+        font: 600 0.85rem var(--mono);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 30px;
+      }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        ul[data-astro-cid-kvvzjfuj] {
+        margin: 12px 0 0;
+        padding-left: 24px;
+        list-style: outside;
+      }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        li[data-astro-cid-kvvzjfuj] {
+        color: var(--muted);
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+      }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        li[data-astro-cid-kvvzjfuj]
+        strong[data-astro-cid-kvvzjfuj] {
+        color: var(--text);
+      }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        a[data-astro-cid-kvvzjfuj] {
+        color: var(--wine);
+      }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        code[data-astro-cid-kvvzjfuj] {
+        font: 0.82rem var(--mono);
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1px 6px;
+      }
+      .release-notes[data-astro-cid-kvvzjfuj]
+        .changelog-body[data-astro-cid-kvvzjfuj]
+        p[data-astro-cid-kvvzjfuj] {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
     </style>
   </head>
   <body>
@@ -743,83 +800,493 @@
         </script>
       </div>
     </header>
-    <main class="page-section shell">
-      <span class="eyebrow">Quickstart</span>
-      <h1>From install to first parse.</h1>
-      <h2>1. Install</h2>
-      <div class="code">
-        <pre><code>npm install decant-core</code></pre>
-      </div>
-      <p class="lede">
-        Published as<a
-          href="https://www.npmjs.com/package/decant-core"
+    <main class="page-section shell release-notes" data-astro-cid-kvvzjfuj>
+      <span class="eyebrow" data-astro-cid-kvvzjfuj>Changelog</span>
+      <h1 data-astro-cid-kvvzjfuj>Release notes.</h1>
+      <p class="lede" data-astro-cid-kvvzjfuj>
+        Every published version of decant-core, newest first. This page is
+        generated from<code data-astro-cid-kvvzjfuj>CHANGELOG.md</code> at build
+        time — the canonical history lives in<a
+          href="https://github.com/Covai-Labs/decant-core/releases"
           target="_blank"
           rel="noopener noreferrer"
-          >decant-core on npm</a
-        >— one dependency, tree-shakeable subpaths.
+          data-astro-cid-kvvzjfuj
+          >GitHub Releases</a
+        >.
       </p>
-      <h2>2. Extract an AI conversation</h2>
-      <div class="code">
-        <pre><code>import &#123; detectPlatform, isAiChatUrl &#125; from "decant-core";
-
-if (isAiChatUrl(window.location.href)) &#123;
-  const &#123; platform, parser &#125; = detectPlatform(window.location.href);
-  if (parser &amp;&amp; parser.isAvailable(window.location.href)) &#123;
-    const result = await parser.parse();
-    console.log(result.title);   // conversation title
-    console.log(result.model);   // model slug when available
-    console.log(result.messages); // [&#123; role: 'User' | 'Assistant', content, ... &#125;]
-  &#125;
-&#125;</code></pre>
-      </div>
-      <h2>3. Extract a regular web article</h2>
-      <div class="code">
-        <pre><code>import &#123; extractArticle &#125; from "decant-core";
-
-const article = await extractArticle(document /* or an HTML string */, &#123;
-  url: window.location.href,
-&#125;);
-
-console.log(article.title);
-console.log(article.markdown);  // clean, reusable Markdown
-console.log(article.engine);    // 'readability' | 'defuddle' | 'raw'</code></pre>
-      </div>
-      <h2>4. Use it outside the browser (Node / CLI)</h2>
-      <p class="lede">
-        Article extraction works in Node via <code>linkedom</code>. Detection is
-        pure string/URL logic and runs anywhere.
-      </p>
-      <div class="code">
-        <pre><code>import &#123; extractArticle &#125; from "decant-core";
-import &#123; readFile &#125; from "node:fs/promises";
-
-const html = await readFile("page.html", "utf8");
-const article = await extractArticle(html, &#123; url: "https://example.com" &#125;);
-console.log(article.markdown);</code></pre>
-      </div>
-      <h2>Subpath imports</h2>
-      <p class="lede">
-        Pull only what you need — every subpath is tree-shakeable.
-      </p>
-      <div class="code">
-        <pre><code>// Individual parsers
-import &#123; ChatGPTParser &#125; from "decant-core/ai/chatgpt";
-import &#123; ClaudeParser &#125; from "decant-core/ai/claude";
-
-// Article extraction
-import &#123; ArticleParser &#125; from "decant-core/article";
-
-// Detection
-import &#123; detectPlatform, isAiChatUrl, parsers &#125; from "decant-core";
-
-// Markdown utilities
-import &#123; convertToMarkdown, normalizeLatexMath &#125; from "decant-core";</code></pre>
-      </div>
-      <div class="callout">
-        <strong>Manifest V3 extensions:</strong> parsers are DOM-ready and work
-        in content scripts. Register what you need in your content script, then
-        call <code>parse()</code> on the current page. No bundled server, no API
-        keys.
+      <div class="changelog-body" data-astro-cid-kvvzjfuj>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.7.0...v1.8.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.8.0</a
+          >
+          (2026-09-13)
+        </h2>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            <strong>web-docs:</strong> add light/dark/system theme support (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/af4be7f4cc77bffb228c084a87a1b8217f041965"
+              target="_blank"
+              rel="noopener noreferrer"
+              >af4be7f</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.6.0...v1.7.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.7.0</a
+          >
+          (2026-09-13)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            apply CodeRabbit auto-fixes (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/d5896dc6946468ed9edf9f7d5df3daee723bd6d0"
+              target="_blank"
+              rel="noopener noreferrer"
+              >d5896dc</a
+            >)
+          </li>
+        </ul>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            <strong>web-docs:</strong> add JobFoundry-style wave background (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/b9a533a63350c80c37dc253708be3eac7d05f7a6"
+              target="_blank"
+              rel="noopener noreferrer"
+              >b9a533a</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.5.0...v1.6.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.6.0</a
+          >
+          (2026-09-12)
+        </h2>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            <strong>gemini:</strong> add batchexecute RPC pagination and
+            resilient candidate extraction with DOM fallback (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/5f096828cabf9cafd221a7563938c2271e65b0b9"
+              target="_blank"
+              rel="noopener noreferrer"
+              >5f09682</a
+            >)
+          </li>
+          <li>
+            <strong>gemini:</strong> enrich API messages with DOM attachments
+            and add test coverage (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/0365bb9e8980b879e82c351df3720a848c8973da"
+              target="_blank"
+              rel="noopener noreferrer"
+              >0365bb9</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.4.0...v1.5.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.5.0</a
+          >
+          (2026-09-12)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>chatgpt:</strong> clean DOM webpage citation pills and
+            support modern turn containers (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/f24f481a0359ecd9c52aae9abefbc33dabeb1894"
+              target="_blank"
+              rel="noopener noreferrer"
+              >f24f481</a
+            >)
+          </li>
+          <li>
+            <strong>perplexity:</strong> resolve account ID for authenticated
+            thread API requests (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/8aaa754a917cca4ae9eab6a3bc6fe010ca0dee17"
+              target="_blank"
+              rel="noopener noreferrer"
+              >8aaa754</a
+            >)
+          </li>
+          <li>
+            <strong>perplexity:</strong> support modern user bubbles and extract
+            message timestamps (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/3451e188b43c2cdc171a7558a1adffbbf80cec8c"
+              target="_blank"
+              rel="noopener noreferrer"
+              >3451e18</a
+            >)
+          </li>
+        </ul>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            <strong>perplexity:</strong> add REST API thread extraction with DOM
+            fallback (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/720b4ed539af4b3616d36a2127dbf2c5ce9fab74"
+              target="_blank"
+              rel="noopener noreferrer"
+              >720b4ed</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.3.1...v1.4.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.4.0</a
+          >
+          (2026-09-09)
+        </h2>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            <strong>claude:</strong> support interactive elements, widgets,
+            questionnaires, and unrolled carousels (<a
+              href="https://github.com/Covai-Labs/decant-core/issues/7"
+              target="_blank"
+              rel="noopener noreferrer"
+              >#7</a
+            >) (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/93baca72364d3fc90eb0bd1a7cd3e78f2d4de594"
+              target="_blank"
+              rel="noopener noreferrer"
+              >93baca7</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.3.0...v1.3.1"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.3.1</a
+          >
+          (2026-09-09)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>google-search-ai:</strong> purge leaked sn._setImageSrc
+            calls and stray data URIs (<a
+              href="https://github.com/Covai-Labs/decant-core/issues/6"
+              target="_blank"
+              rel="noopener noreferrer"
+              >#6</a
+            >) (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/0e250b2523862ee01f87ca32a909af11da198c61"
+              target="_blank"
+              rel="noopener noreferrer"
+              >0e250b2</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.2.6...v1.3.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.3.0</a
+          >
+          (2026-09-07)
+        </h2>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            disable article extraction for content in subframes by checking
+            window hierarchy (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/a0032f68df60cc7b41238f13eff25150fcbf5368"
+              target="_blank"
+              rel="noopener noreferrer"
+              >a0032f6</a
+            >)
+          </li>
+          <li>
+            improve ChatGPT math rendering and cleanup by supporting
+            data-math-source and adding new noise filters. (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/e3017e9d5c8865bedf7689ece681761c05746076"
+              target="_blank"
+              rel="noopener noreferrer"
+              >e3017e9</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.2.5...v1.2.6"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.2.6</a
+          >
+          (2026-09-07)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>google-search-ai:</strong> preserve data-xpm-latex math
+            equation images when stripping base64 images (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/b293769df173df2fbd4e38c84aee1dc9a1b87949"
+              target="_blank"
+              rel="noopener noreferrer"
+              >b293769</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.2.4...v1.2.5"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.2.5</a
+          >
+          (2026-09-07)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            katex rendering (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/6584dbd00d599b1d2ae68334c1fb7739ca7d6ade"
+              target="_blank"
+              rel="noopener noreferrer"
+              >6584dbd</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.2.3...v1.2.4"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.2.4</a
+          >
+          (2026-09-06)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>google-search-ai:</strong> sanitize scripts, base64 images
+            and tracking links (Covai-Labs/ai-chat-exporter<a
+              href="https://github.com/Covai-Labs/decant-core/issues/29"
+              target="_blank"
+              rel="noopener noreferrer"
+              >#29</a
+            >) (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/f70bd42e76b163ec9b4ab2689ea0537531a7901d"
+              target="_blank"
+              rel="noopener noreferrer"
+              >f70bd42</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.2.2...v1.2.3"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.2.3</a
+          >
+          (2026-09-06)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            preserve latex math without turndown escaping (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/68dbdef00599625c4c9786f556805f810edea900"
+              target="_blank"
+              rel="noopener noreferrer"
+              >68dbdef</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.2.1...v1.2.2"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.2.2</a
+          >
+          (2026-09-01)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>gemini:</strong> prioritize DOM extraction &amp; validate
+            API response content (<a
+              href="https://github.com/Covai-Labs/decant-core/issues/1"
+              target="_blank"
+              rel="noopener noreferrer"
+              >#1</a
+            >) (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/84ab6cb01910c2cd5b2e45ae97ef7060fc597f8a"
+              target="_blank"
+              rel="noopener noreferrer"
+              >84ab6cb</a
+            >)
+          </li>
+          <li>
+            <strong>gemini:</strong> prioritize DOM parsing and validate API
+            message content (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/5b44011390ec94bf17ee79307d2f5dfe09ff2b94"
+              target="_blank"
+              rel="noopener noreferrer"
+              >5b44011</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.2.0...v1.2.1"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.2.1</a
+          >
+          (2026-08-31)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>gemini:</strong> clean up console logs and simplify deep
+            research extraction (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/e8990a38c63f3ed92b2ba10ae1e3b92809f72de6"
+              target="_blank"
+              rel="noopener noreferrer"
+              >e8990a3</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.1.0...v1.2.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.2.0</a
+          >
+          (2026-08-25)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            just prettier (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/1cd3a3620573f6a6d9462928939c12f9cab63a8d"
+              target="_blank"
+              rel="noopener noreferrer"
+              >1cd3a36</a
+            >)
+          </li>
+        </ul>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            standardize extraction method metadata across all AI parsers and add
+            validation tests (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/175a99065bd0016261a6b2dd98f0b97396dd10e0"
+              target="_blank"
+              rel="noopener noreferrer"
+              >175a990</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.0.1...v1.1.0"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.1.0</a
+          >
+          (2026-08-20)
+        </h2>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            implement intelligent article extraction and web parsing using
+            Readability, Defuddle, and Article-Extractor libraries. (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/c24dc1650e3ac3c63b5fdf0760a009c5f2c298cb"
+              target="_blank"
+              rel="noopener noreferrer"
+              >c24dc16</a
+            >)
+          </li>
+        </ul>
+        <h2>
+          <a
+            href="https://github.com/Covai-Labs/decant-core/compare/v1.0.0...v1.0.1"
+            target="_blank"
+            rel="noopener noreferrer"
+            >1.0.1</a
+          >
+          (2026-08-19)
+        </h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>ci:</strong> pass NPM_TOKEN to release workflow and format
+            changelog (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/9148fabfb9f7ddd6ba2297be7ba3ea065559f0c9"
+              target="_blank"
+              rel="noopener noreferrer"
+              >9148fab</a
+            >)
+          </li>
+        </ul>
+        <h2>1.0.0 (2026-08-19)</h2>
+        <h3>Bug Fixes</h3>
+        <ul>
+          <li>
+            <strong>ci:</strong> update node version to 22 for semantic-release
+            (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/c806c07a1a671b2cebb2340d4b00d311f52842b1"
+              target="_blank"
+              rel="noopener noreferrer"
+              >c806c07</a
+            >)
+          </li>
+        </ul>
+        <h3>Features</h3>
+        <ul>
+          <li>
+            migrate to semantic-release for automated versioning and package
+            publishing (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/c1910e807b7709c644e69ea853a15dd8b8f25916"
+              target="_blank"
+              rel="noopener noreferrer"
+              >c1910e8</a
+            >)
+          </li>
+          <li>
+            shared @covai/parser-core package (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/28c7998551b87ac0256288fe3082ceaca8484e02"
+              target="_blank"
+              rel="noopener noreferrer"
+              >28c7998</a
+            >)
+          </li>
+          <li>
+            shared @covai/parser-core package (<a
+              href="https://github.com/Covai-Labs/decant-core/commit/eb4427ea3ad3638d7009b18d2db9fbf417806d10"
+              target="_blank"
+              rel="noopener noreferrer"
+              >eb4427e</a
+            >)
+          </li>
+        </ul>
       </div>
     </main>
     <footer class="site-footer">
