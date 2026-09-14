@@ -787,6 +787,23 @@ if (isAiChatUrl(location.href)) &#123;
         </div>
       </section>
       <section class="page-section shell">
+        <h2>Why this exists.</h2>
+        <p class="lede">
+          I kept wanting to export conversations from Claude and ChatGPT, so I
+          tried quite a few browser extensions. Many broke every time the
+          platforms changed — and some sent conversation data to servers I
+          didn't know or trust.
+        </p>
+        <p class="lede">
+          So I built an exporter that extracts locally in the browser. While
+          building it, I realised why these extensions keep breaking: keeping up
+          with the constantly changing DOM, rendering, and features of AI chat
+          apps is genuinely hard, and every exporter ends up solving the same
+          problem alone. decant-core is that shared solution — fix platform
+          parsing once, and let the ecosystem benefit from the fix.
+        </p>
+      </section>
+      <section class="page-section shell">
         <h2>Boring infrastructure. Serious leverage.</h2>
         <p class="lede">
           AI platforms change constantly. Their DOM structures, rendering
