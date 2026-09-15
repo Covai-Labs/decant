@@ -7,8 +7,9 @@ export interface PlatformEntry {
   strategy:
     | 'DOM'
     | 'DOM + internal API'
+    | 'DOM + batchexecute RPC'
+    | 'DOM + internal API + React fiber'
     | 'Internal API + DOM'
-    | 'DOM + React fiber'
     | 'Readability + Defuddle + Article-Extractor';
   notes: string;
 }
@@ -25,14 +26,14 @@ export const PLATFORMS: PlatformEntry[] = [
     platform: 'Claude',
     parser: 'ClaudeParser',
     module: 'decant-core/ai/claude',
-    strategy: 'DOM + React fiber',
-    notes: 'Reads the React tree for artifacts and structured blocks with DOM fallback.',
+    strategy: 'DOM + internal API + React fiber',
+    notes: 'Internal API first with DOM fallback; reads the React tree for artifacts and structured blocks.',
   },
   {
     platform: 'Google Gemini',
     parser: 'GeminiParser',
     module: 'decant-core/ai/gemini',
-    strategy: 'DOM + internal API',
+    strategy: 'DOM + batchexecute RPC',
     notes: 'Uses batchexecute RPC pagination with resilient DOM fallback.',
   },
   {
@@ -54,7 +55,7 @@ export const PLATFORMS: PlatformEntry[] = [
     parser: 'DeepSeekParser',
     module: 'decant-core/ai/deepseek',
     strategy: 'DOM + internal API',
-    notes: 'API-assisted parsing with DOM fallback.',
+    notes: 'API-assisted parsing (fragments[]) with DOM fallback.',
   },
   {
     platform: 'Qwen',
@@ -67,8 +68,8 @@ export const PLATFORMS: PlatformEntry[] = [
     platform: 'Meta AI',
     parser: 'MetaParser',
     module: 'decant-core/ai/meta',
-    strategy: 'DOM',
-    notes: 'DOM extraction.',
+    strategy: 'Internal API + DOM',
+    notes: 'Internal GraphQL API (pinned + auto-resolved doc_ids) with DOM fallback.',
   },
   {
     platform: 'Mistral / Le Chat',
@@ -82,14 +83,21 @@ export const PLATFORMS: PlatformEntry[] = [
     parser: 'LumoParser',
     module: 'decant-core/ai/lumo',
     strategy: 'DOM',
-    notes: 'DOM extraction.',
+    notes: 'DOM only — API responses are E2E-encrypted and not readable.',
   },
   {
     platform: 'Z.ai',
     parser: 'ZAiParser',
     module: 'decant-core/ai/z_ai',
-    strategy: 'DOM',
-    notes: 'DOM extraction.',
+    strategy: 'Internal API + DOM',
+    notes: 'Internal API (chat skeleton + batched bodies) with DOM fallback.',
+  },
+  {
+    platform: 'Grok',
+    parser: 'GrokParser',
+    module: 'decant-core/ai/grok',
+    strategy: 'Internal API + DOM',
+    notes: 'Internal API (response-node ordering + load-responses bodies) with DOM fallback.',
   },
   {
     platform: 'Google AI Studio',

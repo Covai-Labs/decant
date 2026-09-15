@@ -41,7 +41,7 @@ AI platforms don't expose stable public APIs for reading conversation history. N
 
 Maintaining that per-platform logic in every exporter is wasteful and fragile. `decant-core` centralizes it:
 
-- ✅ **10+ AI chat platform parsers** with normalized output — you get structured messages, models, metadata and Markdown, not DOM soup.
+- ✅ **18 AI chat platform parsers** with normalized output — you get structured messages, models, metadata and Markdown, not DOM soup.
 - ✅ **Web article extraction** — Mozilla Readability, Defuddle, and Article-Extractor run in parallel and arbitrate by content-quality scoring.
 - ✅ **Detection utilities** — tell an "AI chat page" apart from a "regular web page" before you decide which parser to run.
 - ✅ **Math & Markdown handling** — LaTeX normalization plus GFM tables/code fencing that survive round-trips into Obsidian, Logseq and Notion.
@@ -117,13 +117,34 @@ import { normalizeLatexMath } from "decant-core";
 
 ## Supported Platforms
 
-10+ AI chat platform parsers plus generic web article extraction:
+18 AI chat platform parsers plus generic web article extraction:
 
-**ChatGPT · Claude · Google Gemini · Microsoft Copilot · Perplexity · DeepSeek · Qwen · Meta AI · Mistral (Le Chat) · Proton Lumo · Z.ai · Google AI Studio · NotebookLM · Google Search AI · Gemini Cloud Assist · Joyland · Chub**
+| Platform                            | Parser                    | Extraction strategy                        |
+| :---------------------------------- | :------------------------ | :----------------------------------------- |
+| **ChatGPT**                         | `ChatGPTParser`           | DOM + internal API                         |
+| **Claude**                          | `ClaudeParser`            | DOM + internal API + React fiber           |
+| **Google Gemini**                   | `GeminiParser`            | DOM + batchexecute RPC                     |
+| **Microsoft Copilot**               | `CopilotParser`           | DOM (multi-domain)                         |
+| **Perplexity**                      | `PerplexityParser`        | Internal API + DOM fallback                |
+| **DeepSeek**                        | `DeepSeekParser`          | DOM + internal API (`fragments[]`)         |
+| **Qwen**                            | `QwenParser`              | DOM                                        |
+| **Meta AI**                         | `MetaParser`              | Internal API (GraphQL) + DOM fallback      |
+| **Mistral / Le Chat**               | `MistralParser`           | DOM                                        |
+| **Proton Lumo**                     | `LumoParser`              | DOM (API is E2E-encrypted, not readable)   |
+| **Z.ai**                            | `ZAiParser`               | Internal API (chat + batch) + DOM fallback |
+| **Grok**                            | `GrokParser`              | Internal API (response-node + load) + DOM  |
+| **Google AI Studio**                | `GoogleAIStudioParser`    | DOM                                        |
+| **NotebookLM**                      | `NotebookLMParser`        | DOM                                        |
+| **Google Search AI (AI Overviews)** | `GoogleSearchAIParser`    | DOM                                        |
+| **Gemini Cloud Assist**             | `GeminiCloudAssistParser` | DOM                                        |
+| **Joyland**                         | `JoylandParser`           | DOM                                        |
+| **Chub**                            | `ChubParser`              | DOM                                        |
+| **Generic Web Article**             | `ArticleParser`           | Readability + Defuddle + Article-Extractor |
 
 All parsers extend the base [`ChatParser`](ai/base.js) interface — a consistent `isAvailable(url)` +
-normalized `parse()` contract. For the extraction-strategy breakdown and maintenance model, see
-[SUPPORTED_PLATFORMS.md](SUPPORTED_PLATFORMS.md).
+normalized `parse()` contract. For the full extraction-strategy breakdown and maintenance model, see
+[SUPPORTED_PLATFORMS.md](SUPPORTED_PLATFORMS.md), also published as the
+[platform matrix](https://covai-labs.github.io/decant-core/platforms/) on the developer docs site.
 
 ---
 
