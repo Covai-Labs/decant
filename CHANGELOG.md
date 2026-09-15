@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/Covai-Labs/decant-core/compare/v1.9.2...v1.10.0) (2026-09-15)
+
+
+### Features
+
+* **parsers:** add GrokParser, Z.ai/Meta internal APIs, DOM hardening from Sept fixtures ([d09d1ca](https://github.com/Covai-Labs/decant-core/commit/d09d1ca68cfd603ead7bb0ed4a1a77d61c071e7a))
+
 ## [1.9.2](https://github.com/Covai-Labs/decant-core/compare/v1.9.1...v1.9.2) (2026-09-14)
 
 
