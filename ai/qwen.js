@@ -24,25 +24,44 @@ export class QwenParser extends ChatParser {
       if (element) {
         const text = element.textContent || element.value || element.innerText;
         if (text && text.trim() && text !== document.title) {
-          title = text.trim();
+          title = text.trim().replace(/\s+/g, " ");
           break;
         }
+      }
+    }
+    if (title === "Qwen Chat" && document.title) {
+      const docTitle = document.title.trim();
+      if (docTitle && docTitle.toLowerCase() !== "qwen studio") {
+        title = docTitle;
       }
     }
 
     const messages = [];
 
     // chat.qwen.ai uses specific class names
-    const chatMessages = document.querySelectorAll(".qwen-chat-message");
+    let chatMessages = document.querySelectorAll(".qwen-chat-message");
+    // Fallback for markup drift: user/assistant content blocks in order.
+    if (chatMessages.length === 0) {
+      chatMessages = document.querySelectorAll(
+        ".user-message-content, .qwen-markdown",
+      );
+    }
 
     chatMessages.forEach((message) => {
-      const isUser = message.classList.contains("qwen-chat-message-user");
+      // Fallback nodes are the content blocks themselves.
+      const isFallbackContent =
+        message.matches?.(".user-message-content, .qwen-markdown") ?? false;
+      const isUser = isFallbackContent
+        ? message.matches(".user-message-content")
+        : message.classList.contains("qwen-chat-message-user");
       const role = isUser ? "User" : "Qwen";
 
       let content = "";
       let attachments = [];
 
-      if (isUser) {
+      if (isFallbackContent) {
+        content = convertToMarkdown(message);
+      } else if (isUser) {
         // Extract attachments first
         const fileItems = message.querySelectorAll(
           ".index-module__file-message-document___OjWnc",

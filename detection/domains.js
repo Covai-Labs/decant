@@ -22,6 +22,7 @@ export const AI_CHAT_DOMAINS = [
   "joyland.ai",
   "chub.ai",
   "characterhub.org",
+  "grok.com",
 ];
 
 /**

@@ -17,6 +17,27 @@ function getUserToken() {
   }
 }
 
+export function extractDeepSeekMessageContent(msgNode) {
+  if (!msgNode) return "";
+  // Current API shape: content lives in fragments[] ({type, content}).
+  // REQUEST = user prompt, RESPONSE = final assistant answer.
+  // THINK / TOOL_* fragments are intermediate reasoning/tool output.
+  if (Array.isArray(msgNode.fragments) && msgNode.fragments.length > 0) {
+    const isUser = msgNode.role === "USER" || msgNode.role === "user";
+    const wanted = isUser ? "REQUEST" : "RESPONSE";
+    const picked = msgNode.fragments.filter((f) => f && f.type === wanted);
+    const fallback = picked.length > 0 ? picked : msgNode.fragments;
+    const text = fallback
+      .map((f) => (typeof f.content === "string" ? f.content : ""))
+      .join("\n\n")
+      .trim();
+    if (text) return text;
+  }
+  // Legacy shape: top-level content/text fields.
+  const legacy = msgNode.content || msgNode.text || "";
+  return typeof legacy === "string" ? legacy.trim() : "";
+}
+
 function getConversationId() {
   try {
     if (typeof window === "undefined" || !window.location) return null;
@@ -76,7 +97,7 @@ async function fetchDeepSeekConversation(sessionId, token) {
     .map((msgNode) => {
       const isUser = msgNode.role === "USER" || msgNode.role === "user";
       const role = isUser ? "User" : "DeepSeek";
-      const content = msgNode.content || msgNode.text || "";
+      const content = extractDeepSeekMessageContent(msgNode);
       return { role, content: content.trim() };
     })
     .filter((msg) => msg.content.length > 0);
@@ -130,12 +151,36 @@ export class DeepSeekParser extends ChatParser {
     const userSelector = ".fbb737a4";
     const assistantSelector = ".ds-markdown";
 
-    // We'll traverse the DOM to find these in order
-    const allElements = document.querySelectorAll(
-      `${userSelector}, ${assistantSelector}`,
+    // We'll traverse the DOM to find these in order. Nested matches
+    // (e.g. a .ds-markdown code fragment inside an assistant turn) are
+    // skipped so each turn is exported exactly once.
+    const allElements = Array.from(
+      document.querySelectorAll(`${userSelector}, ${assistantSelector}`),
     );
+    const outerElements = allElements.filter((el) => {
+      // Skip collapsible thinking-chain blocks: they live inside
+      // ds-think-content containers and would otherwise duplicate turns.
+      let ancestor = el.parentElement;
+      while (ancestor) {
+        const cls =
+          typeof ancestor.className === "string" ? ancestor.className : "";
+        if (/think/i.test(cls)) return false;
+        ancestor = ancestor.parentElement;
+      }
+      let parent = el.parentElement;
+      while (parent) {
+        if (
+          parent.matches &&
+          (parent.matches(userSelector) || parent.matches(assistantSelector))
+        ) {
+          return false;
+        }
+        parent = parent.parentElement;
+      }
+      return true;
+    });
 
-    allElements.forEach((el) => {
+    outerElements.forEach((el) => {
       let role = "Unknown";
       if (el.matches(userSelector)) {
         role = "User";

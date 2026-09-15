@@ -8,13 +8,17 @@ export class MistralParser extends ChatParser {
   }
 
   async parse() {
-    // Extract Title
-    const titleElement = document.querySelector("span.truncate.text-sm");
-    let title = "Mistral Conversation";
-    if (titleElement && titleElement.innerText) {
-      title = titleElement.innerText.trim();
-    } else if (document.title) {
-      title = document.title.replace(" - Mistral", "").trim();
+    // Extract Title: document.title is the most reliable source; the
+    // sidebar truncate span may match unrelated UI ("Upgrade to Pro").
+    let title = (document.title || "")
+      .replace(/\s*-\s*Mistral\s*$/i, "")
+      .trim();
+    if (!title) {
+      const titleElement = document.querySelector(
+        "span.truncate.text-sm, [data-testid='conversation-title']",
+      );
+      title =
+        (titleElement?.textContent || "").trim() || "Mistral Conversation";
     }
 
     const messages = [];
@@ -28,21 +32,18 @@ export class MistralParser extends ChatParser {
       if (role === "user") {
         const contentEl =
           el.querySelector(".select-text") ||
-          el.querySelector(".whitespace-pre-wrap");
-        if (contentEl) {
-          messages.push({
-            role: "User",
-            content: contentEl.innerText.trim(),
-          });
+          el.querySelector(".whitespace-pre-wrap") ||
+          el;
+        const text = convertToMarkdown(contentEl).trim();
+        if (text) {
+          messages.push({ role: "User", content: text });
         }
       } else if (role === "assistant") {
-        const answerEl = el.querySelector('[data-message-part-type="answer"]');
-        if (answerEl) {
-          const markdown = convertToMarkdown(answerEl.innerHTML);
-          messages.push({
-            role: "Mistral",
-            content: markdown,
-          });
+        const answerEl =
+          el.querySelector('[data-message-part-type="answer"]') || el;
+        const markdown = convertToMarkdown(answerEl).trim();
+        if (markdown) {
+          messages.push({ role: "Mistral", content: markdown });
         }
       }
     }
