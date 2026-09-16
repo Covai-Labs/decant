@@ -1,3 +1,11 @@
+## [1.10.1](https://github.com/Covai-Labs/decant-core/compare/v1.10.0...v1.10.1) (2026-09-16)
+
+
+### Bug Fixes
+
+* **google-search-ai:** prevent inline math newline breaks and improve formula container resolution ([72f919a](https://github.com/Covai-Labs/decant-core/commit/72f919a5c683aea468608eb1f1ecf8df5e7d3a29))
+* **google-search-ai:** support data-xpm-copy-text and alt fallbacks cleanly ([8218750](https://github.com/Covai-Labs/decant-core/commit/821875033e197f174114f661cd62e27e843b8094))
+
 # [1.10.0](https://github.com/Covai-Labs/decant-core/compare/v1.9.2...v1.10.0) (2026-09-15)
 
 
