@@ -197,19 +197,44 @@ export function convertToMarkdown(htmlContent, options = {}) {
       if (!clone.contains(el)) return;
       const copyRoot = el.closest("[data-xpm-copy-root]");
       if (!copyRoot) return;
-      const container = el.closest(".cPGBZb") || copyRoot;
+      const blockContainer = el.closest(".cPGBZb");
+      const inlineWrapper = el.closest(".mTEjhd") || el.closest(".dteT0b");
+      const container = blockContainer || inlineWrapper || copyRoot;
       if (!container.parentNode) return;
 
-      const latex = el.getAttribute("data-xpm-latex");
+      const latex =
+        el.getAttribute("data-xpm-latex") ||
+        copyRoot.getAttribute("data-xpm-copy-text") ||
+        el.getAttribute("alt") ||
+        "";
+      if (!latex) return;
 
-      // Determine if it is block math
+      // Determine if block or inline based on DOM structure
       let isBlock = false;
-      const parent = container.parentNode;
-      if (parent) {
-        const parentText = parent.textContent
-          .replace(container.textContent, "")
-          .trim();
-        isBlock = parentText === "";
+      if (blockContainer) {
+        // Full block container (.cPGBZb)
+        isBlock = true;
+      } else if (inlineWrapper) {
+        // Inline math wrapper (.mTEjhd, .dteT0b)
+        isBlock = false;
+      } else {
+        const style = copyRoot.getAttribute("style") || "";
+        if (/display:\s*inline/i.test(style)) {
+          isBlock = false;
+        } else {
+          // Check enclosing block element (p, li, td, th, div) for surrounding text
+          const enclosingBlock = container.closest("p, li, td, th, div");
+          if (enclosingBlock) {
+            const cloneBlock = enclosingBlock.cloneNode(true);
+            const targetInClone =
+              cloneBlock
+                .querySelector("[data-xpm-latex]")
+                ?.closest("[data-xpm-copy-root]") ||
+              cloneBlock.querySelector("[data-xpm-latex]");
+            if (targetInClone) targetInClone.remove();
+            isBlock = cloneBlock.textContent.trim() === "";
+          }
+        }
       }
 
       registerMath(container, latex, isBlock, clone.ownerDocument);

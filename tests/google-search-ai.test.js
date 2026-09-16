@@ -1,11 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { parseHTML } from "linkedom";
 import {
   GoogleSearchAIParser,
   sanitizeResponseContainer,
   cleanMarkdownSpacing,
 } from "../ai/google_search_ai.js";
+import { convertToMarkdown } from "../utils/html-to-markdown.js";
 
 test("GoogleSearchAIParser isAvailable matches google search URLs", () => {
   const parser = new GoogleSearchAIParser();
@@ -172,4 +175,72 @@ test("GoogleSearchAIParser parse() extracts and cleans AI Overview queries and r
   assert.doesNotMatch(result.messages[1].content, /data:image/);
   assert.equal(result.metadata.Source, "Google Search AI");
   assert.equal(result.metadata.Method, "DOM");
+});
+
+test("convertToMarkdown formats Google Search AI inline math without newline breaks in lists or bold tags", () => {
+  const html = `<ul>
+    <li><strong><span class="mTEjhd"><span class="dteT0b"><div data-xpm-copy-root="" data-xpm-math-type="block" style="position: relative; direction: ltr;display: inline-block;"><img data-xpm-latex="e" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></span></span> (Euler's Number):</strong> The base of natural logarithms (<span class="mTEjhd"><span class="dteT0b"><div data-xpm-copy-root="" data-xpm-math-type="block" style="position: relative; direction: ltr;display: inline-block;"><img data-xpm-latex="\\approx 2.718" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></span></span>), deeply tied to calculus.</li>
+  </ul>`;
+
+  const { document } = parseHTML(`<div>${html}</div>`);
+  const container = document.querySelector("div");
+  const md = convertToMarkdown(container);
+
+  assert.equal(
+    md,
+    "*   **$e$ (Euler's Number):** The base of natural logarithms ($\\approx 2.718$), deeply tied to calculus.",
+  );
+  assert.doesNotMatch(md, /\$\$/);
+  assert.doesNotMatch(md, /\n{2,}\$e\$/);
+});
+
+test("convertToMarkdown preserves display math blocks wrapped in .cPGBZb", () => {
+  const html = `<div>
+    <p>Euler's identity:</p>
+    <span class="cPGBZb"><span class="dteT0b"><div data-xpm-copy-root="" data-xpm-math-type="block" style="position: relative; direction: ltr;display: inline-flex;"><img data-xpm-latex="e^{i\\pi}+1=0" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></span></span>
+  </div>`;
+
+  const { document } = parseHTML(html);
+  const container = document.querySelector("div");
+  const md = convertToMarkdown(container);
+
+  assert.match(md, /\$\$e\^\{i\\pi\}\+1=0\$\$/);
+});
+
+test("GoogleSearchAIParser parse() extracts multi-turn conversation and clean math formulas from Sept fixture", async () => {
+  const fixturePath = path.resolve(
+    "/home/anu/Workspace/dev/extensions/Scratch/New Fixtures/16 Sept/google-com-raw-2026-09-16-02-53.html",
+  );
+  if (!fs.existsSync(fixturePath)) {
+    return;
+  }
+
+  const rawHtml = fs.readFileSync(fixturePath, "utf-8");
+  const { document, window } = parseHTML(rawHtml);
+  globalThis.document = document;
+  globalThis.window = window;
+
+  const parser = new GoogleSearchAIParser();
+  const result = await parser.parse();
+
+  assert.equal(result.messages.length, 10);
+  assert.equal(result.messages[0].role, "User");
+  assert.match(result.messages[0].content, /species that went extinct/);
+  assert.equal(result.messages[2].role, "User");
+  assert.equal(result.messages[2].content, "Tell me about Euler's identity.");
+
+  // Check Euler turn math content
+  const eulerReply = result.messages[3].content;
+  assert.equal(result.messages[3].role, "Model");
+  assert.match(eulerReply, /\$\$e\^\{i\\pi \}\+1=0\$\$/);
+  assert.match(
+    eulerReply,
+    /\*\s+\*\*\$e\$ \(Euler's Number\):\*\*\s+The base of natural logarithms \(\$\\approx 2\.718\$\)/,
+  );
+  assert.match(
+    eulerReply,
+    /for \$e\^\{x\}\$, \$\\cos\(x\)\$, and \$\\sin\(x\)\$:/,
+  );
+  // Ensure no stray multi-newline breaks before or after inline $e$
+  assert.doesNotMatch(eulerReply, /\*\s+\*\*\s*\n+\$\$e\$\$/);
 });
