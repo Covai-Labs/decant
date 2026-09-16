@@ -1,7 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import path from "node:path";
 import { parseHTML } from "linkedom";
 import {
   GoogleSearchAIParser,
@@ -207,15 +206,12 @@ test("convertToMarkdown preserves display math blocks wrapped in .cPGBZb", () =>
   assert.match(md, /\$\$e\^\{i\\pi\}\+1=0\$\$/);
 });
 
-test("GoogleSearchAIParser parse() extracts multi-turn conversation and clean math formulas from Sept fixture", async () => {
-  const fixturePath = path.resolve(
-    "/home/anu/Workspace/dev/extensions/Scratch/New Fixtures/16 Sept/google-com-raw-2026-09-16-02-53.html",
+test("GoogleSearchAIParser parse() extracts multi-turn conversation and clean math formulas from fixture", async () => {
+  const fixtureUrl = new URL(
+    "./fixtures/google-search-ai-chat.html",
+    import.meta.url,
   );
-  if (!fs.existsSync(fixturePath)) {
-    return;
-  }
-
-  const rawHtml = fs.readFileSync(fixturePath, "utf-8");
+  const rawHtml = fs.readFileSync(fixtureUrl, "utf-8");
   const { document, window } = parseHTML(rawHtml);
   globalThis.document = document;
   globalThis.window = window;
