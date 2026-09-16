@@ -240,3 +240,19 @@ test("GoogleSearchAIParser parse() extracts multi-turn conversation and clean ma
   // Ensure no stray multi-newline breaks before or after inline $e$
   assert.doesNotMatch(eulerReply, /\*\s+\*\*\s*\n+\$\$e\$\$/);
 });
+
+test("convertToMarkdown handles Google Search AI math with data-xpm-copy-text or alt fallbacks", () => {
+  const htmlWithCopyText = `<div>
+    <p>Value is <span class="mTEjhd"><div data-xpm-copy-root="" data-xpm-copy-text="e^{i\\pi}+1=0" style="display: inline-block;"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></span> in Euler.</p>
+  </div>`;
+  const { document: doc1 } = parseHTML(htmlWithCopyText);
+  const md1 = convertToMarkdown(doc1.querySelector("div"));
+  assert.equal(md1, "Value is $e^{i\\pi}+1=0$ in Euler.");
+
+  const htmlWithAlt = `<div>
+    <p>Formula is <span class="mTEjhd"><div data-xpm-copy-root="" style="display: inline-block;"><img alt="\\sqrt{x^2+y^2}" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></div></span> here.</p>
+  </div>`;
+  const { document: doc2 } = parseHTML(htmlWithAlt);
+  const md2 = convertToMarkdown(doc2.querySelector("div"));
+  assert.equal(md2, "Formula is $\\sqrt{x^2+y^2}$ here.");
+});
