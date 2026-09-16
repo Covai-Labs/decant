@@ -61,5 +61,5 @@ jobs:
       - name: Submit sitemap to IndexNow
         uses: bojieyang/indexnow-action@v3.0.0
         with:
-          sitemap-location: https://covai-labs.github.io/decant/sitemap.xml
+          sitemap-location: https://covai-labs.github.io/decant/sitemap-index.xml
           key: ${{ secrets.INDEXNOW_KEY }}
