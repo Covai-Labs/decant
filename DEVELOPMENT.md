@@ -11,7 +11,7 @@ CLA), see [CONTRIBUTING.md](CONTRIBUTING.md). For the platform matrix, see
 ## Setup
 
 ```bash
-git clone https://github.com/Covai-Labs/decant-core.git
+git clone https://github.com/Covai-Labs/decant.git
 cd decant-core
 npm install
 ```

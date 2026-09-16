@@ -26,12 +26,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Covai-Labs/decant-core.git"
+    "url": "git+https://github.com/Covai-Labs/decant.git"
   },
   "bugs": {
-    "url": "https://github.com/Covai-Labs/decant-core/issues"
+    "url": "https://github.com/Covai-Labs/decant/issues"
   },
-  "homepage": "https://github.com/Covai-Labs/decant-core#readme",
+  "homepage": "https://github.com/Covai-Labs/decant#readme",
   "scripts": {
     "test": "node --test tests/*.test.js",
     "lint": "eslint .",

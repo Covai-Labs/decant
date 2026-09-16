@@ -4,7 +4,7 @@ Thank you for your interest in contributing to decant-core! We welcome bug repor
 
 ## Getting Started
 
-1. Check existing [Issues](https://github.com/Covai-Labs/decant-core/issues) and [Pull Requests](https://github.com/Covai-Labs/decant-core/pulls) before submitting new ones to avoid duplicates.
+1. Check existing [Issues](https://github.com/Covai-Labs/decant/issues) and [Pull Requests](https://github.com/Covai-Labs/decant/pulls) before submitting new ones to avoid duplicates.
 2. For local setup, install dependencies with `npm install`.
 
 ## Submitting Pull Requests

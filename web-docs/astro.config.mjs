@@ -1,11 +1,12 @@
 import { defineConfig } from 'astro/config';
 
-// Developer documentation site for decant-core.
-// Hosted on GitHub Pages for the Covai-Labs/decant-core repository by building
-// into ../docs (the default page branch). PRs preview on covai-labs.github.io/decant-core.
+// Developer documentation site for decant-core (repo Covai-Labs/decant).
+// Hosted on GitHub Pages by building into ../docs.
+// Stage 1: served from the project Pages URL. Once decant.js.org is claimed,
+// switch site to 'https://decant.js.org' and base to '/'.
 export default defineConfig({
-  site: 'https://covai-labs.github.io/decant-core',
-  base: '/decant-core',
+  site: 'https://covai-labs.github.io/decant',
+  base: '/decant',
   outDir: '../docs',
   build: {
     format: 'file',

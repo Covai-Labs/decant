@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/decant-core?logo=npm&logoColor=white&label=npm&color=cb3837)](https://www.npmjs.com/package/decant-core)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-red.svg)](LICENSE)
-[![GitHub](https://img.shields.io/github/stars/Covai-Labs/decant-core?logo=github&logoColor=white&color=yellow&label=Stars)](https://github.com/Covai-Labs/decant-core/stargazers)
+[![GitHub](https://img.shields.io/github/stars/Covai-Labs/decant?logo=github&logoColor=white&color=yellow&label=Stars)](https://github.com/Covai-Labs/decant/stargazers)
 
 Every AI chat exporter ends up solving the same problem: extracting conversations from ChatGPT, Claude, Gemini, Perplexity, DeepSeek and other constantly changing AI interfaces.
 
@@ -144,7 +144,7 @@ import { normalizeLatexMath } from "decant-core";
 All parsers extend the base [`ChatParser`](ai/base.js) interface — a consistent `isAvailable(url)` +
 normalized `parse()` contract. For the full extraction-strategy breakdown and maintenance model, see
 [SUPPORTED_PLATFORMS.md](SUPPORTED_PLATFORMS.md), also published as the
-[platform matrix](https://covai-labs.github.io/decant-core/platforms/) on the developer docs site.
+[platform matrix](https://covai-labs.github.io/decant/platforms/) on the developer docs site.
 
 ---
 
@@ -163,7 +163,7 @@ Sample test fixtures located in [`tests/fixtures/`](tests/fixtures/) consist of 
 ## Used by
 
 - [AI Chat Exporter](https://github.com/Covai-Labs/ai-chat-exporter) — export, archive and transfer AI conversations between platforms.
-- [Decant](https://github.com/Covai-Labs/decant) — the distraction-free web clipper and research batcher.
+- [Decant](https://github.com/Covai-Labs/decant-browser-extension) — the distraction-free web clipper and research batcher.
 
 These products are demonstrations of the library, not its purpose. Yours can be next — see [CONTRIBUTING.md](CONTRIBUTING.md).
 

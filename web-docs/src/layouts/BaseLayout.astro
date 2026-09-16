@@ -11,11 +11,11 @@ interface Props {
 
 const { title, description, canonicalPath = '/', noindex = false } = Astro.props;
 
-const SITE = 'https://covai-labs.github.io';
-const canonical = new URL(
-  `/decant-core${canonicalPath.startsWith('/') ? '' : '/'}${canonicalPath}`,
-  SITE,
-).toString();
+// Stage 1: served from the project Pages URL. After the js.org subdomain goes
+// live, switch SITE to 'https://decant.js.org'.
+const SITE = 'https://covai-labs.github.io/decant';
+const path = canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`;
+const canonical = `${SITE}${path === '/' ? '' : path}`;
 ---
 
 <!doctype html>

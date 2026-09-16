@@ -36,4 +36,4 @@ pixel positions). "Internal API" parsers read the same RPC payloads the frontend
 working even when the CSS is redecorated. When a platform changes, one shared fix heals every
 exporter built on `decant-core`.
 
-This table is mirrored on the [developer docs site](https://covai-labs.github.io/decant-core/platforms/).
+This table is mirrored on the [developer docs site](https://covai-labs.github.io/decant/platforms/).
