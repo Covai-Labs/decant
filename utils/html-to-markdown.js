@@ -192,28 +192,63 @@ export function convertToMarkdown(htmlContent, options = {}) {
       registerMath(el, latex, isBlock, clone.ownerDocument);
     });
 
-    // 3. Process Google Search SGE LaTeX images with [data-xpm-latex]
-    clone.querySelectorAll("[data-xpm-latex]").forEach((el) => {
-      if (!clone.contains(el)) return;
-      const copyRoot = el.closest("[data-xpm-copy-root]");
-      if (!copyRoot) return;
-      const container = el.closest(".cPGBZb") || copyRoot;
-      if (!container.parentNode) return;
+    // 3. Process Google Search SGE LaTeX images with [data-xpm-latex] or fallback math roots
+    clone
+      .querySelectorAll(
+        "[data-xpm-latex], [data-xpm-copy-root][data-xpm-copy-text], [data-xpm-copy-root] img[alt]",
+      )
+      .forEach((el) => {
+        if (!clone.contains(el)) return;
+        const copyRoot = el.hasAttribute("data-xpm-copy-root")
+          ? el
+          : el.closest("[data-xpm-copy-root]");
+        if (!copyRoot) return;
+        const blockContainer = el.closest(".cPGBZb");
+        const inlineWrapper = el.closest(".mTEjhd") || el.closest(".dteT0b");
+        const container = blockContainer || inlineWrapper || copyRoot;
+        if (!container.parentNode) return;
 
-      const latex = el.getAttribute("data-xpm-latex");
+        const img = el.tagName === "IMG" ? el : copyRoot.querySelector("img");
+        const latex =
+          copyRoot.getAttribute("data-xpm-latex") ||
+          el.getAttribute("data-xpm-latex") ||
+          copyRoot.getAttribute("data-xpm-copy-text") ||
+          (img && img.getAttribute("data-xpm-latex")) ||
+          el.getAttribute("alt") ||
+          (img && img.getAttribute("alt")) ||
+          "";
+        if (!latex) return;
 
-      // Determine if it is block math
-      let isBlock = false;
-      const parent = container.parentNode;
-      if (parent) {
-        const parentText = parent.textContent
-          .replace(container.textContent, "")
-          .trim();
-        isBlock = parentText === "";
-      }
+        // Determine if block or inline based on DOM structure
+        let isBlock = false;
+        if (blockContainer) {
+          // Full block container (.cPGBZb)
+          isBlock = true;
+        } else if (inlineWrapper) {
+          // Inline math wrapper (.mTEjhd, .dteT0b)
+          isBlock = false;
+        } else {
+          const style = copyRoot.getAttribute("style") || "";
+          if (/display:\s*inline/i.test(style)) {
+            isBlock = false;
+          } else {
+            // Check enclosing block element (p, li, td, th, div) for surrounding text
+            const enclosingBlock = container.closest("p, li, td, th, div");
+            if (enclosingBlock) {
+              const cloneBlock = enclosingBlock.cloneNode(true);
+              const targetInClone =
+                cloneBlock
+                  .querySelector("[data-xpm-latex]")
+                  ?.closest("[data-xpm-copy-root]") ||
+                cloneBlock.querySelector("[data-xpm-latex]");
+              if (targetInClone) targetInClone.remove();
+              isBlock = cloneBlock.textContent.trim() === "";
+            }
+          }
+        }
 
-      registerMath(container, latex, isBlock, clone.ownerDocument);
-    });
+        registerMath(container, latex, isBlock, clone.ownerDocument);
+      });
 
     // 4. Process block display KaTeX (.katex-display)
     clone.querySelectorAll(".katex-display").forEach((el) => {
