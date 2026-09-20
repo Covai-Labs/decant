@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/Covai-Labs/decant/compare/v1.10.1...v1.11.0) (2026-09-20)
+
+
+### Features
+
+* **parser:** add Duck.ai parser and platform detection ([9701c2a](https://github.com/Covai-Labs/decant/commit/9701c2a31fd649654fb50ecf3c14d70edee77171))
+
 ## [1.10.1](https://github.com/Covai-Labs/decant-core/compare/v1.10.0...v1.10.1) (2026-09-16)
 
 
