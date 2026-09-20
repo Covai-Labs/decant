@@ -31,3 +31,6 @@ jobs:
 
       - name: Run format check
         run: npm run format:check
+
+      - name: Verify platform docs sync
+        run: npm run sync:check
