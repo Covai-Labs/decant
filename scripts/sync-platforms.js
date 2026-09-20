@@ -87,6 +87,8 @@ async function main() {
     if (isCheckMode) {
       console.error(`SUPPORTED_PLATFORMS.md not found at ${supportedMdPath}`);
       hasDiff = true;
+    } else {
+      throw new Error(`SUPPORTED_PLATFORMS.md not found at ${supportedMdPath}`);
     }
   } else {
     const supportedRegex = /(\| Platform\s*\|[\s\S]*?)(\n## Maintenance model)/;
@@ -96,6 +98,10 @@ async function main() {
           "SUPPORTED_PLATFORMS.md is missing the '| Platform |' or '## Maintenance model' section marker",
         );
         hasDiff = true;
+      } else {
+        throw new Error(
+          "SUPPORTED_PLATFORMS.md is missing the '| Platform |' or '## Maintenance model' section marker",
+        );
       }
     } else {
       let updatedSupported = currentSupported.replace(
@@ -127,6 +133,8 @@ async function main() {
     if (isCheckMode) {
       console.error(`README.md not found at ${readmePath}`);
       hasDiff = true;
+    } else {
+      throw new Error(`README.md not found at ${readmePath}`);
     }
   } else {
     const readmeSectionRegex =
@@ -137,6 +145,10 @@ async function main() {
           "README.md is missing the '## Supported Platforms' section marker",
         );
         hasDiff = true;
+      } else {
+        throw new Error(
+          "README.md is missing the '## Supported Platforms' section marker",
+        );
       }
     } else {
       let updatedReadme = currentReadme.replace(

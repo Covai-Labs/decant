@@ -27,7 +27,7 @@ npm run sync:platforms # Sync data/platforms.json -> README.md, SUPPORTED_PLATFO
 npm run sync:check     # Verify documentation tables match data/platforms.json (runs in CI)
 ```
 
-All quality and consistency checks run in CI on every push and pull request.
+Lint, code formatting, and platform synchronization checks run in CI on pull requests.
 
 ## Project Layout
 
