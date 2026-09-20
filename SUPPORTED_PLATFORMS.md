@@ -23,6 +23,7 @@ and installation, see [README.md](README.md).
 | **Gemini Cloud Assist**             | `GeminiCloudAssistParser` | DOM                                                                   |
 | **Joyland**                         | `JoylandParser`           | DOM                                                                   |
 | **Chub**                            | `ChubParser`              | DOM                                                                   |
+| **Duck.ai (DuckDuckGo AI)**         | `DuckAIParser`            | DOM (client-side privacy, no server chat history API)                 |
 | **Generic Web Article**             | `ArticleParser`           | Readability + Defuddle + Article-Extractor                            |
 
 ## Maintenance model

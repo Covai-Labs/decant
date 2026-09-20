@@ -23,6 +23,7 @@ export const AI_CHAT_DOMAINS = [
   "chub.ai",
   "characterhub.org",
   "grok.com",
+  "duck.ai",
 ];
 
 /**
@@ -50,5 +51,11 @@ export const URL_PATTERNS = [
   {
     test: (url) => url.includes("console.cloud.google.com/gemini"),
     platform: "gemini-cloud-assist",
+  },
+  {
+    test: (url) =>
+      url.includes("duck.ai") ||
+      /duckduckgo\.com\/(?:chat|\?.*ia=chat)/i.test(url),
+    platform: "duck-ai",
   },
 ];
