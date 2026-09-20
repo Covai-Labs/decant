@@ -13,7 +13,8 @@
     "./web": "./web/index.js",
     "./web/*": "./web/*.js",
     "./article": "./web/article.js",
-    "./detection/*": "./detection/*.js"
+    "./detection/*": "./detection/*.js",
+    "./platforms": "./data/platforms.json"
   },
   "files": [
     "ai",
@@ -21,6 +22,7 @@
     "detection",
     "lib",
     "utils",
+    "data",
     "LICENSE",
     "README.md"
   ],
@@ -36,7 +38,9 @@
     "test": "node --test tests/*.test.js",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "sync:platforms": "node scripts/sync-platforms.js",
+    "sync:check": "node scripts/sync-platforms.js --check"
   },
   "keywords": [
     "ai",

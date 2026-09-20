@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node ../scripts/sync-platforms.js",
     "build": "astro build && prettier --write ../docs",
     "preview": "astro preview",
     "format:check": "prettier --check ."
