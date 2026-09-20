@@ -1,3 +1,5 @@
+import { isDuckAiUrl } from "../ai/duck_ai.js";
+
 /**
  * AI chat platform domain definitions.
  * Centralised so detection logic and UI (e.g. Decant's tip banner) share the same list.
@@ -23,6 +25,7 @@ export const AI_CHAT_DOMAINS = [
   "chub.ai",
   "characterhub.org",
   "grok.com",
+  "duck.ai",
 ];
 
 /**
@@ -50,5 +53,9 @@ export const URL_PATTERNS = [
   {
     test: (url) => url.includes("console.cloud.google.com/gemini"),
     platform: "gemini-cloud-assist",
+  },
+  {
+    test: isDuckAiUrl,
+    platform: "duck-ai",
   },
 ];
