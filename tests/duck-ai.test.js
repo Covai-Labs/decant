@@ -33,6 +33,12 @@ test("DuckAIParser isAvailable matches duck.ai and duckduckgo chat URLs", () => 
 
   assert.equal(parser.isAvailable("https://duckduckgo.com/?q=test"), false);
   assert.equal(parser.isAvailable("https://google.com"), false);
+  assert.equal(
+    parser.isAvailable("https://example.com/?target=https://duck.ai"),
+    false,
+  );
+  assert.equal(parser.isAvailable("https://notduck.ai/"), false);
+  assert.equal(parser.isAvailable("https://duckduckgo.com.evil.com/"), false);
   assert.equal(parser.isAvailable(""), false);
   assert.equal(parser.isAvailable(null), false);
 });

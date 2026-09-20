@@ -117,29 +117,30 @@ import { normalizeLatexMath } from "decant-core";
 
 ## Supported Platforms
 
-18 AI chat platform parsers plus generic web article extraction:
+19 AI chat platform parsers plus generic web article extraction:
 
-| Platform                            | Parser                    | Extraction strategy                        |
-| :---------------------------------- | :------------------------ | :----------------------------------------- |
-| **ChatGPT**                         | `ChatGPTParser`           | DOM + internal API                         |
-| **Claude**                          | `ClaudeParser`            | DOM + internal API + React fiber           |
-| **Google Gemini**                   | `GeminiParser`            | DOM + batchexecute RPC                     |
-| **Microsoft Copilot**               | `CopilotParser`           | DOM (multi-domain)                         |
-| **Perplexity**                      | `PerplexityParser`        | Internal API + DOM fallback                |
-| **DeepSeek**                        | `DeepSeekParser`          | DOM + internal API (`fragments[]`)         |
-| **Qwen**                            | `QwenParser`              | DOM                                        |
-| **Meta AI**                         | `MetaParser`              | Internal API (GraphQL) + DOM fallback      |
-| **Mistral / Le Chat**               | `MistralParser`           | DOM                                        |
-| **Proton Lumo**                     | `LumoParser`              | DOM (API is E2E-encrypted, not readable)   |
-| **Z.ai**                            | `ZAiParser`               | Internal API (chat + batch) + DOM fallback |
-| **Grok**                            | `GrokParser`              | Internal API (response-node + load) + DOM  |
-| **Google AI Studio**                | `GoogleAIStudioParser`    | DOM                                        |
-| **NotebookLM**                      | `NotebookLMParser`        | DOM                                        |
-| **Google Search AI (AI Overviews)** | `GoogleSearchAIParser`    | DOM                                        |
-| **Gemini Cloud Assist**             | `GeminiCloudAssistParser` | DOM                                        |
-| **Joyland**                         | `JoylandParser`           | DOM                                        |
-| **Chub**                            | `ChubParser`              | DOM                                        |
-| **Generic Web Article**             | `ArticleParser`           | Readability + Defuddle + Article-Extractor |
+| Platform                            | Parser                    | Extraction strategy                                   |
+| :---------------------------------- | :------------------------ | :---------------------------------------------------- |
+| **ChatGPT**                         | `ChatGPTParser`           | DOM + internal API                                    |
+| **Claude**                          | `ClaudeParser`            | DOM + internal API + React fiber                      |
+| **Google Gemini**                   | `GeminiParser`            | DOM + batchexecute RPC                                |
+| **Microsoft Copilot**               | `CopilotParser`           | DOM (multi-domain)                                    |
+| **Perplexity**                      | `PerplexityParser`        | Internal API + DOM fallback                           |
+| **DeepSeek**                        | `DeepSeekParser`          | DOM + internal API (`fragments[]`)                    |
+| **Qwen**                            | `QwenParser`              | DOM                                                   |
+| **Meta AI**                         | `MetaParser`              | Internal API (GraphQL) + DOM fallback                 |
+| **Mistral / Le Chat**               | `MistralParser`           | DOM                                                   |
+| **Proton Lumo**                     | `LumoParser`              | DOM (API is E2E-encrypted, not readable)              |
+| **Z.ai**                            | `ZAiParser`               | Internal API (chat + batch) + DOM fallback            |
+| **Grok**                            | `GrokParser`              | Internal API (response-node + load) + DOM             |
+| **Google AI Studio**                | `GoogleAIStudioParser`    | DOM                                                   |
+| **NotebookLM**                      | `NotebookLMParser`        | DOM                                                   |
+| **Google Search AI (AI Overviews)** | `GoogleSearchAIParser`    | DOM                                                   |
+| **Gemini Cloud Assist**             | `GeminiCloudAssistParser` | DOM                                                   |
+| **Joyland**                         | `JoylandParser`           | DOM                                                   |
+| **Chub**                            | `ChubParser`              | DOM                                                   |
+| **Duck.ai (DuckDuckGo AI)**         | `DuckAIParser`            | DOM (client-side privacy, no server chat history API) |
+| **Generic Web Article**             | `ArticleParser`           | Readability + Defuddle + Article-Extractor            |
 
 All parsers extend the base [`ChatParser`](ai/base.js) interface — a consistent `isAvailable(url)` +
 normalized `parse()` contract. For the full extraction-strategy breakdown and maintenance model, see

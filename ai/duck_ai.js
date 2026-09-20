@@ -1,15 +1,31 @@
 import { ChatParser } from "./base.js";
 import { convertToMarkdown } from "../utils/html-to-markdown.js";
 
+export function isDuckAiUrl(url) {
+  if (!url || typeof url !== "string") return false;
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+    if (host === "duck.ai" || host.endsWith(".duck.ai")) {
+      return true;
+    }
+    if (host === "duckduckgo.com" || host.endsWith(".duckduckgo.com")) {
+      if (parsed.pathname === "/chat" || parsed.pathname.startsWith("/chat/")) {
+        return true;
+      }
+      return parsed.searchParams.get("ia") === "chat";
+    }
+  } catch {
+    return false;
+  }
+  return false;
+}
+
 export class DuckAIParser extends ChatParser {
   name = "Duck.ai";
 
   isAvailable(url) {
-    if (!url || typeof url !== "string") return false;
-    return (
-      url.includes("duck.ai") ||
-      /duckduckgo\.com\/(?:chat|\?.*ia=chat)/i.test(url)
-    );
+    return isDuckAiUrl(url);
   }
 
   async parse() {
