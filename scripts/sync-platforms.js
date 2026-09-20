@@ -2,7 +2,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import prettier from "prettier";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
@@ -31,7 +30,40 @@ function readFileIfExists(filePath) {
   }
 }
 
+async function getPrettier() {
+  try {
+    const mod = await import("prettier");
+    return mod.default || mod;
+  } catch {
+    try {
+      const webDocsPrettier = path.join(
+        rootDir,
+        "web-docs",
+        "node_modules",
+        "prettier",
+        "index.mjs",
+      );
+      const mod = await import(webDocsPrettier);
+      return mod.default || mod;
+    } catch {
+      return null;
+    }
+  }
+}
+
+async function formatCode(content, parser, prettierInstance) {
+  if (prettierInstance && typeof prettierInstance.format === "function") {
+    try {
+      return await prettierInstance.format(content, { parser });
+    } catch {
+      return content;
+    }
+  }
+  return content;
+}
+
 async function main() {
+  const prettierInstance = await getPrettier();
   const platforms = JSON.parse(fs.readFileSync(platformsPath, "utf-8"));
   const aiPlatforms = platforms.filter((p) => p.id !== "article");
   const aiCount = aiPlatforms.length;
@@ -51,16 +83,30 @@ async function main() {
 
   // 2. Sync SUPPORTED_PLATFORMS.md
   const currentSupported = readFileIfExists(supportedMdPath);
-  if (currentSupported !== null) {
+  if (currentSupported === null) {
+    if (isCheckMode) {
+      console.error(`SUPPORTED_PLATFORMS.md not found at ${supportedMdPath}`);
+      hasDiff = true;
+    }
+  } else {
     const supportedRegex = /(\| Platform\s*\|[\s\S]*?)(\n## Maintenance model)/;
-    if (supportedRegex.test(currentSupported)) {
+    if (!supportedRegex.test(currentSupported)) {
+      if (isCheckMode) {
+        console.error(
+          "SUPPORTED_PLATFORMS.md is missing the '| Platform |' or '## Maintenance model' section marker",
+        );
+        hasDiff = true;
+      }
+    } else {
       let updatedSupported = currentSupported.replace(
         supportedRegex,
         `${markdownTable}$2`,
       );
-      updatedSupported = await prettier.format(updatedSupported, {
-        parser: "markdown",
-      });
+      updatedSupported = await formatCode(
+        updatedSupported,
+        "markdown",
+        prettierInstance,
+      );
       if (currentSupported !== updatedSupported) {
         if (isCheckMode) {
           console.error(
@@ -77,34 +123,44 @@ async function main() {
 
   // 3. Sync README.md
   const currentReadme = readFileIfExists(readmePath);
-  if (currentReadme !== null) {
-    // Update bullet point count
-    let updatedReadme = currentReadme.replace(
-      /✅ \*\*\d+ AI chat platform parsers\*\*/g,
-      `✅ **${aiCount} AI chat platform parsers**`,
-    );
-
-    // Update Supported Platforms section
+  if (currentReadme === null) {
+    if (isCheckMode) {
+      console.error(`README.md not found at ${readmePath}`);
+      hasDiff = true;
+    }
+  } else {
     const readmeSectionRegex =
       /(## Supported Platforms\n\n)\d+ AI chat platform parsers[^\n]*\n\n(\| Platform[\s\S]*?)(\n\nAll parsers extend)/;
-    if (readmeSectionRegex.test(updatedReadme)) {
+    if (!readmeSectionRegex.test(currentReadme)) {
+      if (isCheckMode) {
+        console.error(
+          "README.md is missing the '## Supported Platforms' section marker",
+        );
+        hasDiff = true;
+      }
+    } else {
+      let updatedReadme = currentReadme.replace(
+        /✅ \*\*\d+ AI chat platform parsers\*\*/g,
+        `✅ **${aiCount} AI chat platform parsers**`,
+      );
       updatedReadme = updatedReadme.replace(
         readmeSectionRegex,
         `$1${aiCount} AI chat platform parsers plus generic web article extraction:\n\n${markdownTable}$3`,
       );
-    }
+      updatedReadme = await formatCode(
+        updatedReadme,
+        "markdown",
+        prettierInstance,
+      );
 
-    updatedReadme = await prettier.format(updatedReadme, {
-      parser: "markdown",
-    });
-
-    if (currentReadme !== updatedReadme) {
-      if (isCheckMode) {
-        console.error("README.md is out of sync with data/platforms.json");
-        hasDiff = true;
-      } else {
-        fs.writeFileSync(readmePath, updatedReadme, "utf-8");
-        console.log("✓ Updated README.md");
+      if (currentReadme !== updatedReadme) {
+        if (isCheckMode) {
+          console.error("README.md is out of sync with data/platforms.json");
+          hasDiff = true;
+        } else {
+          fs.writeFileSync(readmePath, updatedReadme, "utf-8");
+          console.log("✓ Updated README.md");
+        }
       }
     }
   }
@@ -132,9 +188,7 @@ export interface PlatformEntry {
 export const PLATFORMS: PlatformEntry[] = ${JSON.stringify(platforms, null, 2)};
 `;
 
-  tsContent = await prettier.format(tsContent, {
-    parser: "typescript",
-  });
+  tsContent = await formatCode(tsContent, "typescript", prettierInstance);
 
   const currentTs = readFileIfExists(webDocsPlatformsPath);
   if (currentTs !== tsContent) {
@@ -149,6 +203,7 @@ export const PLATFORMS: PlatformEntry[] = ${JSON.stringify(platforms, null, 2)};
         console.log("✓ Updated web-docs/src/data/platforms.ts");
       } catch (err) {
         console.error(`Failed to write ${webDocsPlatformsPath}:`, err.message);
+        throw err;
       }
     }
   }

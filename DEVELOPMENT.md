@@ -6,7 +6,7 @@ CLA), see [CONTRIBUTING.md](CONTRIBUTING.md). For the platform matrix, see
 
 ## Prerequisites
 
-- **Node.js 18+** with npm
+- **Node.js 26+** with npm
 
 ## Setup
 
