@@ -16,7 +16,7 @@ And every time one of those platforms changes its UI, seriously re-renders a mes
 
 Existing chat exporters often suffer from two major flaws: they break whenever platform DOMs update, and many route user conversations through third-party servers.
 
-`decant-core` was created to solve both at the foundation. Originally built to power local-first extensions like [AI Chat Exporter](https://ai-chat-exporter.covai.org/) and [Decant](https://decant.covai.org/), it decouples fragile platform parsing from presentation. By sharing this engine under AGPL-3.0, any browser extension, web clipper, archiver, or research tool can rely on a maintained, local-first extraction layer instead of reverse-engineering AI platforms in isolation.
+`decant-core` was created to solve both at the foundation. Originally built to power local-first extensions like [AI Chat Exporter](https://ace.covai.org/) and [Decant](https://decant.covai.org/), it decouples fragile platform parsing from presentation. By sharing this engine under AGPL-3.0, any browser extension, web clipper, archiver, or research tool can rely on a maintained, local-first extraction layer instead of reverse-engineering AI platforms in isolation.
 
 ```bash
 npm install decant-core
