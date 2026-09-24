@@ -55,7 +55,7 @@ test("extractDeepSeekMessageContent reads REQUEST/RESPONSE fragments", () => {
   assert.equal(extractDeepSeekMessageContent(null), "");
 });
 
-test("DeepSeekParser DOM extracts 16 turns, thinking blocks excluded", async () => {
+test("DeepSeekParser DOM extracts 16 turns, thinking blocks standardized", async () => {
   setupDom("deepseek-chat.html", PAGE_URL);
   globalThis.localStorage = { getItem: () => null };
   const result = await new DeepSeekParser().parse({ parserMode: "prefer_dom" });
@@ -66,6 +66,12 @@ test("DeepSeekParser DOM extracts 16 turns, thinking blocks excluded", async () 
     assert.equal(m.role, i % 2 === 0 ? "User" : "DeepSeek");
   });
   assert.ok(result.messages[0].content.includes("species that went extinct"));
+  assert.equal(result.messages[0].thinking, undefined);
+  assert.ok(!result.messages[0].content.includes("<think>"));
+  assert.equal(result.messages[13].role, "DeepSeek");
+  assert.ok(result.messages[13].thinking);
+  assert.ok(result.messages[13].content.includes("<think>"));
+  assert.ok(result.messages[13].content.includes("</think>"));
 });
 
 test("DeepSeekParser API path follows current_message_id branch (mocked)", async () => {
@@ -90,8 +96,51 @@ test("DeepSeekParser API path follows current_message_id branch (mocked)", async
     assert.equal(result.messages.length, 16);
     assert.equal(result.messages[0].role, "User");
     assert.ok(result.messages[0].content.includes("species that went extinct"));
+    assert.equal(result.messages[0].thinking, undefined);
     assert.equal(result.messages[1].role, "DeepSeek");
+    assert.ok(result.messages[13].thinking);
+    assert.ok(result.messages[13].content.includes("<think>"));
+    assert.ok(result.messages[13].content.includes("</think>"));
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test("DeepSeekParser DOM fallback selector extracts thinking without mutating live DOM", async () => {
+  const dom = parseHTML(`
+    <html>
+      <head><title>Fallback Chat</title></head>
+      <body>
+        <div class="ds-message-row ds-user-message"><p>Hello DeepSeek</p></div>
+        <div class="ds-message-row">
+          <div class="ds-think-content"><p>Thinking about greeting</p></div>
+          <p>Hello human!</p>
+        </div>
+      </body>
+    </html>
+  `);
+  globalThis.document = dom.document;
+  globalThis.window = dom.window;
+  globalThis.window.location = { href: PAGE_URL };
+  globalThis.localStorage = { getItem: () => null };
+
+  const parser = new DeepSeekParser();
+  const result1 = await parser.parse({ parserMode: "prefer_dom" });
+  assert.equal(result1.messages.length, 2);
+  assert.equal(result1.messages[1].role, "DeepSeek");
+  assert.equal(result1.messages[1].thinking, "Thinking about greeting");
+  assert.ok(
+    result1.messages[1].content.includes(
+      "<think>\nThinking about greeting\n</think>",
+    ),
+  );
+  assert.ok(result1.messages[1].content.includes("Hello human!"));
+
+  // Verify DOM was not mutated: .ds-think-content still exists in document
+  const thinkNodes = globalThis.document.querySelectorAll(".ds-think-content");
+  assert.equal(thinkNodes.length, 1);
+
+  // A second parse extracts identical thinking
+  const result2 = await parser.parse({ parserMode: "prefer_dom" });
+  assert.equal(result2.messages[1].thinking, "Thinking about greeting");
 });

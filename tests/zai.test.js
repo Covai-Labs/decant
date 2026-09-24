@@ -74,8 +74,11 @@ test("formatZaiMessage maps user content and assistant text blocks", () => {
   assert.ok(messages[0].content.includes("species that went extinct"));
   assert.equal(messages[1].role, "Z.ai");
   assert.ok(messages[1].content.includes("Recently Extinct Species"));
-  // Reasoning blocks are preserved as quoted thinking, not dropped.
-  assert.ok(messages[13].content.includes("Thinking"));
+  // Reasoning blocks are preserved in standardized <think> block and on msg.thinking.
+  assert.ok(messages[13].content.includes("<think>"));
+  assert.ok(messages[13].content.includes("</think>"));
+  assert.ok(messages[13].thinking);
+  assert.ok(messages[13].thinking.includes("XXXX.in"));
 });
 
 test("ZAiParser DOM extracts 14 alternating turns from Sept fixture", async () => {

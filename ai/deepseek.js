@@ -98,7 +98,29 @@ async function fetchDeepSeekConversation(sessionId, token) {
       const isUser = msgNode.role === "USER" || msgNode.role === "user";
       const role = isUser ? "User" : "DeepSeek";
       const content = extractDeepSeekMessageContent(msgNode);
-      return { role, content: content.trim() };
+      let thinking = "";
+      if (!isUser && Array.isArray(msgNode.fragments)) {
+        const thinkFragments = msgNode.fragments.filter(
+          (f) => f && f.type === "THINK" && typeof f.content === "string",
+        );
+        thinking = thinkFragments
+          .map((f) => f.content.trim())
+          .filter(Boolean)
+          .join("\n\n");
+      }
+      let fullContent = "";
+      if (thinking) {
+        fullContent += `<think>\n${thinking}\n</think>\n\n`;
+      }
+      if (content.trim()) {
+        fullContent += content.trim();
+      }
+      fullContent = fullContent.trim();
+      const msg = { role, content: fullContent };
+      if (thinking) {
+        msg.thinking = thinking;
+      }
+      return msg;
     })
     .filter((msg) => msg.content.length > 0);
 }
@@ -182,15 +204,40 @@ export class DeepSeekParser extends ChatParser {
 
     outerElements.forEach((el) => {
       let role = "Unknown";
+      let thinking = "";
       if (el.matches(userSelector)) {
         role = "User";
       } else if (el.matches(assistantSelector)) {
         role = "DeepSeek";
+        const messageContainer =
+          (el.closest && el.closest(".ds-message")) || el.parentElement;
+        if (messageContainer) {
+          const thinkContainers =
+            messageContainer.querySelectorAll(".ds-think-content");
+          if (thinkContainers.length > 0) {
+            thinking = Array.from(thinkContainers)
+              .map((tc) => convertToMarkdown(tc).trim())
+              .filter(Boolean)
+              .join("\n\n");
+          }
+        }
       }
 
       const text = convertToMarkdown(el);
+      let fullContent = "";
+      if (thinking) {
+        fullContent += `<think>\n${thinking}\n</think>\n\n`;
+      }
       if (text.trim()) {
-        messages.push({ role, content: text.trim() });
+        fullContent += text.trim();
+      }
+      fullContent = fullContent.trim();
+      if (fullContent) {
+        const msg = { role, content: fullContent };
+        if (thinking) {
+          msg.thinking = thinking;
+        }
+        messages.push(msg);
       }
     });
 
@@ -202,9 +249,37 @@ export class DeepSeekParser extends ChatParser {
       messageRows.forEach((row) => {
         const isUser = row.classList.contains("ds-user-message");
         const role = isUser ? "User" : "DeepSeek";
-        const text = convertToMarkdown(row);
+        const rowClone = row.cloneNode(true);
+        let thinking = "";
+        if (!isUser) {
+          const thinkContainers =
+            rowClone.querySelectorAll(".ds-think-content");
+          if (thinkContainers.length > 0) {
+            thinking = Array.from(thinkContainers)
+              .map((tc) => {
+                const md = convertToMarkdown(tc).trim();
+                tc.remove();
+                return md;
+              })
+              .filter(Boolean)
+              .join("\n\n");
+          }
+        }
+        const text = convertToMarkdown(rowClone);
+        let fullContent = "";
+        if (thinking) {
+          fullContent += `<think>\n${thinking}\n</think>\n\n`;
+        }
         if (text.trim()) {
-          messages.push({ role, content: text.trim() });
+          fullContent += text.trim();
+        }
+        fullContent = fullContent.trim();
+        if (fullContent) {
+          const msg = { role, content: fullContent };
+          if (thinking) {
+            msg.thinking = thinking;
+          }
+          messages.push(msg);
         }
       });
     }

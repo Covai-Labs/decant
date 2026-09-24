@@ -402,12 +402,30 @@ export class ClaudeParser extends ChatParser {
             const role = message.sender === "human" ? "User" : "Claude";
 
             let contentStr = "";
+            let thinkingStr = "";
 
             // Construct content
             if (message.content && Array.isArray(message.content)) {
               for (const block of message.content) {
-                if (block.type === "thinking" && block.thinking) {
-                  contentStr += `> **Thinking Process:**\n> \n> ${block.thinking.replace(/\n/g, "\n> ")}\n\n`;
+                if (block.type === "thinking") {
+                  let thoughtText = "";
+                  if (
+                    typeof block.thinking === "string" &&
+                    block.thinking.trim()
+                  ) {
+                    thoughtText = block.thinking.trim();
+                  } else if (Array.isArray(block.summaries)) {
+                    thoughtText = block.summaries
+                      .map((s) =>
+                        typeof s === "string" ? s : s?.summary || "",
+                      )
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                      .join("\n");
+                  }
+                  if (thoughtText) {
+                    thinkingStr += (thinkingStr ? "\n\n" : "") + thoughtText;
+                  }
                 } else if (block.type === "text" && block.text) {
                   const cleanText = block.text
                     .replace(/<antArtifact[^>]*>[\s\S]*?<\/antArtifact>/g, "")
@@ -516,9 +534,17 @@ export class ClaudeParser extends ChatParser {
               }
             }
 
+            if (thinkingStr) {
+              contentStr = `<think>\n${thinkingStr}\n</think>\n\n` + contentStr;
+            }
+
             contentStr = contentStr.trim();
             if (contentStr) {
-              messages.push({ role, content: contentStr });
+              const msgObj = { role, content: contentStr };
+              if (thinkingStr) {
+                msgObj.thinking = thinkingStr;
+              }
+              messages.push(msgObj);
             }
 
             // Extract and push artifacts
