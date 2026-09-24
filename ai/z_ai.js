@@ -60,13 +60,12 @@ export function formatZaiMessage(entry) {
     .filter(Boolean)
     .join("\n\n");
   if (reasoning) {
-    const quoted = reasoning
-      .split("\n")
-      .map((line) => `> ${line}`)
-      .join("\n");
-    content += `\n\n> 🧠 Thinking\n${quoted}`;
+    content = `<think>\n${reasoning}\n</think>\n\n${content}`;
   }
   const msg = { role, content };
+  if (reasoning) {
+    msg.thinking = reasoning;
+  }
   if (entry.timestamp) {
     try {
       msg.timestamp = new Date(entry.timestamp * 1000).toISOString();

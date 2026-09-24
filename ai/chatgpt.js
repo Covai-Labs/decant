@@ -831,6 +831,7 @@ export class ChatGPTParser extends ChatParser {
     const messages = [];
     for (const msg of apiMessages) {
       let content = "";
+      let thinking = "";
       for (const seg of msg.segments) {
         if (seg.type === "text") {
           content +=
@@ -843,7 +844,7 @@ export class ChatGPTParser extends ChatParser {
             msg.imageGroupMap,
           );
           if (thoughtText) {
-            content += `<details><summary>Thought Process</summary>\n\n${thoughtText}\n\n</details>\n\n`;
+            thinking += (thinking ? "\n\n" : "") + thoughtText;
           }
         } else if (seg.type === "image") {
           const src = images[seg.fileId];
@@ -852,12 +853,22 @@ export class ChatGPTParser extends ChatParser {
           }
         }
       }
-      content = content.trim();
-      if (content) {
+      let fullContent = "";
+      if (thinking) {
+        fullContent += `<think>\n${thinking}\n</think>\n\n`;
+      }
+      if (content.trim()) {
+        fullContent += content.trim();
+      }
+      fullContent = fullContent.trim();
+      if (fullContent) {
         const msgObj = {
           role: msg.role,
-          content: content,
+          content: fullContent,
         };
+        if (thinking) {
+          msgObj.thinking = thinking;
+        }
         if (msg.timestamp) {
           msgObj.timestamp = msg.timestamp;
         }
@@ -876,8 +887,10 @@ export class ChatGPTParser extends ChatParser {
       Link: currentUrl,
       Model:
         convoData?.model_slug ||
-        document.querySelector('[data-testid="model-selector-dropdown"]')
-          ?.innerText ||
+        (typeof document !== "undefined" && document.querySelector
+          ? document.querySelector('[data-testid="model-selector-dropdown"]')
+              ?.innerText
+          : null) ||
         "ChatGPT",
       Method: method,
     };
