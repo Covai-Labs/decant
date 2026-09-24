@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/Covai-Labs/decant/compare/v1.11.0...v1.12.0) (2026-09-24)
+
+
+### Features
+
+* standardize thinking process output across parsers ([#31](https://github.com/Covai-Labs/decant/issues/31)) ([eae8342](https://github.com/Covai-Labs/decant/commit/eae8342ff80efeb9d49cf40f95fe5d05d0f8a66f)), closes [#30](https://github.com/Covai-Labs/decant/issues/30)
+
 # [1.11.0](https://github.com/Covai-Labs/decant/compare/v1.10.1...v1.11.0) (2026-09-20)
 
 
