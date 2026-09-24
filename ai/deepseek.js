@@ -249,9 +249,11 @@ export class DeepSeekParser extends ChatParser {
       messageRows.forEach((row) => {
         const isUser = row.classList.contains("ds-user-message");
         const role = isUser ? "User" : "DeepSeek";
+        const rowClone = row.cloneNode(true);
         let thinking = "";
         if (!isUser) {
-          const thinkContainers = row.querySelectorAll(".ds-think-content");
+          const thinkContainers =
+            rowClone.querySelectorAll(".ds-think-content");
           if (thinkContainers.length > 0) {
             thinking = Array.from(thinkContainers)
               .map((tc) => {
@@ -263,7 +265,7 @@ export class DeepSeekParser extends ChatParser {
               .join("\n\n");
           }
         }
-        const text = convertToMarkdown(row);
+        const text = convertToMarkdown(rowClone);
         let fullContent = "";
         if (thinking) {
           fullContent += `<think>\n${thinking}\n</think>\n\n`;
