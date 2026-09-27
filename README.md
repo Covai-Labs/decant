@@ -151,9 +151,15 @@ normalized `parse()` contract. For the full extraction-strategy breakdown and ma
 
 ## License
 
-`decant-core` is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0-only)**.
+`decant-core` is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0-only)** with a **FOSS Linking Exception**, alongside a **Commercial License** option.
 
-That choice is deliberate. AI platforms change constantly, and parser fixes belong in a shared commons so the whole ecosystem benefits — not siloed in a proprietary fork. If you use `decant-core`, network-based deployments that serve modified versions must also offer the corresponding source. Please review [`LICENSE`](LICENSE) before incorporating it into your project.
+### FOSS Linking Exception (Open Source)
+
+Permission is granted to link, import, or bundle `decant-core` into projects distributed under any OSI-approved open source license (including **MPL-2.0**, **MIT**, **Apache-2.0**, and **BSD**) and distribute the resulting work under that project's license, without requiring the enclosing project to be licensed under AGPLv3. Any modifications directly made to `decant-core` source files remain subject to AGPLv3.
+
+### Commercial License
+
+If you wish to use `decant-core` in closed-source, proprietary, or commercial software that cannot comply with the AGPLv3, a commercial license is available. Please contact `office@covai.org` for licensing terms.
 
 ### Third-Party Test Fixtures Notice
 
