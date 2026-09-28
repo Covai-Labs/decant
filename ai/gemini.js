@@ -492,15 +492,15 @@ export class GeminiParser extends ChatParser {
         // Drop bare placeholder-chip lines; they resolve to nothing outside
         // the live page (the real content is inlined separately below).
         if (
-          /^https?:\/\/googleusercontent\.com\/\S*$/.test(trimmed) ||
-          /^<?https?:\/\/googleusercontent\.com\/\S*>?$/.test(trimmed)
+          /^<?https?:\/\/googleusercontent\.com\/immersive_entry_chip\/\S*>?$/.test(trimmed) ||
+          /^<?https?:\/\/googleusercontent\.com\/immersive_entry_chip\/\S*>?$/.test(trimmed)
         ) {
           return false;
         }
         return true;
       })
       .join("\n")
-      .replace(/https?:\/\/googleusercontent\.com\/\S*/g, "")
+      .replace(/https?:\/\/googleusercontent\.com\/immersive_entry_chip\/\S*/g, "")
       .replace(/\n{3,}/g, "\n\n");
   }
 
@@ -661,7 +661,14 @@ export class GeminiParser extends ChatParser {
   extractDeepResearchExtras(item) {
     const parts = [];
     try {
-      for (const cand of this.getApiCandidates(item)) {
+      const candidates = this.getApiCandidates(item);
+      const selected = candidates.find((cand) => {
+        if (!Array.isArray(cand)) return false;
+        return (Array.isArray(cand[1]) && typeof cand[1][0] === "string") ||
+          typeof cand[1] === "string" ||
+          (typeof cand[0] === "string" && cand[0].length > 50);
+      });
+      for (const cand of selected ? [selected] : []) {
         const plan = this.extractResearchPlanFromCandidate(cand);
         if (plan) parts.push(plan);
         const doc = this.extractImmersiveDocFromCandidate(cand);
@@ -906,6 +913,9 @@ export class GeminiParser extends ChatParser {
                 "button, .thoughts-container, .thoughts-wrapper, model-thoughts, .table-footer, message-actions, election-info-disclaimer, finance-info-disclaimer, .sources-list",
               )
               .forEach((el) => el.remove());
+
+            // Remove follow-up suggestion widgets, but retain research plans.
+            clone.querySelectorAll("follow-up-suggestions, .suggestion-list").forEach((el) => el.remove());
 
             // Unwrap response-element wrappers and message-action guards
             clone
