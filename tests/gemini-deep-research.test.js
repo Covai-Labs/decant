@@ -117,6 +117,22 @@ test("GeminiParser API inlines deep-research report, plan, and cites", () => {
   assert.ok(content.includes("[Source D](https://d.example/w)"));
 });
 
+test("GeminiParser preserves real links while stripping chip placeholders", () => {
+  const parser = new GeminiParser();
+  const text = parser.stripChipPlaceholders(
+    [
+      "See the report.",
+      "http://googleusercontent.com/immersive_entry_chip/0",
+      "Photo: [img](https://lh3.googleusercontent.com/abc) and [doc](https://example.com/x).",
+      "http://googleusercontent.com/deep_research_confirmation_content/0 trailing",
+    ].join("\n"),
+  );
+  assert.ok(!text.includes("immersive_entry_chip"));
+  assert.ok(!text.includes("deep_research_confirmation_content"));
+  assert.ok(text.includes("[img](https://lh3.googleusercontent.com/abc)"));
+  assert.ok(text.includes("[doc](https://example.com/x)"));
+});
+
 test("GeminiParser API leaves regular turns untouched", () => {
   const parser = new GeminiParser();
   const item = [
@@ -185,6 +201,10 @@ test("GeminiParser DOM keeps deep-research plan widget text", async () => {
         <user-query><div class="query-text"><p>Research AI tells</p></div></user-query>
         <model-response><message-content><div class="markdown markdown-main-panel">
           <p>I've put together a research plan.</p>
+          <follow-up><div class="follow-up-container hide-from-message-actions">
+            <div class="follow-up-text">Want a closer look?</div>
+            <div class="follow-up-button-container"><button>Yes</button></div>
+          </div></follow-up>
           <div class="attachment-container unknown"><response-element class="no-md">
             <deep-research-confirmation-widget>
               <div hide-from-message-actions="" class="container lm-enabled hide-from-message-actions">
@@ -212,4 +232,5 @@ test("GeminiParser DOM keeps deep-research plan widget text", async () => {
   assert.ok(modelMsg.content.includes("Research Websites"));
   assert.ok(modelMsg.content.includes("Survey tropes and shifts."));
   assert.ok(!modelMsg.content.includes("Start research"));
+  assert.ok(!modelMsg.content.includes("Want a closer look?"));
 });

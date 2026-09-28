@@ -223,6 +223,8 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
       } else {
         prevMsg.segments.push(...entry.segments);
       }
+      Object.assign(prevMsg.citeMap, entry.citeMap);
+      Object.assign(prevMsg.imageGroupMap, entry.imageGroupMap);
       if (entry.timestamp && !prevMsg.timestamp) {
         prevMsg.timestamp = entry.timestamp;
       }
@@ -240,9 +242,13 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
     const content = msg.content || {};
     const contentType = content.content_type;
     const segments = [];
+    // Mirror the mapping path's thought detection (content types plus
+    // author/recipient markers).
     const isThoughtMsg =
-      contentType === "thoughts" ||
+      msg?.author?.name === "thought" ||
+      msg?.recipient === "thought" ||
       contentType === "thought" ||
+      contentType === "thoughts" ||
       contentType === "reasoning_recap" ||
       msg?.metadata?.reasoning_status === "is_reasoning";
 
@@ -271,7 +277,8 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
     // Tool invocations (content_type "code", e.g. Deep Research args JSON)
     // and tool-role messages are not user-visible prose — skip them.
     if (contentType !== "code" && role !== "tool") {
-      for (const part of content.parts ?? []) {
+      const parts = Array.isArray(content.parts) ? content.parts : [];
+      for (const part of parts) {
         let partText = "";
         let isThoughtPart = isThoughtMsg;
         if (typeof part === "string") {
@@ -285,6 +292,11 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
           ) {
             partText = part.text;
             isThoughtPart = true;
+          } else if (
+            part.content_type === "audio_transcription" &&
+            typeof part.text === "string"
+          ) {
+            partText = part.text;
           } else if (
             includeImages &&
             part?.content_type === "image_asset_pointer" &&
@@ -305,6 +317,63 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
           });
         }
       }
+
+      // Standalone content.text without parts (plain text / execution
+      // output), mirroring the mapping path.
+      if (
+        parts.length === 0 &&
+        typeof content.text === "string" &&
+        content.text.trim()
+      ) {
+        segments.push({ type: "text", content: content.text.trim() });
+      }
+    }
+
+    // Deep Research reports (widget_state), attachments, and Canvas
+    // documents from message metadata, mirroring the mapping path.
+    if (role !== "tool") {
+      const widgetRaw =
+        msg.metadata?.chatgpt_sdk?.widget_state ||
+        msg.metadata?.tool_response_metadata?.venus_widget_state;
+      if (widgetRaw) {
+        try {
+          const widget =
+            typeof widgetRaw === "string" ? JSON.parse(widgetRaw) : widgetRaw;
+          const reportText =
+            widget.report_message?.content?.parts?.[0] || widget.markdown;
+          const steering = widget.steering_acknowledgement;
+          let researchContent = "";
+          if (steering) researchContent += `${steering}\n\n`;
+          if (reportText) researchContent += reportText;
+          if (researchContent.trim()) {
+            segments.push({ type: "text", content: researchContent.trim() });
+          }
+        } catch {
+          // Ignore widget state JSON parse errors
+        }
+      }
+
+      if (
+        Array.isArray(msg.metadata?.attachments) &&
+        msg.metadata.attachments.length > 0
+      ) {
+        const fileNames = msg.metadata.attachments
+          .map((att) => att.name)
+          .filter(Boolean);
+        if (fileNames.length > 0) {
+          segments.push({
+            type: "text",
+            content: `[Attached: ${fileNames.join(", ")}]`,
+          });
+        }
+      }
+
+      if (msg.metadata?.canvas?.title) {
+        segments.push({
+          type: "text",
+          content: `[Canvas: ${msg.metadata.canvas.title}]`,
+        });
+      }
     }
 
     if (segments.length === 0) continue;
@@ -313,12 +382,26 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
     const timestamp = msg?.create_time
       ? new Date(msg.create_time * 1000).toLocaleString()
       : null;
+    // Citation / image-group references, mirroring the mapping path.
+    const citeMap = {};
+    const imageGroupMap = {};
+    for (const ref of msg?.metadata?.content_references ?? []) {
+      if (ref.matched_text) {
+        if (ref.items?.length) citeMap[ref.matched_text] = ref.items;
+        if (
+          ref.type === "image_group" ||
+          ref.matched_text.includes("image_group")
+        ) {
+          imageGroupMap[ref.matched_text] = ref;
+        }
+      }
+    }
     pushOrMerge(
       {
         role: displayRole,
         segments,
-        citeMap: {},
-        imageGroupMap: {},
+        citeMap,
+        imageGroupMap,
         timestamp,
       },
       isThoughtMsg,
@@ -400,8 +483,20 @@ export function linearize(mapping, includeImages, currentNodeId) {
     ) {
       const segments = [];
       const parts = msg?.content?.parts ?? [];
+      // Tool-invocation payloads (content_type "code") are not user-visible
+      // prose, whether carried as standalone text or inside parts.
+      const isToolInvocation = msg?.content?.content_type === "code";
 
       for (const part of parts) {
+        if (isToolInvocation) {
+          if (!(
+            includeImages &&
+            part?.content_type === "image_asset_pointer" &&
+            part?.asset_pointer
+          )) {
+            continue;
+          }
+        }
         let partText = "";
         let isThoughtPart = isThoughtMsg;
 

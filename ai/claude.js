@@ -189,8 +189,8 @@ function collectPresentedFiles(branch) {
   }
 
   for (const [toolUseId, filepaths] of pathsByToolUseId.entries()) {
-    if (filesByToolUseId.has(toolUseId)) continue;
-    const entries = [];
+    const existing = filesByToolUseId.get(toolUseId) || [];
+    const entries = [...existing];
     for (const filePath of filepaths) {
       if (typeof filePath !== "string" || !filePath) continue;
       if (seenPaths.has(filePath)) continue;
@@ -391,14 +391,15 @@ function extractArtifacts(message, foldedArtifacts = new Map()) {
 function extractFileCards(root) {
   if (!root || typeof root.querySelectorAll !== "function") return [];
   const names = [];
-  const seen = new Set();
   const cards = root.querySelectorAll('[data-testid="file-card-open"]');
   for (const card of cards) {
     const label = card.getAttribute && card.getAttribute("aria-label");
     const match = typeof label === "string" && label.match(/^View\s+(.+)$/i);
     const name = match ? match[1].trim() : "";
-    if (name && !seen.has(name.toLowerCase())) {
-      seen.add(name.toLowerCase());
+    // No name-based dedup: two cards may legitimately share a display name
+    // (same basename in different directories). Each card element is visited
+    // exactly once, so nothing is double-counted here.
+    if (name) {
       names.push(name);
     }
     // Remove the whole card element so download buttons / type badges

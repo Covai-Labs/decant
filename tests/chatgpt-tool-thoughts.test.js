@@ -154,6 +154,97 @@ test("ChatGPT linearizeMessagesArray skips tool payloads, keeps thoughts", () =>
   assert.ok(combined.includes("Deep Research has started"));
 });
 
+test("ChatGPT linearizeMessagesArray honours thought markers and text shapes", () => {
+  const m = (id, role, content, extra = {}) => ({
+    id,
+    author: { role },
+    create_time: 1790572783,
+    content,
+    status: "finished_successfully",
+    metadata: {},
+    recipient: "all",
+    ...extra,
+  });
+  const apiMessages = linearizeMessagesArray(
+    [
+      // recipient-marked reasoning with plain text parts
+      m(
+        "t1",
+        "assistant",
+        { content_type: "text", parts: ["Should I mention dates?"] },
+        { recipient: "thought" },
+      ),
+      // standalone content.text without parts
+      m("a1", "assistant", {
+        content_type: "text",
+        text: "Standalone answer.",
+      }),
+      // voice transcription part
+      m("u1", "user", {
+        content_type: "text",
+        parts: [
+          { content_type: "audio_transcription", text: "Dictated query" },
+        ],
+      }),
+      // citation references map
+      m(
+        "a2",
+        "assistant",
+        { content_type: "text", parts: ["Cited claim【1】"] },
+        {
+          metadata: {
+            content_references: [
+              {
+                matched_text: "【1】",
+                items: [{ title: "Source", url: "https://s.example" }],
+              },
+            ],
+          },
+        },
+      ),
+    ],
+    false,
+  );
+
+  const thoughts = apiMessages.find((msg) =>
+    msg.segments.some((s) => s.type === "thought"),
+  );
+  assert.ok(thoughts, "recipient-marked reasoning becomes thought segments");
+  const allText = apiMessages
+    .flatMap((msg) => msg.segments.map((s) => s.content))
+    .join("\n");
+  assert.ok(allText.includes("Standalone answer."));
+  assert.ok(allText.includes("Dictated query"));
+  const cited = apiMessages.find((msg) =>
+    msg.segments.some((s) => s.content.includes("Cited claim")),
+  );
+  assert.deepEqual(Object.keys(cited.citeMap), ["【1】"]);
+});
+
+test("ChatGPT linearize skips code-type parts in mapping messages", () => {
+  const mapping = {
+    n1: {
+      id: "n1",
+      parent: null,
+      children: [],
+      message: {
+        id: "m1",
+        author: { role: "assistant" },
+        create_time: 1790572783,
+        content: {
+          content_type: "code",
+          language: "python3",
+          parts: ['{"path":"/tool/start","args":{}}'],
+        },
+        recipient: "all",
+        metadata: {},
+      },
+    },
+  };
+  const apiMessages = linearize(mapping, false, "n1");
+  assert.equal(apiMessages.length, 0);
+});
+
 test("ChatGPT formatApiResult renders messages-array thoughts as <think>", () => {
   const fixture = messagesArrayFixture();
   const apiMessages = linearizeMessagesArray(fixture.messages, false);

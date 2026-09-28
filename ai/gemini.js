@@ -481,26 +481,22 @@ export class GeminiParser extends ChatParser {
   // Deep-research turns render a short summary plus placeholder chip links
   // (e.g. http://googleusercontent.com/immersive_entry_chip/0) whose real
   // content — research plan, full report, citation map — lives in adjacent
-  // candidate slots. These helpers recover that content.
+  // candidate slots. Only the known chip placeholders are stripped; every
+  // other URL (including googleusercontent subdomains hosting real images
+  // and links inside markdown) is left intact.
   stripChipPlaceholders(text) {
     if (typeof text !== "string" || !text) return text;
+    const chipPattern =
+      /<?https?:\/\/googleusercontent\.com\/(?:immersive_entry_chip|deep_research_confirmation_content)(?:\/\d*)?>?/;
+    const chipPatternGlobal = new RegExp(chipPattern.source, "g");
     return text
       .split("\n")
       .filter((line) => {
-        const trimmed = line.trim();
-        if (!trimmed) return true;
-        // Drop bare placeholder-chip lines; they resolve to nothing outside
-        // the live page (the real content is inlined separately below).
-        if (
-          /^https?:\/\/googleusercontent\.com\/\S*$/.test(trimmed) ||
-          /^<?https?:\/\/googleusercontent\.com\/\S*>?$/.test(trimmed)
-        ) {
-          return false;
-        }
-        return true;
+        if (!chipPattern.test(line)) return true;
+        return line.replace(chipPatternGlobal, "").trim() !== "";
       })
+      .map((line) => line.replace(chipPatternGlobal, ""))
       .join("\n")
-      .replace(/https?:\/\/googleusercontent\.com\/\S*/g, "")
       .replace(/\n{3,}/g, "\n\n");
   }
 
@@ -661,10 +657,22 @@ export class GeminiParser extends ChatParser {
   extractDeepResearchExtras(item) {
     const parts = [];
     try {
-      for (const cand of this.getApiCandidates(item)) {
-        const plan = this.extractResearchPlanFromCandidate(cand);
+      // Extras must come from the same candidate that supplied the visible
+      // text (findModelTextInApiItem uses the first candidate with text),
+      // never mixed in from alternate drafts.
+      const candidates = this.getApiCandidates(item);
+      let anchorIdx = candidates.findIndex(
+        (cand) =>
+          (Array.isArray(cand[1]) && typeof cand[1][0] === "string") ||
+          typeof cand[1] === "string" ||
+          (typeof cand[0] === "string" && cand[0].length > 50),
+      );
+      if (anchorIdx === -1) anchorIdx = 0;
+      const anchor = candidates[anchorIdx];
+      if (anchor) {
+        const plan = this.extractResearchPlanFromCandidate(anchor);
         if (plan) parts.push(plan);
-        const doc = this.extractImmersiveDocFromCandidate(cand);
+        const doc = this.extractImmersiveDocFromCandidate(anchor);
         if (doc) parts.push(doc);
       }
       const sourceLines = this.extractActivitySources(item);
@@ -897,13 +905,14 @@ export class GeminiParser extends ChatParser {
           if (markdownDiv) {
             const clone = markdownDiv.cloneNode(true);
 
-            // Remove UI buttons, thought overlays, and interactive toolbars.
+            // Remove UI buttons, thought overlays, follow-up suggestion
+            // widgets, and interactive toolbars.
             // Note: .hide-from-message-actions is NOT removed — it wraps
             // deep-research plan widgets whose text must be kept (buttons
             // inside are still stripped above).
             clone
               .querySelectorAll(
-                "button, .thoughts-container, .thoughts-wrapper, model-thoughts, .table-footer, message-actions, election-info-disclaimer, finance-info-disclaimer, .sources-list",
+                "button, follow-up, .follow-up-container, .thoughts-container, .thoughts-wrapper, model-thoughts, .table-footer, message-actions, election-info-disclaimer, finance-info-disclaimer, .sources-list",
               )
               .forEach((el) => el.remove());
 
@@ -1091,7 +1100,7 @@ export class GeminiParser extends ChatParser {
       });
       clone
         .querySelectorAll(
-          "button, toolbar, toc-menu, mat-menu, message-actions, .hide-from-message-actions button",
+          "button, toolbar, toc-menu, mat-menu, message-actions, follow-up, .follow-up-container, .hide-from-message-actions button",
         )
         .forEach((el) => el.remove());
       clone.querySelectorAll("response-element").forEach((el) => {

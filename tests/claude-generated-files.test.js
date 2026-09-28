@@ -131,6 +131,58 @@ test("ClaudeParser API emits present_files generated files exactly once", async 
   assert.equal(content.match(/^-\s+`deadrat-agent\.tar`/gm).length, 1);
 });
 
+test("ClaudeParser API merges input paths missing from partial results", async () => {
+  setupApiDom();
+  mockFetch({
+    name: "Partial",
+    model: "claude-sonnet-5",
+    current_leaf_message_uuid: "msg-2",
+    chat_messages: [
+      {
+        uuid: "msg-1",
+        sender: "human",
+        parent_message_uuid: null,
+        content: [{ type: "text", text: "Build it" }],
+      },
+      {
+        uuid: "msg-2",
+        sender: "assistant",
+        parent_message_uuid: "msg-1",
+        content: [
+          {
+            type: "tool_use",
+            id: "toolu-partial-1",
+            name: "present_files",
+            input: {
+              filepaths: ["/out/a.md", "/out/b.md"],
+            },
+          },
+          {
+            type: "tool_result",
+            tool_use_id: "toolu-partial-1",
+            name: "present_files",
+            content: [
+              {
+                type: "local_resource",
+                file_path: "/out/a.md",
+                name: "a",
+                mime_type: "text/markdown",
+                uuid: "uuid-a",
+              },
+            ],
+          },
+          { type: "text", text: "Done." },
+        ],
+      },
+    ],
+  });
+
+  const result = await new ClaudeParser().parse({ parserMode: "api" });
+  const content = result.messages.find((m) => m.role === "Claude").content;
+  assert.ok(content.includes("a.md"));
+  assert.ok(content.includes("b.md"));
+});
+
 test("ClaudeParser API falls back to input.filepaths without tool_result metadata", async () => {
   setupApiDom();
   mockFetch({
@@ -222,6 +274,10 @@ test("ClaudeParser DOM fallback extracts file cards as generated files", async (
           <button type="button" data-testid="file-card-open" aria-label="View Style rules"></button>
           <div class="truncate">Style rules</div><div>MD</div>
         </div>
+        <div class="pb-2 pl-5">
+          <button type="button" data-testid="file-card-open" aria-label="View Style rules"></button>
+          <div class="truncate">Style rules</div><div>MD</div>
+        </div>
       </div>
     </body></html>`,
   );
@@ -239,4 +295,6 @@ test("ClaudeParser DOM fallback extracts file cards as generated files", async (
   assert.ok(content.includes("Generated files:"));
   assert.ok(content.includes("Deadrat agent.tar"));
   assert.ok(content.includes("Style rules"));
+  // Same-named cards in different directories are both kept.
+  assert.equal(content.match(/^-\s+`Style rules`/gm).length, 2);
 });
