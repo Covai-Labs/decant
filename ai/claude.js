@@ -189,12 +189,13 @@ function collectPresentedFiles(branch) {
   }
 
   for (const [toolUseId, filepaths] of pathsByToolUseId.entries()) {
-    if (filesByToolUseId.has(toolUseId)) continue;
-    const entries = [];
+    const entries = filesByToolUseId.get(toolUseId) || [];
+    const represented = new Set(entries.map((entry) => entry.path));
     for (const filePath of filepaths) {
       if (typeof filePath !== "string" || !filePath) continue;
-      if (seenPaths.has(filePath)) continue;
+      if (represented.has(filePath) || seenPaths.has(filePath)) continue;
       seenPaths.add(filePath);
+      represented.add(filePath);
       entries.push(toEntry(null, filePath));
     }
     if (entries.length > 0) filesByToolUseId.set(toolUseId, entries);
@@ -391,16 +392,12 @@ function extractArtifacts(message, foldedArtifacts = new Map()) {
 function extractFileCards(root) {
   if (!root || typeof root.querySelectorAll !== "function") return [];
   const names = [];
-  const seen = new Set();
   const cards = root.querySelectorAll('[data-testid="file-card-open"]');
   for (const card of cards) {
     const label = card.getAttribute && card.getAttribute("aria-label");
     const match = typeof label === "string" && label.match(/^View\s+(.+)$/i);
     const name = match ? match[1].trim() : "";
-    if (name && !seen.has(name.toLowerCase())) {
-      seen.add(name.toLowerCase());
-      names.push(name);
-    }
+    if (name) names.push(name);
     // Remove the whole card element so download buttons / type badges
     // don't leak into the markdown conversion. The open button is a direct
     // child of the card root, so one level up removes the entire card
