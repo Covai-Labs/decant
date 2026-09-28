@@ -461,16 +461,220 @@ export class GeminiParser extends ChatParser {
       }
 
       const modelText = this.findModelTextInApiItem(item, options);
-      if (modelText) {
+      const researchExtras = this.extractDeepResearchExtras(item);
+      const combined = [modelText, researchExtras]
+        .map((t) => this.stripChipPlaceholders(t))
+        .filter((t) => t && t.trim())
+        .join("\n\n");
+      if (combined.trim()) {
         messages.push({
           role: "Model",
-          content: normalizeLatexMath(modelText.trim()),
+          content: normalizeLatexMath(combined.trim()),
           turnId,
         });
       }
     }
 
     return messages;
+  }
+
+  // Deep-research turns render a short summary plus placeholder chip links
+  // (e.g. http://googleusercontent.com/immersive_entry_chip/0) whose real
+  // content — research plan, full report, citation map — lives in adjacent
+  // candidate slots. These helpers recover that content.
+  stripChipPlaceholders(text) {
+    if (typeof text !== "string" || !text) return text;
+    return text
+      .split("\n")
+      .filter((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return true;
+        // Drop bare placeholder-chip lines; they resolve to nothing outside
+        // the live page (the real content is inlined separately below).
+        if (
+          /^https?:\/\/googleusercontent\.com\/\S*$/.test(trimmed) ||
+          /^<?https?:\/\/googleusercontent\.com\/\S*>?$/.test(trimmed)
+        ) {
+          return false;
+        }
+        return true;
+      })
+      .join("\n")
+      .replace(/https?:\/\/googleusercontent\.com\/\S*/g, "")
+      .replace(/\n{3,}/g, "\n\n");
+  }
+
+  getApiCandidates(item) {
+    try {
+      if (!Array.isArray(item[3])) return [];
+      const candidates = Array.isArray(item[3][0]) ? item[3][0] : item[3];
+      return candidates.filter((cand) => Array.isArray(cand));
+    } catch {
+      return [];
+    }
+  }
+
+  buildDeepResearchCiteMap(citeGroups) {
+    const map = new Map();
+    try {
+      const groups = Array.isArray(citeGroups) ? citeGroups : [citeGroups];
+      for (const group of groups) {
+        if (!group || typeof group !== "object" || Array.isArray(group))
+          continue;
+        for (const entries of Object.values(group)) {
+          if (!Array.isArray(entries)) continue;
+          for (const entry of entries) {
+            if (!Array.isArray(entry) || !Array.isArray(entry[1])) continue;
+            for (const source of entry[1]) {
+              // Source shape: [null, null, null,
+              //   [detail, number, ...]] where detail = [favicon, url, title].
+              if (!Array.isArray(source) || !Array.isArray(source[3])) continue;
+              const detail = source[3][0];
+              const url = Array.isArray(detail) ? detail[1] : null;
+              const number = source[3][1];
+              if (
+                typeof url === "string" &&
+                url.startsWith("http") &&
+                typeof number === "number" &&
+                !map.has(number)
+              ) {
+                map.set(number, {
+                  url,
+                  title:
+                    typeof detail[2] === "string" && detail[2]
+                      ? detail[2]
+                      : url,
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch {
+      // Ignore malformed citation maps
+    }
+    return map;
+  }
+
+  resolveDeepResearchCites(markdown, citeMap) {
+    if (typeof markdown !== "string" || !(citeMap instanceof Map)) {
+      return markdown;
+    }
+    return markdown.replace(/ ?\[cite: ([\d,\s]+)\]/g, (match, nums) => {
+      const numbers = [
+        ...new Set(
+          nums
+            .split(",")
+            .map((n) => parseInt(n.trim(), 10))
+            .filter((n) => Number.isFinite(n)),
+        ),
+      ];
+      if (numbers.length === 0) return "";
+      const links = numbers.map((n) => {
+        const cite = citeMap.get(n);
+        return cite ? `[[${n}]](${cite.url})` : `[${n}]`;
+      });
+      return ` ${links.join(" ")}`;
+    });
+  }
+
+  extractImmersiveDocFromCandidate(cand) {
+    try {
+      if (!Array.isArray(cand[30]) || cand[30].length === 0) return "";
+      const doc = cand[30][0];
+      if (!Array.isArray(doc)) return "";
+      // Guard: immersive research documents carry this task marker.
+      if (doc[3] !== "agency-placeholder-task-id") return "";
+      if (typeof doc[4] !== "string" || doc[4].trim().length < 100) return "";
+      const title = typeof doc[2] === "string" && doc[2] ? doc[2] : "Report";
+      const citeMap = this.buildDeepResearchCiteMap(doc[5]);
+      const markdown = this.resolveDeepResearchCites(doc[4].trim(), citeMap);
+      return `## ${title}\n\n${markdown}`;
+    } catch {
+      return "";
+    }
+  }
+
+  extractResearchPlanFromCandidate(cand) {
+    try {
+      if (!Array.isArray(cand[12])) return "";
+      for (const annotation of cand[12]) {
+        if (
+          !annotation ||
+          typeof annotation !== "object" ||
+          Array.isArray(annotation) ||
+          !Array.isArray(annotation["56"])
+        ) {
+          continue;
+        }
+        const [planTitle, steps] = annotation["56"];
+        if (!Array.isArray(steps) || steps.length === 0) continue;
+        const lines = steps.map((step, idx) => {
+          if (!Array.isArray(step)) return null;
+          const stepTitle = step[1] || `Step ${idx + 1}`;
+          const desc =
+            typeof step[2] === "string" && step[2].trim()
+              ? `: ${step[2].trim()}`
+              : "";
+          return `${idx + 1}. **${stepTitle}**${desc}`;
+        });
+        const valid = lines.filter(Boolean);
+        if (valid.length === 0) continue;
+        const heading =
+          typeof planTitle === "string" && planTitle
+            ? `### ${planTitle} — research plan`
+            : "### Research plan";
+        return `${heading}\n${valid.join("\n")}`;
+      }
+    } catch {
+      // Ignore malformed plan annotations
+    }
+    return "";
+  }
+
+  extractActivitySources(item, limit = 40) {
+    const seen = new Map();
+    try {
+      const trail = item[3]?.[4];
+      if (!Array.isArray(trail)) return [];
+      for (const entry of trail) {
+        const detail = entry?.[4]?.[2];
+        const url = Array.isArray(detail) ? detail[1] : null;
+        if (typeof url !== "string" || !url.startsWith("http")) continue;
+        if (seen.has(url)) continue;
+        const title =
+          typeof detail[2] === "string" && detail[2] ? detail[2] : url;
+        seen.set(url, title);
+      }
+    } catch {
+      // Ignore malformed activity trails
+    }
+    const all = [...seen.entries()];
+    const shown = all.slice(0, limit);
+    const lines = shown.map(([url, title]) => `- [${title}](${url})`);
+    if (all.length > shown.length) {
+      lines.push(`- …and ${all.length - shown.length} more`);
+    }
+    return lines;
+  }
+
+  extractDeepResearchExtras(item) {
+    const parts = [];
+    try {
+      for (const cand of this.getApiCandidates(item)) {
+        const plan = this.extractResearchPlanFromCandidate(cand);
+        if (plan) parts.push(plan);
+        const doc = this.extractImmersiveDocFromCandidate(cand);
+        if (doc) parts.push(doc);
+      }
+      const sourceLines = this.extractActivitySources(item);
+      if (sourceLines.length > 0) {
+        parts.push(`**Sources consulted:**\n${sourceLines.join("\n")}`);
+      }
+    } catch {
+      // Never let research extras break the base message
+    }
+    return parts.filter(Boolean).join("\n\n");
   }
 
   findUserTextInApiItem(item) {
@@ -693,20 +897,25 @@ export class GeminiParser extends ChatParser {
           if (markdownDiv) {
             const clone = markdownDiv.cloneNode(true);
 
-            // Remove UI buttons, thought overlays, and interactive toolbars
+            // Remove UI buttons, thought overlays, and interactive toolbars.
+            // Note: .hide-from-message-actions is NOT removed — it wraps
+            // deep-research plan widgets whose text must be kept (buttons
+            // inside are still stripped above).
             clone
               .querySelectorAll(
-                "button, .thoughts-container, .thoughts-wrapper, model-thoughts, .table-footer, .hide-from-message-actions, message-actions, election-info-disclaimer, finance-info-disclaimer, .sources-list",
+                "button, .thoughts-container, .thoughts-wrapper, model-thoughts, .table-footer, message-actions, election-info-disclaimer, finance-info-disclaimer, .sources-list",
               )
               .forEach((el) => el.remove());
 
-            // Unwrap response-element wrappers
-            clone.querySelectorAll("response-element").forEach((el) => {
-              while (el.firstChild) {
-                el.parentNode.insertBefore(el.firstChild, el);
-              }
-              el.remove();
-            });
+            // Unwrap response-element wrappers and message-action guards
+            clone
+              .querySelectorAll("response-element, .hide-from-message-actions")
+              .forEach((el) => {
+                while (el.firstChild) {
+                  el.parentNode.insertBefore(el.firstChild, el);
+                }
+                el.remove();
+              });
 
             const text = convertToMarkdown(clone);
             const trimmed = text.trim();
