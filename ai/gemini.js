@@ -931,7 +931,17 @@ export class GeminiParser extends ChatParser {
       });
     }
 
-    // Strategy 2: Deep Research immersive panel structure fallback
+    // Strategy 2: Deep Research immersive panel (full report document).
+    // Runs even when chat shells were found above — the panel holds the
+    // report body, which never appears in the chat transcript.
+    const immersiveSections = this.extractImmersivePanelMessages(document);
+    immersiveSections.forEach((section) => {
+      if (section.content && !seenTexts.has(section.content)) {
+        seenTexts.add(section.content);
+        messages.push(section);
+      }
+    });
+
     if (messages.length === 0) {
       const deepResearchPanel = document.querySelector(
         "deep-research-immersive-panel",
@@ -1044,6 +1054,67 @@ export class GeminiParser extends ChatParser {
       if (sections.length > 0) return sections;
     }
 
+    return sections;
+  }
+
+  // Extracts the open Deep Research immersive panel (the full report
+  // document). Returns [] when no panel is rendered in the DOM.
+  extractImmersivePanelMessages(doc) {
+    const sections = [];
+    try {
+      if (!doc || typeof doc.querySelector !== "function") return sections;
+      const panel =
+        doc.querySelector("immersive-panel deep-research-immersive-panel") ||
+        doc.querySelector("deep-research-immersive-panel");
+      if (!panel) return sections;
+
+      const titleEl =
+        panel.querySelector("toolbar .title-text") ||
+        panel.querySelector(".title-text");
+      const title = (titleEl?.textContent || "").trim();
+
+      const bodyRoot =
+        panel.querySelector('[data-test-id="message-content"] .markdown') ||
+        panel.querySelector("#extended-response-markdown-content") ||
+        panel.querySelector("message-content .markdown") ||
+        panel.querySelector("message-content");
+      if (!bodyRoot) return sections;
+
+      const clone = bodyRoot.cloneNode(true);
+      // Inline citation footnotes carry only a source index — render it as
+      // text so references survive markdown conversion.
+      clone.querySelectorAll("sup[data-turn-source-index]").forEach((sup) => {
+        const idx = sup.getAttribute("data-turn-source-index");
+        if (idx && sup.parentNode) {
+          sup.parentNode.replaceChild(doc.createTextNode(`[${idx}]`), sup);
+        }
+      });
+      clone
+        .querySelectorAll(
+          "button, toolbar, toc-menu, mat-menu, message-actions, .hide-from-message-actions button",
+        )
+        .forEach((el) => el.remove());
+      clone.querySelectorAll("response-element").forEach((el) => {
+        while (el.firstChild) {
+          el.parentNode.insertBefore(el.firstChild, el);
+        }
+        el.remove();
+      });
+
+      const body = convertToMarkdown(clone)
+        .trim()
+        // Turndown escapes the [N] citation markers inserted above;
+        // restore them (they render identically either way).
+        .replace(/\\\[(\d+)\\\]/g, "[$1]");
+      if (body && body.length > 100) {
+        sections.push({
+          role: "Model",
+          content: title ? `## ${title}\n\n${body}` : body,
+        });
+      }
+    } catch (error) {
+      console.error("[Gemini Parser] Error extracting immersive panel:", error);
+    }
     return sections;
   }
 

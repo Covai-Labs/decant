@@ -135,6 +135,49 @@ test("GeminiParser API leaves regular turns untouched", () => {
   assert.ok(!messages[1].content.includes("research plan"));
 });
 
+test("GeminiParser DOM extracts open immersive report panel", async () => {
+  const dom = parseHTML(
+    `<html><head><title>Gemini</title></head><body>
+      <div class="conversation-container">
+        <user-query><div class="query-text"><p>Research AI tells</p></div></user-query>
+        <model-response><message-content><div class="markdown markdown-main-panel">
+          <p>I've completed your research.</p>
+        </div></message-content></model-response>
+      </div>
+      <immersive-panel>
+        <deep-research-immersive-panel>
+          <toolbar><div class="toolbar"><h2 class="title-text">Humanizing Text</h2>
+            <button>Share and export</button>
+          </div></toolbar>
+          <div data-test-id="scroll-container"><response-container>
+            <structured-content-container data-test-id="message-content">
+              <div class="container"><message-content>
+                <div class="markdown markdown-main-panel">
+                  <h1>Report Title</h1>
+                  <p>Findings here<span><response-element class="no-md"><source-footnote><sup data-turn-source-index="1"></sup></source-footnote></response-element></span> with enough surrounding analysis text to pass the minimum body length guard for real report documents.</p>
+                </div>
+              </message-content></div>
+            </structured-content-container>
+          </response-container></div>
+        </deep-research-immersive-panel>
+      </immersive-panel>
+    </body></html>`,
+  );
+  globalThis.document = dom.document;
+  globalThis.window = dom.window;
+  globalThis.window.location = { href: "https://gemini.google.com/app/abc" };
+
+  const result = await new GeminiParser().parse({ parserMode: "dom" });
+  const panelMsg = result.messages.find((m) =>
+    m.content.includes("Report Title"),
+  );
+  assert.ok(panelMsg, "expected immersive panel message");
+  assert.equal(panelMsg.role, "Model");
+  assert.ok(panelMsg.content.includes("## Humanizing Text"));
+  assert.ok(panelMsg.content.includes("[1]"));
+  assert.ok(!panelMsg.content.includes("Share and export"));
+});
+
 test("GeminiParser DOM keeps deep-research plan widget text", async () => {
   const dom = parseHTML(
     `<html><head><title>Gemini</title></head><body>
