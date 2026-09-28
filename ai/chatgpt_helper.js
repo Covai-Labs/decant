@@ -84,8 +84,11 @@ if (!window.__chatgptHelperInjected) {
       let images = {};
       if (includeImages) {
         const fileIds = new Set();
-        for (const node of Object.values(data.mapping)) {
-          const msg = node.message;
+        const apiMessages = Array.isArray(data.messages)
+          ? data.messages
+          : Object.values(data.mapping || {}).map((node) => node?.message);
+        for (const msg of apiMessages) {
+          if (!msg) continue;
           if (msg && msg.content && Array.isArray(msg.content.parts)) {
             for (const part of msg.content.parts) {
               if (
