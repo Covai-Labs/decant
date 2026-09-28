@@ -244,7 +244,9 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
       contentType === "thoughts" ||
       contentType === "thought" ||
       contentType === "reasoning_recap" ||
-      msg?.metadata?.reasoning_status === "is_reasoning";
+      msg?.metadata?.reasoning_status === "is_reasoning" ||
+      msg?.author?.name === "thought" ||
+      msg?.recipient === "thought";
 
     // Reasoning summaries: thoughts = [{ summary, content }]
     if (Array.isArray(content.thoughts) && content.thoughts.length > 0) {
@@ -277,7 +279,10 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
         if (typeof part === "string") {
           partText = part;
         } else if (part && typeof part === "object") {
-          if (part.content_type === "text" && typeof part.text === "string") {
+          if (
+            (part.content_type === "text" || part.content_type === "audio_transcription") &&
+            typeof part.text === "string"
+          ) {
             partText = part.text;
           } else if (
             part.content_type === "thought" &&
@@ -307,6 +312,15 @@ export function linearizeMessagesArray(apiMessages, includeImages) {
       }
     }
 
+    // Array responses may store standalone text or transcription outside parts.
+    if (segments.length === 0 && typeof content.text === "string") {
+      const text = cleanApiPartText(content.text);
+      if (text) segments.push({ type: isThoughtMsg ? "thought" : "text", content: text });
+    }
+    if (segments.length === 0 && contentType === "audio_transcription" && typeof content.text === "string") {
+      const text = cleanApiPartText(content.text);
+      if (text) segments.push({ type: isThoughtMsg ? "thought" : "text", content: text });
+    }
     if (segments.length === 0) continue;
 
     const displayRole = role === "user" ? "User" : "ChatGPT";
@@ -408,7 +422,10 @@ export function linearize(mapping, includeImages, currentNodeId) {
         if (typeof part === "string") {
           partText = part;
         } else if (part && typeof part === "object") {
-          if (part.content_type === "text" && typeof part.text === "string") {
+          if (
+            (part.content_type === "text" || part.content_type === "audio_transcription") &&
+            typeof part.text === "string"
+          ) {
             partText = part.text;
           } else if (
             part.content_type === "thought" &&
