@@ -196,6 +196,221 @@ export function extractSharedConversationFromDom(
   return null;
 }
 
+function cleanApiPartText(partText) {
+  return partText
+    .replace(/\u{E0000}[\u{E0000}-\u{E007F}]*/gu, "")
+    .replace(/citeturn\d+\w*/g, "")
+    .trim();
+}
+
+// Linearize the newer backend-api conversation shape, which returns a
+// `messages` array instead of a `mapping` tree. Output segments match the
+// mapping-based linearize() format ({ type: "text" | "thought" | "image" })
+// so both flow through the same formatApiResult().
+export function linearizeMessagesArray(apiMessages, includeImages) {
+  const messages = [];
+  if (!Array.isArray(apiMessages)) return messages;
+
+  const pushOrMerge = (entry, isThoughtMsg) => {
+    if (
+      entry.role === "ChatGPT" &&
+      messages.length > 0 &&
+      messages[messages.length - 1].role === "ChatGPT"
+    ) {
+      const prevMsg = messages[messages.length - 1];
+      if (isThoughtMsg) {
+        prevMsg.segments.unshift(...entry.segments);
+      } else {
+        prevMsg.segments.push(...entry.segments);
+      }
+      Object.assign(prevMsg.citeMap, entry.citeMap);
+      Object.assign(prevMsg.imageGroupMap, entry.imageGroupMap);
+      if (entry.timestamp && !prevMsg.timestamp) {
+        prevMsg.timestamp = entry.timestamp;
+      }
+    } else {
+      messages.push(entry);
+    }
+  };
+
+  for (const msg of apiMessages) {
+    if (!msg) continue;
+    const role = msg?.author?.role;
+    if (role !== "user" && role !== "assistant" && role !== "tool") continue;
+    if (msg.metadata?.is_visually_hidden_from_conversation === true) continue;
+
+    const content = msg.content || {};
+    const contentType = content.content_type;
+    const segments = [];
+    // Mirror the mapping path's thought detection (content types plus
+    // author/recipient markers).
+    const isThoughtMsg =
+      msg?.author?.name === "thought" ||
+      msg?.recipient === "thought" ||
+      contentType === "thought" ||
+      contentType === "thoughts" ||
+      contentType === "reasoning_recap" ||
+      msg?.metadata?.reasoning_status === "is_reasoning";
+
+    // Reasoning summaries: thoughts = [{ summary, content }]
+    if (Array.isArray(content.thoughts) && content.thoughts.length > 0) {
+      const thoughtParts = content.thoughts
+        .map((t) =>
+          t.summary ? `**${t.summary}**\n${t.content || ""}` : t.content || "",
+        )
+        .map((t) => t.trim())
+        .filter(Boolean);
+      if (thoughtParts.length > 0) {
+        segments.push({ type: "thought", content: thoughtParts.join("\n\n") });
+      }
+    }
+
+    // Reasoning recap (e.g. "Worked for 11s")
+    if (
+      contentType === "reasoning_recap" &&
+      typeof content.content === "string" &&
+      content.content.trim()
+    ) {
+      segments.push({ type: "thought", content: content.content.trim() });
+    }
+
+    // Tool invocations (content_type "code", e.g. Deep Research args JSON)
+    // and tool-role messages are not user-visible prose — skip them.
+    if (contentType !== "code" && role !== "tool") {
+      const parts = Array.isArray(content.parts) ? content.parts : [];
+      for (const part of parts) {
+        let partText = "";
+        let isThoughtPart = isThoughtMsg;
+        if (typeof part === "string") {
+          partText = part;
+        } else if (part && typeof part === "object") {
+          if (part.content_type === "text" && typeof part.text === "string") {
+            partText = part.text;
+          } else if (
+            part.content_type === "thought" &&
+            typeof part.text === "string"
+          ) {
+            partText = part.text;
+            isThoughtPart = true;
+          } else if (
+            part.content_type === "audio_transcription" &&
+            typeof part.text === "string"
+          ) {
+            partText = part.text;
+          } else if (
+            includeImages &&
+            part?.content_type === "image_asset_pointer" &&
+            part?.asset_pointer
+          ) {
+            segments.push({
+              type: "image",
+              fileId: part.asset_pointer.split("://")[1],
+            });
+            continue;
+          }
+        }
+        const text = partText ? cleanApiPartText(partText) : "";
+        if (text) {
+          segments.push({
+            type: isThoughtPart ? "thought" : "text",
+            content: text,
+          });
+        }
+      }
+
+      // Standalone content.text without parts (plain text / execution
+      // output), mirroring the mapping path.
+      if (
+        parts.length === 0 &&
+        typeof content.text === "string" &&
+        content.text.trim()
+      ) {
+        segments.push({ type: "text", content: content.text.trim() });
+      }
+    }
+
+    // Deep Research reports (widget_state), attachments, and Canvas
+    // documents from message metadata, mirroring the mapping path.
+    if (role !== "tool") {
+      const widgetRaw =
+        msg.metadata?.chatgpt_sdk?.widget_state ||
+        msg.metadata?.tool_response_metadata?.venus_widget_state;
+      if (widgetRaw) {
+        try {
+          const widget =
+            typeof widgetRaw === "string" ? JSON.parse(widgetRaw) : widgetRaw;
+          const reportText =
+            widget.report_message?.content?.parts?.[0] || widget.markdown;
+          const steering = widget.steering_acknowledgement;
+          let researchContent = "";
+          if (steering) researchContent += `${steering}\n\n`;
+          if (reportText) researchContent += reportText;
+          if (researchContent.trim()) {
+            segments.push({ type: "text", content: researchContent.trim() });
+          }
+        } catch {
+          // Ignore widget state JSON parse errors
+        }
+      }
+
+      if (
+        Array.isArray(msg.metadata?.attachments) &&
+        msg.metadata.attachments.length > 0
+      ) {
+        const fileNames = msg.metadata.attachments
+          .map((att) => att.name)
+          .filter(Boolean);
+        if (fileNames.length > 0) {
+          segments.push({
+            type: "text",
+            content: `[Attached: ${fileNames.join(", ")}]`,
+          });
+        }
+      }
+
+      if (msg.metadata?.canvas?.title) {
+        segments.push({
+          type: "text",
+          content: `[Canvas: ${msg.metadata.canvas.title}]`,
+        });
+      }
+    }
+
+    if (segments.length === 0) continue;
+
+    const displayRole = role === "user" ? "User" : "ChatGPT";
+    const timestamp = msg?.create_time
+      ? new Date(msg.create_time * 1000).toLocaleString()
+      : null;
+    // Citation / image-group references, mirroring the mapping path.
+    const citeMap = {};
+    const imageGroupMap = {};
+    for (const ref of msg?.metadata?.content_references ?? []) {
+      if (ref.matched_text) {
+        if (ref.items?.length) citeMap[ref.matched_text] = ref.items;
+        if (
+          ref.type === "image_group" ||
+          ref.matched_text.includes("image_group")
+        ) {
+          imageGroupMap[ref.matched_text] = ref;
+        }
+      }
+    }
+    pushOrMerge(
+      {
+        role: displayRole,
+        segments,
+        citeMap,
+        imageGroupMap,
+        timestamp,
+      },
+      isThoughtMsg,
+    );
+  }
+
+  return messages;
+}
+
 export function linearize(mapping, includeImages, currentNodeId) {
   let path = [];
   const leafId = resolveActiveLeafNode(mapping, currentNodeId);
@@ -268,8 +483,20 @@ export function linearize(mapping, includeImages, currentNodeId) {
     ) {
       const segments = [];
       const parts = msg?.content?.parts ?? [];
+      // Tool-invocation payloads (content_type "code") are not user-visible
+      // prose, whether carried as standalone text or inside parts.
+      const isToolInvocation = msg?.content?.content_type === "code";
 
       for (const part of parts) {
+        if (isToolInvocation) {
+          if (!(
+            includeImages &&
+            part?.content_type === "image_asset_pointer" &&
+            part?.asset_pointer
+          )) {
+            continue;
+          }
+        }
         let partText = "";
         let isThoughtPart = isThoughtMsg;
 
@@ -316,11 +543,15 @@ export function linearize(mapping, includeImages, currentNodeId) {
         }
       }
 
-      // Handle standalone content.text (e.g. execution_output or plain text)
+      // Handle standalone content.text (e.g. execution_output or plain text).
+      // Tool-invocation payloads (content_type "code", e.g. Deep Research
+      // "/Deep Research App/start" args JSON) are not user-visible prose —
+      // the site renders a status card instead — so never dump them as text.
       if (
         typeof msg.content?.text === "string" &&
         msg.content.text.trim() &&
-        parts.length === 0
+        parts.length === 0 &&
+        msg.content?.content_type !== "code"
       ) {
         segments.push({ type: "text", content: msg.content.text.trim() });
       }
@@ -887,6 +1118,7 @@ export class ChatGPTParser extends ChatParser {
       Link: currentUrl,
       Model:
         convoData?.model_slug ||
+        convoData?.default_model_slug ||
         (typeof document !== "undefined" && document.querySelector
           ? document.querySelector('[data-testid="model-selector-dropdown"]')
               ?.innerText
@@ -961,11 +1193,22 @@ export class ChatGPTParser extends ChatParser {
           };
         }
 
-        const apiMessages = linearize(
-          result.data.mapping,
-          includeImages,
-          result.data.current_node,
-        );
+        // The backend returns either the legacy `mapping` tree or the newer
+        // `messages` array shape — support both.
+        let apiMessages = [];
+        if (result.data.mapping) {
+          apiMessages = linearize(
+            result.data.mapping,
+            includeImages,
+            result.data.current_node,
+          );
+        }
+        if (apiMessages.length === 0 && Array.isArray(result.data.messages)) {
+          apiMessages = linearizeMessagesArray(
+            result.data.messages,
+            includeImages,
+          );
+        }
         if (apiMessages.length > 0) {
           return this.formatApiResult(
             result.data,

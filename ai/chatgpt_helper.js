@@ -84,16 +84,30 @@ if (!window.__chatgptHelperInjected) {
       let images = {};
       if (includeImages) {
         const fileIds = new Set();
-        for (const node of Object.values(data.mapping)) {
+        const collectImagePointer = (part) => {
+          if (
+            part &&
+            part.content_type === "image_asset_pointer" &&
+            part.asset_pointer
+          ) {
+            fileIds.add(part.asset_pointer.split("://")[1]);
+          }
+        };
+        // Legacy `mapping` tree shape…
+        for (const node of Object.values(data.mapping || {})) {
           const msg = node.message;
           if (msg && msg.content && Array.isArray(msg.content.parts)) {
             for (const part of msg.content.parts) {
-              if (
-                part &&
-                part.content_type === "image_asset_pointer" &&
-                part.asset_pointer
-              ) {
-                fileIds.add(part.asset_pointer.split("://")[1]);
+              collectImagePointer(part);
+            }
+          }
+        }
+        // …and the newer `messages` array shape.
+        if (Array.isArray(data.messages)) {
+          for (const msg of data.messages) {
+            if (msg && msg.content && Array.isArray(msg.content.parts)) {
+              for (const part of msg.content.parts) {
+                collectImagePointer(part);
               }
             }
           }

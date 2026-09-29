@@ -103,6 +103,124 @@ const MIME_TO_LANG = {
   "application/vnd.ant.code": "text",
 };
 
+// Binary archives cannot be inlined as text in any export format; they are
+// listed by name so they at least appear in markdown/html/json exports.
+const BINARY_ARCHIVE_MIMES = new Set([
+  "application/x-tar",
+  "application/gzip",
+  "application/zip",
+  "application/x-7z-compressed",
+  "application/x-rar-compressed",
+]);
+
+function formatFileSize(bytes) {
+  if (typeof bytes !== "number" || !Number.isFinite(bytes) || bytes < 0) {
+    return "";
+  }
+  if (bytes < 1024) return `${bytes} B`;
+  return `${(bytes / 1024).toFixed(1)} KB`;
+}
+
+function basenameOfPath(filePath) {
+  if (typeof filePath !== "string" || !filePath) return "file";
+  const base = filePath.split("/").pop();
+  return base || "file";
+}
+
+function isBinaryArchive(mimeType, filePath) {
+  if (mimeType && BINARY_ARCHIVE_MIMES.has(mimeType)) return true;
+  return /\.(tar\.gz|tgz|tar|zip|gz|7z|rar)$/i.test(filePath || "");
+}
+
+// Collect files surfaced via the `present_files` tool (File Creation
+// integration). The tool_use block carries `input.filepaths`; the matching
+// tool_result block (joined via tool_use_id) carries display names + mime
+// types as `local_resource` entries. Either side may be missing, so resolve
+// metadata when available and fall back to bare paths otherwise.
+function collectPresentedFiles(branch) {
+  const pathsByToolUseId = new Map();
+  const resourcesByToolUseId = new Map();
+  for (const msg of branch) {
+    if (!Array.isArray(msg?.content)) continue;
+    for (const block of msg.content) {
+      if (block?.type === "tool_use" && block?.name === "present_files") {
+        const filepaths = block?.input?.filepaths;
+        if (Array.isArray(filepaths) && filepaths.length > 0 && block.id) {
+          pathsByToolUseId.set(block.id, filepaths);
+        }
+      } else if (
+        block?.type === "tool_result" &&
+        Array.isArray(block.content)
+      ) {
+        const resources = block.content.filter(
+          (item) => item && item.type === "local_resource" && item.file_path,
+        );
+        if (resources.length > 0) {
+          const toolUseId = block.tool_use_id || block.id;
+          if (toolUseId) resourcesByToolUseId.set(toolUseId, resources);
+        }
+      }
+    }
+  }
+
+  const filesByToolUseId = new Map();
+  const seenPaths = new Set();
+  const toEntry = (resource, fallbackPath) => {
+    const filePath = resource?.file_path || fallbackPath || "";
+    const name = resource?.name || basenameOfPath(filePath);
+    return {
+      key: resource?.uuid || filePath || `${name}`,
+      name,
+      path: filePath,
+      mime: resource?.mime_type || "",
+    };
+  };
+
+  for (const [toolUseId, resources] of resourcesByToolUseId.entries()) {
+    const entries = [];
+    for (const resource of resources) {
+      // Skip the inline "say they are below" helper text item (type: text).
+      if (!resource.file_path) continue;
+      if (seenPaths.has(resource.file_path)) continue;
+      seenPaths.add(resource.file_path);
+      entries.push(toEntry(resource));
+    }
+    if (entries.length > 0) filesByToolUseId.set(toolUseId, entries);
+  }
+
+  for (const [toolUseId, filepaths] of pathsByToolUseId.entries()) {
+    const existing = filesByToolUseId.get(toolUseId) || [];
+    const entries = [...existing];
+    for (const filePath of filepaths) {
+      if (typeof filePath !== "string" || !filePath) continue;
+      if (seenPaths.has(filePath)) continue;
+      seenPaths.add(filePath);
+      entries.push(toEntry(null, filePath));
+    }
+    if (entries.length > 0) filesByToolUseId.set(toolUseId, entries);
+  }
+
+  return filesByToolUseId;
+}
+
+function formatGeneratedFilesSection(files) {
+  if (!Array.isArray(files) || files.length === 0) return "";
+  const lines = files.map((file) => {
+    const displayName = file.name || basenameOfPath(file.path);
+    const meta = [];
+    if (file.mime) meta.push(file.mime);
+    if (isBinaryArchive(file.mime, file.path || displayName)) {
+      meta.push("binary archive — download from Claude UI");
+    }
+    const suffix = meta.length > 0 ? ` _(${meta.join(", ")})_` : "";
+    const pathSuffix =
+      file.path && file.path !== displayName ? ` — \`${file.path}\`` : "";
+    return `- \`${displayName}\`${suffix}${pathSuffix}`;
+  });
+  const label = files.length === 1 ? "Generated file:" : "Generated files:";
+  return `\n\n**${label}**\n${lines.join("\n")}\n\n`;
+}
+
 function extractArtifactsFromText(text) {
   const artifactRegex = /<antArtifact[^>]*>([\s\S]*?)<\/antArtifact>/g;
   const artifacts = [];
@@ -267,6 +385,44 @@ function extractArtifacts(message, foldedArtifacts = new Map()) {
   return artifacts;
 }
 
+// File cards rendered for generated files (markdown docs, tarballs, …).
+// They carry no text content for convertToMarkdown, so extract their display
+// names (aria-label="View <name>") and drop the nodes to avoid button noise.
+function extractFileCards(root) {
+  if (!root || typeof root.querySelectorAll !== "function") return [];
+  const names = [];
+  const cards = root.querySelectorAll('[data-testid="file-card-open"]');
+  for (const card of cards) {
+    const label = card.getAttribute && card.getAttribute("aria-label");
+    const match = typeof label === "string" && label.match(/^View\s+(.+)$/i);
+    const name = match ? match[1].trim() : "";
+    // No name-based dedup: two cards may legitimately share a display name
+    // (same basename in different directories). Each card element is visited
+    // exactly once, so nothing is double-counted here.
+    if (name) {
+      names.push(name);
+    }
+    // Remove the whole card element so download buttons / type badges
+    // don't leak into the markdown conversion — but only when the parent
+    // is a dedicated card wrapper. If the button shares its parent with
+    // other prose, remove just the button to avoid deleting message text.
+    const parent =
+      card.parentElement && card.parentElement !== root
+        ? card.parentElement
+        : null;
+    const isDedicatedCard =
+      !!parent &&
+      parent.querySelectorAll('[data-testid="file-card-open"]').length === 1;
+    const target = isDedicatedCard ? parent : card;
+    if (target && typeof target.remove === "function") {
+      target.remove();
+    } else if (card.parentNode) {
+      card.parentNode.removeChild(card);
+    }
+  }
+  return names;
+}
+
 function unrollInteractiveElements(root, doc) {
   if (!root || !doc) return;
 
@@ -371,6 +527,8 @@ export class ClaudeParser extends ChatParser {
 
           const branch = getCurrentBranch(data);
           const foldedArtifacts = collectArtifacts(branch);
+          const presentedFilesByToolUseId = collectPresentedFiles(branch);
+          const emittedFileKeys = new Set();
 
           const toolResultMap = new Map();
           for (const msg of branch) {
@@ -473,6 +631,37 @@ export class ClaudeParser extends ChatParser {
                         : `> - ${qText}\n`;
                     }
                     contentStr += `${qStr}\n`;
+                  } else if (
+                    block.name === "present_files" &&
+                    presentedFilesByToolUseId.has(block.id)
+                  ) {
+                    // Files surfaced via the File Creation integration
+                    // (markdown docs, tarball, …). Without this they are
+                    // silently dropped from every export format.
+                    const files = presentedFilesByToolUseId.get(block.id);
+                    const fresh = files.filter(
+                      (file) => !emittedFileKeys.has(file.key),
+                    );
+                    fresh.forEach((file) => emittedFileKeys.add(file.key));
+                    if (fresh.length > 0) {
+                      contentStr += formatGeneratedFilesSection(fresh);
+                    }
+                  }
+                } else if (
+                  block.type === "tool_result" &&
+                  Array.isArray(block.content)
+                ) {
+                  // Orphan file presentation: the matching tool_use block may
+                  // sit outside the current branch, so emit unseen
+                  // local_resource entries directly from the result.
+                  const toolUseId = block.tool_use_id || block.id;
+                  const files = presentedFilesByToolUseId.get(toolUseId) || [];
+                  const fresh = files.filter(
+                    (file) => !emittedFileKeys.has(file.key),
+                  );
+                  fresh.forEach((file) => emittedFileKeys.add(file.key));
+                  if (fresh.length > 0) {
+                    contentStr += formatGeneratedFilesSection(fresh);
                   }
                 }
               }
@@ -491,8 +680,9 @@ export class ClaudeParser extends ChatParser {
                 if (attachment.file_name) {
                   let header = `### Attachment: ${attachment.file_name}`;
                   const meta = [];
-                  if (attachment.file_size) {
-                    meta.push(`${(attachment.file_size / 1024).toFixed(1)} KB`);
+                  const sizeLabel = formatFileSize(attachment.file_size);
+                  if (sizeLabel) {
+                    meta.push(sizeLabel);
                   }
                   if (attachment.file_type) {
                     meta.push(attachment.file_type);
@@ -505,7 +695,9 @@ export class ClaudeParser extends ChatParser {
                     contentStr += `\`\`\`\`\n${attachment.extracted_content}\n\`\`\`\`\n\n`;
                   }
                 } else if (attachment.extracted_content) {
-                  contentStr += `\n\n### Pasted\n\`\`\`\`\n${attachment.extracted_content}\n\`\`\`\`\n\n`;
+                  const sizeLabel = formatFileSize(attachment.file_size);
+                  const sizeSuffix = sizeLabel ? ` _(${sizeLabel})_` : "";
+                  contentStr += `\n\n### Pasted content${sizeSuffix}\n\`\`\`\`\n${attachment.extracted_content}\n\`\`\`\`\n\n`;
                 }
               }
             }
@@ -678,8 +870,16 @@ export class ClaudeParser extends ChatParser {
       ) {
         role = "Claude";
         const clone = el.cloneNode(true);
+        // Extract file cards first: unrollInteractiveElements strips all
+        // buttons, which would destroy the card markers.
+        const fileCardNames = extractFileCards(clone);
         unrollInteractiveElements(clone, el.ownerDocument || document);
         content = convertToMarkdown(clone);
+        if (fileCardNames.length > 0) {
+          content += formatGeneratedFilesSection(
+            fileCardNames.map((name) => ({ name, path: "", mime: "" })),
+          );
+        }
       } else if (el.matches(".artifact-block-cell")) {
         role = "Claude Artifact";
 
