@@ -1,3 +1,19 @@
+# [1.13.0](https://github.com/Covai-Labs/decant/compare/v1.12.0...v1.13.0) (2026-09-29)
+
+
+### Bug Fixes
+
+* address review findings on array parity, partial files, chip stripping ([b3b8a32](https://github.com/Covai-Labs/decant/commit/b3b8a3206144a25c612cb550d38c19033e5626f7))
+* harden card removal and dedupe panel against chat text ([994a775](https://github.com/Covai-Labs/decant/commit/994a775e6573d82e3a64a148ab88f02079541be8))
+
+
+### Features
+
+* export Gemini deep-research reports, plans, and citations ([e472d9d](https://github.com/Covai-Labs/decant/commit/e472d9d4b6521761c3e1b9cf7b6ed61a3ab8344d))
+* extract open deep-research immersive panel in Gemini DOM fallback ([a515159](https://github.com/Covai-Labs/decant/commit/a5151595a59a6b4186644b03cdc6f0e6a71a4272))
+* hide ChatGPT tool-invocation payloads and support messages-array API shape ([ab81058](https://github.com/Covai-Labs/decant/commit/ab81058e38284ce9e8a2d40501f0557ffc020d67))
+* surface Claude present_files outputs and standardise attachment headers ([4af6c99](https://github.com/Covai-Labs/decant/commit/4af6c99ad1567c1aba717f9ebca16772328b10e7))
+
 # [1.12.0](https://github.com/Covai-Labs/decant/compare/v1.11.0...v1.12.0) (2026-09-24)
 
 
