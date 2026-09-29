@@ -298,3 +298,29 @@ test("ClaudeParser DOM fallback extracts file cards as generated files", async (
   // Same-named cards in different directories are both kept.
   assert.equal(content.match(/^-\s+`Style rules`/gm).length, 2);
 });
+
+test("ClaudeParser DOM keeps prose when cards share a parent", async () => {
+  const dom = parseHTML(
+    `<html><head><title>Claude Chat</title></head><body>
+      <div class="font-claude-response">
+        <p>Extract the tarball into your repo root.</p>
+        <div class="shared-files">
+          <button type="button" data-testid="file-card-open" aria-label="View a.md"></button>
+          <span>a.md</span>
+          <button type="button" data-testid="file-card-open" aria-label="View b.md"></button>
+          <span>b.md</span>
+        </div>
+      </div>
+    </body></html>`,
+  );
+  globalThis.document = dom.document;
+  globalThis.window = dom.window;
+  globalThis.window.location = { href: "https://claude.ai/chat/abc" };
+  globalThis.chrome = { runtime: { getURL: (p) => p } };
+
+  const result = await new ClaudeParser().parse({ parserMode: "prefer_dom" });
+  const content = result.messages.find((m) => m.role === "Claude").content;
+  assert.ok(content.includes("Extract the tarball into your repo root."));
+  assert.ok(content.includes("a.md"));
+  assert.ok(content.includes("b.md"));
+});

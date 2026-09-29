@@ -194,6 +194,44 @@ test("GeminiParser DOM extracts open immersive report panel", async () => {
   assert.ok(!panelMsg.content.includes("Share and export"));
 });
 
+test("GeminiParser DOM skips panel report already rendered in chat", async () => {
+  const reportBody =
+    "Findings here with enough surrounding analysis text to pass the minimum body length guard for real report documents.";
+  const dom = parseHTML(
+    `<html><head><title>Gemini</title></head><body>
+      <div class="conversation-container">
+        <user-query><div class="query-text"><p>Research AI tells</p></div></user-query>
+        <model-response><message-content><div class="markdown markdown-main-panel">
+          <h1>Report Title</h1><p>${reportBody}</p>
+        </div></message-content></model-response>
+      </div>
+      <immersive-panel>
+        <deep-research-immersive-panel>
+          <toolbar><div class="toolbar"><h2 class="title-text">Humanizing Text</h2></div></toolbar>
+          <div data-test-id="scroll-container"><response-container>
+            <structured-content-container data-test-id="message-content">
+              <div class="container"><message-content>
+                <div class="markdown markdown-main-panel">
+                  <h1>Report Title</h1><p>${reportBody}</p>
+                </div>
+              </message-content></div>
+            </structured-content-container>
+          </response-container></div>
+        </deep-research-immersive-panel>
+      </immersive-panel>
+    </body></html>`,
+  );
+  globalThis.document = dom.document;
+  globalThis.window = dom.window;
+  globalThis.window.location = { href: "https://gemini.google.com/app/abc" };
+
+  const result = await new GeminiParser().parse({ parserMode: "dom" });
+  const hits = result.messages.filter((m) =>
+    m.content.includes("Report Title"),
+  );
+  assert.equal(hits.length, 1);
+});
+
 test("GeminiParser DOM keeps deep-research plan widget text", async () => {
   const dom = parseHTML(
     `<html><head><title>Gemini</title></head><body>

@@ -403,16 +403,19 @@ function extractFileCards(root) {
       names.push(name);
     }
     // Remove the whole card element so download buttons / type badges
-    // don't leak into the markdown conversion. The open button is a direct
-    // child of the card root, so one level up removes the entire card
-    // without touching surrounding message text.
-    const cardRoot =
-      (card.parentElement &&
-        card.parentElement !== root &&
-        card.parentElement) ||
-      card;
-    if (cardRoot && typeof cardRoot.remove === "function") {
-      cardRoot.remove();
+    // don't leak into the markdown conversion — but only when the parent
+    // is a dedicated card wrapper. If the button shares its parent with
+    // other prose, remove just the button to avoid deleting message text.
+    const parent =
+      card.parentElement && card.parentElement !== root
+        ? card.parentElement
+        : null;
+    const isDedicatedCard =
+      !!parent &&
+      parent.querySelectorAll('[data-testid="file-card-open"]').length === 1;
+    const target = isDedicatedCard ? parent : card;
+    if (target && typeof target.remove === "function") {
+      target.remove();
     } else if (card.parentNode) {
       card.parentNode.removeChild(card);
     }

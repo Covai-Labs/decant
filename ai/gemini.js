@@ -945,7 +945,17 @@ export class GeminiParser extends ChatParser {
     // report body, which never appears in the chat transcript.
     const immersiveSections = this.extractImmersivePanelMessages(document);
     immersiveSections.forEach((section) => {
-      if (section.content && !seenTexts.has(section.content)) {
+      if (!section.content || seenTexts.has(section.content)) return;
+      // The panel body passes through a different conversion path than chat
+      // messages, so exact-match dedup never fires. Skip the section when a
+      // Model message already carries the report (e.g. panel content also
+      // rendered inside a chat model-response).
+      const body = section.content.replace(/^## .*\n\n/, "");
+      const probe = body.slice(0, 300);
+      const alreadyExported =
+        probe.length > 0 &&
+        messages.some((m) => m.role === "Model" && m.content.includes(probe));
+      if (!alreadyExported) {
         seenTexts.add(section.content);
         messages.push(section);
       }
