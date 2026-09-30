@@ -940,8 +940,12 @@ export class ClaudeParser extends ChatParser {
               ? el.querySelector("time[datetime]")
               : null;
           if (!timeEl && typeof el.closest === "function") {
+            // Narrow containers only: transcript-row holds one turn, so its
+            // time belongs to this message. Never fall back to broad
+            // containers like article (many turns) — wrong date is worse
+            // than no date.
             const row = el.closest(
-              '[data-testid="transcript-row"], .group\\/message-row, article',
+              '[data-testid="transcript-row"], .group\\/message-row',
             );
             timeEl = row?.querySelector?.("time[datetime]") || null;
           }
