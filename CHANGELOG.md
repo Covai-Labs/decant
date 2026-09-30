@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/Covai-Labs/decant/compare/v1.13.0...v1.14.0) (2026-09-30)
+
+
+### Features
+
+* standardize per-message timestamps across parsers ([#36](https://github.com/Covai-Labs/decant/issues/36)) ([172de79](https://github.com/Covai-Labs/decant/commit/172de79cfb830f61f95f68e857de673640656659))
+
 # [1.13.0](https://github.com/Covai-Labs/decant/compare/v1.12.0...v1.13.0) (2026-09-29)
 
 
