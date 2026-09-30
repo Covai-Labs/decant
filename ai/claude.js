@@ -1,5 +1,6 @@
 import { ChatParser } from "./base.js";
 import { convertToMarkdown } from "../utils/html-to-markdown.js";
+import { pickTimestamp } from "../utils/timestamps.js";
 
 async function getOrganizationId() {
   try {
@@ -736,6 +737,13 @@ export class ClaudeParser extends ChatParser {
               if (thinkingStr) {
                 msgObj.thinking = thinkingStr;
               }
+              const timestamp = pickTimestamp(message, [
+                "created_at",
+                "updated_at",
+              ]);
+              if (timestamp) {
+                msgObj.timestamp = timestamp;
+              }
               messages.push(msgObj);
             }
 
@@ -760,6 +768,14 @@ export class ClaudeParser extends ChatParser {
               messages.push({
                 role: "Claude Artifact",
                 content: artContent.trim(),
+                ...(pickTimestamp(message, ["created_at", "updated_at"])
+                  ? {
+                      timestamp: pickTimestamp(message, [
+                        "created_at",
+                        "updated_at",
+                      ]),
+                    }
+                  : {}),
               });
             }
           }
@@ -912,7 +928,23 @@ export class ClaudeParser extends ChatParser {
       }
 
       if (content) {
-        messages.push({ role, content });
+        const msgObj = { role, content };
+        // Best-effort DOM timestamp: <time datetime="..."> inside the turn.
+        // Sparse in practice (hover-only on some turns) — absent stays absent.
+        try {
+          const timeEl =
+            typeof el.querySelector === "function"
+              ? el.querySelector("time[datetime]")
+              : null;
+          const datetime = timeEl?.getAttribute?.("datetime");
+          const timestamp = pickTimestamp({ datetime }, ["datetime"]);
+          if (timestamp) {
+            msgObj.timestamp = timestamp;
+          }
+        } catch {
+          // Ignore DOM timestamp lookup errors
+        }
+        messages.push(msgObj);
       }
     }
 

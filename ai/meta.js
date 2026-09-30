@@ -1,5 +1,6 @@
 import { ChatParser } from "./base.js";
 import { convertToMarkdown } from "../utils/html-to-markdown.js";
+import { pickTimestamp } from "../utils/timestamps.js";
 
 // Observed Relay doc_ids for the conversation message list (Sept 2026).
 // These rotate when Meta redeploys the web client. The parser tries the
@@ -139,12 +140,23 @@ export function formatMetaEdges(edges) {
   });
   const messages = [];
   for (const node of nodes) {
+    // Turn granularity: user + assistant in the same turn share createdAt,
+    // so both messages carry the same timestamp (matches Perplexity pattern).
+    const timestamp = pickTimestamp(node, ["createdAt", "userCreatedAt"]);
     if (node.__typename === "UserMessage") {
       const content = extractMetaUserText(node);
-      if (content) messages.push({ role: "User", content });
+      if (content) {
+        const msg = { role: "User", content };
+        if (timestamp) msg.timestamp = timestamp;
+        messages.push(msg);
+      }
     } else if (node.__typename === "AssistantMessage") {
       const content = extractMetaAssistantText(node);
-      if (content) messages.push({ role: "Meta AI", content });
+      if (content) {
+        const msg = { role: "Meta AI", content };
+        if (timestamp) msg.timestamp = timestamp;
+        messages.push(msg);
+      }
     }
   }
   return messages;
