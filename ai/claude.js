@@ -1,5 +1,6 @@
 import { ChatParser } from "./base.js";
 import { convertToMarkdown } from "../utils/html-to-markdown.js";
+import { pickTimestamp } from "../utils/timestamps.js";
 
 async function getOrganizationId() {
   try {
@@ -736,6 +737,13 @@ export class ClaudeParser extends ChatParser {
               if (thinkingStr) {
                 msgObj.thinking = thinkingStr;
               }
+              const timestamp = pickTimestamp(message, [
+                "created_at",
+                "updated_at",
+              ]);
+              if (timestamp) {
+                msgObj.timestamp = timestamp;
+              }
               messages.push(msgObj);
             }
 
@@ -760,6 +768,14 @@ export class ClaudeParser extends ChatParser {
               messages.push({
                 role: "Claude Artifact",
                 content: artContent.trim(),
+                ...(pickTimestamp(message, ["created_at", "updated_at"])
+                  ? {
+                      timestamp: pickTimestamp(message, [
+                        "created_at",
+                        "updated_at",
+                      ]),
+                    }
+                  : {}),
               });
             }
           }
@@ -912,7 +928,36 @@ export class ClaudeParser extends ChatParser {
       }
 
       if (content) {
-        messages.push({ role, content });
+        const msgObj = { role, content };
+        // Best-effort DOM timestamp. <time datetime> usually lives in the
+        // sibling MessageActions toolbar inside the same transcript row —
+        // not inside the message element itself. Scope to the closest row
+        // so we never borrow the previous/next turn's timestamp. Sparse in
+        // practice (hover-only on some turns) — absent stays absent.
+        try {
+          let timeEl =
+            typeof el.querySelector === "function"
+              ? el.querySelector("time[datetime]")
+              : null;
+          if (!timeEl && typeof el.closest === "function") {
+            // Narrow containers only: transcript-row holds one turn, so its
+            // time belongs to this message. Never fall back to broad
+            // containers like article (many turns) — wrong date is worse
+            // than no date.
+            const row = el.closest(
+              '[data-testid="transcript-row"], .group\\/message-row',
+            );
+            timeEl = row?.querySelector?.("time[datetime]") || null;
+          }
+          const datetime = timeEl?.getAttribute?.("datetime");
+          const timestamp = pickTimestamp({ datetime }, ["datetime"]);
+          if (timestamp) {
+            msgObj.timestamp = timestamp;
+          }
+        } catch {
+          // Ignore DOM timestamp lookup errors
+        }
+        messages.push(msgObj);
       }
     }
 

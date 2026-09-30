@@ -1,5 +1,6 @@
 import { ChatParser } from "./base.js";
 import { convertToMarkdown } from "../utils/html-to-markdown.js";
+import { normalizeTimestamp } from "../utils/timestamps.js";
 
 function getUserToken() {
   try {
@@ -119,6 +120,12 @@ async function fetchDeepSeekConversation(sessionId, token) {
       const msg = { role, content: fullContent };
       if (thinking) {
         msg.thinking = thinking;
+      }
+      // Turn granularity: inserted_at is seconds-epoch, ~identical within a
+      // USER/ASSISTANT pair, so both sides share the turn's timestamp.
+      const timestamp = normalizeTimestamp(msgNode?.inserted_at);
+      if (timestamp) {
+        msg.timestamp = timestamp;
       }
       return msg;
     })
