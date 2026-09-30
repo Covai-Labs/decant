@@ -932,10 +932,21 @@ export class ClaudeParser extends ChatParser {
         // Best-effort DOM timestamp: <time datetime="..."> inside the turn.
         // Sparse in practice (hover-only on some turns) — absent stays absent.
         try {
-          const timeEl =
-            typeof el.querySelector === "function"
-              ? el.querySelector("time[datetime]")
-              : null;
+          let timeEl = null;
+          if (el.matches('[data-testid="user-message"]')) {
+            // User timestamps live in the sibling message-actions container,
+            // rather than inside the message content element.
+            let messageRow = el.parentElement;
+            while (messageRow && !timeEl) {
+              const actions = messageRow.querySelector?.(
+                '[data-testid="message-actions"], .message-actions, message-actions',
+              );
+              timeEl = actions?.querySelector?.("time[datetime]") || null;
+              messageRow = messageRow.parentElement;
+            }
+          } else if (typeof el.querySelector === "function") {
+            timeEl = el.querySelector("time[datetime]");
+          }
           const datetime = timeEl?.getAttribute?.("datetime");
           const timestamp = pickTimestamp({ datetime }, ["datetime"]);
           if (timestamp) {
