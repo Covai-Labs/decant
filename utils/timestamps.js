@@ -39,9 +39,10 @@ export function normalizeTimestamp(value) {
         try {
           return new Date(normalizeEpochToMs(numeric)).toISOString();
         } catch {
-          return trimmed;
+          return null;
         }
       }
+      return null;
     }
     return trimmed;
   }

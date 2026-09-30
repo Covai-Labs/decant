@@ -929,13 +929,22 @@ export class ClaudeParser extends ChatParser {
 
       if (content) {
         const msgObj = { role, content };
-        // Best-effort DOM timestamp: <time datetime="..."> inside the turn.
-        // Sparse in practice (hover-only on some turns) — absent stays absent.
+        // Best-effort DOM timestamp. <time datetime> usually lives in the
+        // sibling MessageActions toolbar inside the same transcript row —
+        // not inside the message element itself. Scope to the closest row
+        // so we never borrow the previous/next turn's timestamp. Sparse in
+        // practice (hover-only on some turns) — absent stays absent.
         try {
-          const timeEl =
+          let timeEl =
             typeof el.querySelector === "function"
               ? el.querySelector("time[datetime]")
               : null;
+          if (!timeEl && typeof el.closest === "function") {
+            const row = el.closest(
+              '[data-testid="transcript-row"], .group\\/message-row, article',
+            );
+            timeEl = row?.querySelector?.("time[datetime]") || null;
+          }
           const datetime = timeEl?.getAttribute?.("datetime");
           const timestamp = pickTimestamp({ datetime }, ["datetime"]);
           if (timestamp) {
