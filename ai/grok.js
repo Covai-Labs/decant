@@ -15,7 +15,10 @@ export function getGrokConversationId(url) {
   // 2. Project URLs with chat query parameter (/project/<workspaceId>?chat=<conversationId>)
   try {
     const parsed = new URL(url);
-    if (parsed.pathname.startsWith("/project/")) {
+    const hostname = parsed.hostname.toLowerCase();
+    const isGrokHost =
+      hostname === "grok.com" || hostname.endsWith(".grok.com");
+    if (isGrokHost && parsed.pathname.startsWith("/project/")) {
       const chatParam = parsed.searchParams.get("chat");
       if (
         chatParam &&

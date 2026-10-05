@@ -68,6 +68,18 @@ test("getGrokConversationId extracts UUID from chat/c/conversation URLs", () => 
     ),
     null,
   );
+  assert.equal(
+    getGrokConversationId(
+      `https://example.com/project/cbfc80b1-9471-4b6a-9db1-02c268e80260?chat=${CONVERSATION_ID}`,
+    ),
+    null,
+  );
+  assert.equal(
+    getGrokConversationId(
+      `https://www.grok.com/project/cbfc80b1-9471-4b6a-9db1-02c268e80260?chat=${CONVERSATION_ID}`,
+    ),
+    CONVERSATION_ID,
+  );
   assert.equal(getGrokConversationId("https://grok.com/"), null);
   assert.equal(getGrokConversationId(null), null);
 });
