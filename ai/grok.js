@@ -5,6 +5,15 @@ export const GROK_BATCH_SIZE = 20;
 
 export function getGrokConversationId(url) {
   if (!url || typeof url !== "string") return null;
+  try {
+    const parsed = new URL(url);
+    const chatParam = parsed.searchParams.get("chat");
+    if (chatParam && /^[a-f0-9-]+$/i.test(chatParam)) {
+      return chatParam;
+    }
+  } catch {
+    // Ignore invalid URL parsing and fall back to regex matching
+  }
   return (
     url.match(/grok\.com\/(?:chat|c|conversation)\/([a-f0-9-]+)/i)?.[1] ?? null
   );
