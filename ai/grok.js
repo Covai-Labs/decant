@@ -5,21 +5,30 @@ export const GROK_BATCH_SIZE = 20;
 
 export function getGrokConversationId(url) {
   if (!url || typeof url !== "string") return null;
+
+  // 1. Direct conversation paths take precedence (/c/, /chat/, /conversation/)
+  const pathMatch = url.match(
+    /grok\.com\/(?:chat|c|conversation)\/([a-f0-9-]+)/i,
+  )?.[1];
+  if (pathMatch) return pathMatch;
+
+  // 2. Project URLs with chat query parameter (/project/<workspaceId>?chat=<conversationId>)
   try {
     const parsed = new URL(url);
-    const chatParam = parsed.searchParams.get("chat");
-    if (
-      chatParam &&
-      /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(chatParam)
-    ) {
-      return chatParam;
+    if (parsed.pathname.startsWith("/project/")) {
+      const chatParam = parsed.searchParams.get("chat");
+      if (
+        chatParam &&
+        /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(chatParam)
+      ) {
+        return chatParam;
+      }
     }
   } catch {
-    // Ignore invalid URL parsing and fall back to regex matching
+    // Ignore invalid URL parsing
   }
-  return (
-    url.match(/grok\.com\/(?:chat|c|conversation)\/([a-f0-9-]+)/i)?.[1] ?? null
-  );
+
+  return null;
 }
 
 /**
