@@ -8,7 +8,10 @@ export function getGrokConversationId(url) {
   try {
     const parsed = new URL(url);
     const chatParam = parsed.searchParams.get("chat");
-    if (chatParam && /^[a-f0-9-]+$/i.test(chatParam)) {
+    if (
+      chatParam &&
+      /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(chatParam)
+    ) {
       return chatParam;
     }
   } catch {
