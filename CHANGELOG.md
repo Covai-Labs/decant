@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Covai-Labs/decant/compare/v1.14.0...v1.15.0) (2026-10-05)
+
+
+### Features
+
+* support grok project chat URLs ([#40](https://github.com/Covai-Labs/decant/issues/40)) ([f0c4e2b](https://github.com/Covai-Labs/decant/commit/f0c4e2ba861690a7504b91244e8e729ad255d07a))
+
 # [1.14.0](https://github.com/Covai-Labs/decant/compare/v1.13.0...v1.14.0) (2026-09-30)
 
 
