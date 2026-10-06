@@ -40,6 +40,13 @@ export const URL_PATTERNS = [
       url.includes("copilot.cloud.microsoft") ||
       url.includes("m365.cloud.microsoft") ||
       url.includes("m365.microsoft.com") ||
+      url.includes("onenote.cloud.microsoft") ||
+      url.includes("word.cloud.microsoft") ||
+      url.includes("excel.cloud.microsoft") ||
+      url.includes("powerpoint.cloud.microsoft") ||
+      url.includes("outlook.cloud.microsoft") ||
+      url.includes("teams.cloud.microsoft") ||
+      url.includes("loop.cloud.microsoft") ||
       url.includes("bing.com/chat") ||
       url.includes("bing.com/copilot") ||
       url.includes("bing.com/copilotsearch") ||

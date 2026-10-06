@@ -10,6 +10,13 @@ export class CopilotParser extends ChatParser {
       url.includes("copilot.cloud.microsoft") ||
       url.includes("m365.cloud.microsoft") ||
       url.includes("m365.microsoft.com") ||
+      url.includes("onenote.cloud.microsoft") ||
+      url.includes("word.cloud.microsoft") ||
+      url.includes("excel.cloud.microsoft") ||
+      url.includes("powerpoint.cloud.microsoft") ||
+      url.includes("outlook.cloud.microsoft") ||
+      url.includes("teams.cloud.microsoft") ||
+      url.includes("loop.cloud.microsoft") ||
       url.includes("bing.com/chat") ||
       url.includes("bing.com/copilot") ||
       url.includes("bing.com/copilotsearch") ||
@@ -23,8 +30,10 @@ export class CopilotParser extends ChatParser {
       const cleanTitle = document.title
         .replace(/^Microsoft Copilot:\s*/i, "")
         .replace(/\s*-\s*Microsoft Copilot$/i, "")
+        .replace(/\s*\|\s*Microsoft Copilot$/i, "")
         .replace(/^Copilot:\s*/i, "")
         .replace(/\s*-\s*Copilot$/i, "")
+        .replace(/\s*\|\s*Copilot$/i, "")
         .replace(/Your AI companion/i, "")
         .trim();
       if (
@@ -88,6 +97,41 @@ export class CopilotParser extends ChatParser {
         }
       });
 
+      // Transform Bebop / Fluent citation buttons into standard anchor links
+      const ownerDoc = clone.ownerDocument || document;
+      clone
+        .querySelectorAll('.fai-BebopCitation, [class*="BebopCitation"]')
+        .forEach((btn) => {
+          const rawJson = btn.getAttribute("data-grouped-citations");
+          if (rawJson) {
+            try {
+              const citations = JSON.parse(rawJson);
+              if (Array.isArray(citations) && citations.length > 0) {
+                const links = citations
+                  .filter((c) => c.url)
+                  .map((c) => {
+                    const a = ownerDoc.createElement("a");
+                    a.href = c.url;
+                    a.textContent = c.name || "source";
+                    return a;
+                  });
+                if (links.length > 0) {
+                  const span = ownerDoc.createElement("span");
+                  links.forEach((link, idx) => {
+                    if (idx > 0) span.appendChild(ownerDoc.createTextNode(" "));
+                    span.appendChild(link);
+                  });
+                  btn.replaceWith(span);
+                  return;
+                }
+              }
+            } catch {
+              // Ignore malformed citation JSON
+            }
+          }
+          btn.remove();
+        });
+
       // Standardize code blocks with language labels
       clone
         .querySelectorAll('div.rounded-xl, div[class*="code-block"]')
@@ -110,7 +154,7 @@ export class CopilotParser extends ChatParser {
           }
         });
 
-      return clone.innerHTML;
+      return clone;
     };
 
     // Multi-tier DOM extraction strategy
