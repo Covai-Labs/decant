@@ -1,4 +1,5 @@
 import { isDuckAiUrl } from "../ai/duck_ai.js";
+import { isCopilotUrl } from "../ai/copilot.js";
 
 /**
  * AI chat platform domain definitions.
@@ -34,16 +35,7 @@ export const AI_CHAT_DOMAINS = [
  */
 export const URL_PATTERNS = [
   {
-    test: (url) =>
-      url.includes("copilot.microsoft.com") ||
-      url.includes("copilot.com") ||
-      url.includes("copilot.cloud.microsoft") ||
-      url.includes("m365.cloud.microsoft") ||
-      url.includes("m365.microsoft.com") ||
-      url.includes("bing.com/chat") ||
-      url.includes("bing.com/copilot") ||
-      url.includes("bing.com/copilotsearch") ||
-      url.includes("edgeservices.bing.com"),
+    test: isCopilotUrl,
     platform: "copilot",
   },
   {
