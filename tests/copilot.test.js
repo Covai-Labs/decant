@@ -27,16 +27,16 @@ test("CopilotParser isAvailable matches standard and M365 cloud.microsoft URLs",
   const validUrls = [
     "https://copilot.microsoft.com/",
     "https://copilot.com/",
-    "https://copilot.cloud.microsoft/",
+    "https://copilot.cloud.microsoft/chat",
     "https://m365.cloud.microsoft/chat",
-    "https://m365.microsoft.com/",
-    "https://onenote.cloud.microsoft/",
-    "https://word.cloud.microsoft/",
-    "https://excel.cloud.microsoft/",
-    "https://powerpoint.cloud.microsoft/",
-    "https://outlook.cloud.microsoft/",
-    "https://teams.cloud.microsoft/",
-    "https://loop.cloud.microsoft/",
+    "https://m365.microsoft.com/chat",
+    "https://onenote.cloud.microsoft/chat",
+    "https://word.cloud.microsoft/chat",
+    "https://excel.cloud.microsoft/chat",
+    "https://powerpoint.cloud.microsoft/chat",
+    "https://outlook.cloud.microsoft/chat",
+    "https://teams.cloud.microsoft/chat",
+    "https://loop.cloud.microsoft/chat",
     "https://www.bing.com/chat",
     "https://www.bing.com/copilot",
     "https://www.bing.com/copilotsearch",
@@ -63,6 +63,8 @@ test("CopilotParser isAvailable matches standard and M365 cloud.microsoft URLs",
     "https://chatgpt.com/",
     "https://claude.ai/",
     "https://example.com/onenote",
+    "https://example.test/?next=https://onenote.cloud.microsoft/chat",
+    "https://word.cloud.microsoft/",
     "https://microsoft.com/en-us",
   ];
 
@@ -110,8 +112,7 @@ test("CopilotParser DOM extracts 4 turns with cleaned title and citations", asyn
   assert.ok(
     result.messages[3].content.includes(
       "[github.com](https://github.com/Covai-Labs/ace)",
-    ) ||
-      result.messages[3].content.includes("https://github.com/Covai-Labs/ace"),
+    ),
     "Expected citation links to be preserved",
   );
 });

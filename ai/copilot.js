@@ -1,27 +1,11 @@
 import { ChatParser } from "./base.js";
 import { convertToMarkdown } from "../utils/html-to-markdown.js";
+import { isCopilotUrl } from "../detection/domains.js";
 
 export class CopilotParser extends ChatParser {
   name = "Copilot";
   isAvailable(url) {
-    return (
-      url.includes("copilot.microsoft.com") ||
-      url.includes("copilot.com") ||
-      url.includes("copilot.cloud.microsoft") ||
-      url.includes("m365.cloud.microsoft") ||
-      url.includes("m365.microsoft.com") ||
-      url.includes("onenote.cloud.microsoft") ||
-      url.includes("word.cloud.microsoft") ||
-      url.includes("excel.cloud.microsoft") ||
-      url.includes("powerpoint.cloud.microsoft") ||
-      url.includes("outlook.cloud.microsoft") ||
-      url.includes("teams.cloud.microsoft") ||
-      url.includes("loop.cloud.microsoft") ||
-      url.includes("bing.com/chat") ||
-      url.includes("bing.com/copilot") ||
-      url.includes("bing.com/copilotsearch") ||
-      url.includes("edgeservices.bing.com")
-    );
+    return isCopilotUrl(url);
   }
 
   async parse() {
