@@ -1,20 +1,67 @@
 import { ChatParser } from "./base.js";
 import { convertToMarkdown } from "../utils/html-to-markdown.js";
 
+const COPILOT_APP_HOSTS = [
+  "m365.cloud.microsoft",
+  "m365.microsoft.com",
+  "onenote.cloud.microsoft",
+  "word.cloud.microsoft",
+  "excel.cloud.microsoft",
+  "powerpoint.cloud.microsoft",
+  "outlook.cloud.microsoft",
+  "teams.cloud.microsoft",
+  "loop.cloud.microsoft",
+];
+
+const COPILOT_CHAT_PATHS = ["/chat", "/projects", "/copilot"];
+
+export function isCopilotUrl(url) {
+  if (!url || typeof url !== "string") return false;
+
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false;
+  }
+
+  const host = parsed.hostname.toLowerCase();
+  const cleanHost = host.startsWith("www.") ? host.slice(4) : host;
+
+  if (
+    cleanHost === "copilot.microsoft.com" ||
+    cleanHost === "copilot.com" ||
+    cleanHost === "copilot.cloud.microsoft" ||
+    cleanHost === "edgeservices.bing.com"
+  ) {
+    return true;
+  }
+
+  if (cleanHost === "bing.com") {
+    return (
+      parsed.pathname === "/chat" ||
+      parsed.pathname.startsWith("/chat/") ||
+      parsed.pathname === "/copilot" ||
+      parsed.pathname.startsWith("/copilot/") ||
+      parsed.pathname === "/copilotsearch" ||
+      parsed.pathname.startsWith("/copilotsearch/")
+    );
+  }
+
+  if (COPILOT_APP_HOSTS.includes(cleanHost)) {
+    return COPILOT_CHAT_PATHS.some(
+      (path) =>
+        parsed.pathname === path || parsed.pathname.startsWith(`${path}/`),
+    );
+  }
+
+  return false;
+}
+
 export class CopilotParser extends ChatParser {
   name = "Copilot";
   isAvailable(url) {
-    return (
-      url.includes("copilot.microsoft.com") ||
-      url.includes("copilot.com") ||
-      url.includes("copilot.cloud.microsoft") ||
-      url.includes("m365.cloud.microsoft") ||
-      url.includes("m365.microsoft.com") ||
-      url.includes("bing.com/chat") ||
-      url.includes("bing.com/copilot") ||
-      url.includes("bing.com/copilotsearch") ||
-      url.includes("edgeservices.bing.com")
-    );
+    return isCopilotUrl(url);
   }
 
   async parse() {
@@ -23,8 +70,10 @@ export class CopilotParser extends ChatParser {
       const cleanTitle = document.title
         .replace(/^Microsoft Copilot:\s*/i, "")
         .replace(/\s*-\s*Microsoft Copilot$/i, "")
+        .replace(/\s*\|\s*Microsoft Copilot$/i, "")
         .replace(/^Copilot:\s*/i, "")
         .replace(/\s*-\s*Copilot$/i, "")
+        .replace(/\s*\|\s*Copilot$/i, "")
         .replace(/Your AI companion/i, "")
         .trim();
       if (
@@ -77,16 +126,100 @@ export class CopilotParser extends ChatParser {
         clone.querySelectorAll(sel).forEach((el) => el.remove());
       });
 
+      const ownerDoc = clone.ownerDocument || document;
+      const baseUrl =
+        (ownerDoc && ownerDoc.baseURI) ||
+        (typeof window !== "undefined" && window.location?.href) ||
+        "https://copilot.microsoft.com";
+
       // Transform data-url span buttons into standard anchor tags
       clone.querySelectorAll("span[data-url]").forEach((span) => {
-        const url = span.getAttribute("data-url");
-        if (url && !url.startsWith("ca://")) {
-          const a = document.createElement("a");
-          a.href = url;
-          a.textContent = span.textContent;
-          span.replaceWith(a);
+        const rawUrl = span.getAttribute("data-url");
+        if (rawUrl && !rawUrl.startsWith("ca://")) {
+          try {
+            const parsed = new URL(rawUrl, baseUrl);
+            if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+              let finalHref = parsed.href;
+              if (
+                (rawUrl.startsWith("http://") ||
+                  rawUrl.startsWith("https://")) &&
+                !rawUrl.endsWith("/") &&
+                finalHref.endsWith("/")
+              ) {
+                finalHref = finalHref.slice(0, -1);
+              }
+              const a = ownerDoc.createElement("a");
+              a.href = finalHref;
+              a.textContent = span.textContent;
+              span.replaceWith(a);
+            }
+          } catch {
+            // Ignore malformed URL
+          }
         }
       });
+
+      // Transform Bebop / Fluent citation buttons into standard anchor links
+      clone
+        .querySelectorAll('.fai-BebopCitation, [class*="BebopCitation"]')
+        .forEach((btn) => {
+          const rawJson = btn.getAttribute("data-grouped-citations");
+          if (rawJson) {
+            try {
+              const citations = JSON.parse(rawJson);
+              if (Array.isArray(citations) && citations.length > 0) {
+                const links = [];
+                for (const c of citations) {
+                  if (c && typeof c.url === "string") {
+                    try {
+                      const parsed = new URL(c.url, baseUrl);
+                      if (
+                        parsed.protocol === "http:" ||
+                        parsed.protocol === "https:"
+                      ) {
+                        let finalHref = parsed.href;
+                        if (
+                          (c.url.startsWith("http://") ||
+                            c.url.startsWith("https://")) &&
+                          !c.url.endsWith("/") &&
+                          finalHref.endsWith("/")
+                        ) {
+                          finalHref = finalHref.slice(0, -1);
+                        }
+                        const a = ownerDoc.createElement("a");
+                        a.href = finalHref;
+                        a.textContent = c.name || "source";
+                        links.push(a);
+                      }
+                    } catch {
+                      // Skip invalid citation URL
+                    }
+                  }
+                }
+                if (links.length > 0) {
+                  const span = ownerDoc.createElement("span");
+                  links.forEach((link, idx) => {
+                    if (idx > 0) span.appendChild(ownerDoc.createTextNode(" "));
+                    span.appendChild(link);
+                  });
+                  btn.replaceWith(span);
+                  return;
+                }
+              }
+            } catch {
+              // Ignore malformed citation JSON
+            }
+          }
+
+          const fallbackText = btn.textContent.trim();
+          if (fallbackText) {
+            const span = ownerDoc.createElement("span");
+            span.textContent = fallbackText;
+            btn.replaceWith(span);
+          } else {
+            btn.remove();
+          }
+        });
 
       // Standardize code blocks with language labels
       clone
@@ -110,7 +243,7 @@ export class CopilotParser extends ChatParser {
           }
         });
 
-      return clone.innerHTML;
+      return clone;
     };
 
     // Multi-tier DOM extraction strategy
