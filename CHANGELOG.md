@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/Covai-Labs/decant/compare/v1.15.0...v1.16.0) (2026-10-06)
+
+
+### Features
+
+* **copilot:** support cloud.microsoft chat routes, pipe titles, and citation links ([#41](https://github.com/Covai-Labs/decant/issues/41)) ([f019be9](https://github.com/Covai-Labs/decant/commit/f019be901cf01ed75078007ed1f9df08b3fb755b))
+
 # [1.15.0](https://github.com/Covai-Labs/decant/compare/v1.14.0...v1.15.0) (2026-10-05)
 
 
