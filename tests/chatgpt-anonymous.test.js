@@ -32,7 +32,7 @@ test("ChatGPTParser extracts messages from signed-out/anonymous session DOM fixt
   assert.equal(messages.length, 10, "Should extract all 10 conversation turns");
 
   assert.equal(messages[0].role, "User");
-  assert.ok(messages[0].content.includes("https://ace.covai.org/"));
+  assert.ok(messages[0].content.includes("Which of these has any potential"));
   assert.doesNotMatch(messages[0].content, /You said:/);
 
   assert.equal(messages[1].role, "ChatGPT");
