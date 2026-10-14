@@ -36,8 +36,9 @@ export function getConversationTurnIndex(turn) {
 export function getConversationTurns(doc = document) {
   if (!doc || typeof doc.querySelectorAll !== "function") return [];
   const turns = Array.from(doc.querySelectorAll(TURN_SELECTOR));
-  // Filter out nested duplicates (e.g. [data-message-author-role] inside an article)
+  // Filter out nested duplicates and recovery placeholders
   const filtered = turns.filter((el) => {
+    if (el.matches?.("[data-conversation-recovery]")) return false;
     return !turns.some((parent) => parent !== el && parent.contains(el));
   });
 
