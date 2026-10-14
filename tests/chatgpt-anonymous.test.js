@@ -29,22 +29,32 @@ test("ChatGPTParser extracts messages from signed-out/anonymous session DOM fixt
 
   // Signed out session has no access token, so it uses DOM parsing
   const messages = parser.extractMountedMessages();
-  assert.equal(messages.length, 4, "Should extract all 4 conversation turns");
+  assert.equal(messages.length, 10, "Should extract all 10 conversation turns");
 
   assert.equal(messages[0].role, "User");
-  assert.match(messages[0].content, /https:\/\/ace\.covai\.org\//);
+  assert.ok(messages[0].content.includes("https://ace.covai.org/"));
   assert.doesNotMatch(messages[0].content, /You said:/);
 
   assert.equal(messages[1].role, "ChatGPT");
-  assert.match(messages[1].content, /Covai/);
+  assert.ok(messages[1].content.includes("Decant"));
   assert.doesNotMatch(messages[1].content, /ChatGPT said:/);
 
   assert.equal(messages[2].role, "User");
-  assert.equal(messages[2].content, "both");
+  assert.ok(messages[2].content.includes("decant-core"));
   assert.doesNotMatch(messages[2].content, /You said:/);
 
   assert.equal(messages[3].role, "ChatGPT");
   assert.doesNotMatch(messages[3].content, /ChatGPT said:/);
+
+  assert.equal(messages[4].role, "User");
+  assert.match(
+    messages[4].content,
+    /!\[.*?\]\(blob:https:\/\/chatgpt\.com\/.*?\)/,
+  );
+  assert.ok(messages[4].content.includes("**Attachments & Images:**"));
+
+  assert.equal(messages[9].role, "ChatGPT");
+  assert.doesNotMatch(messages[9].content, /ChatGPT said:/);
 });
 
 test("ChatGPTParser ignores Octane conversation recovery placeholder elements", async () => {
