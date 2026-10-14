@@ -46,3 +46,41 @@ test("ChatGPTParser extracts messages from signed-out/anonymous session DOM fixt
   assert.equal(messages[3].role, "ChatGPT");
   assert.doesNotMatch(messages[3].content, /ChatGPT said:/);
 });
+
+test("ChatGPTParser ignores Octane conversation recovery placeholder elements", async () => {
+  const { window, document, HTMLElement, Node, DOMParser } = parseHTML(`
+    <ol data-conversation-transcript="">
+      <li data-message-role="user"><div data-user-message-bubble="">Hello</div></li>
+      <li data-message-role="assistant" data-conversation-recovery="">
+        <h4>ChatGPT said:</h4>
+        <div data-conversation-recovery-status="failed">
+          <span>Unable to connect</span>
+        </div>
+      </li>
+      <li data-message-role="assistant">
+        <div data-assistant-markdown-root="">
+          <p>Real response</p>
+        </div>
+      </li>
+    </ol>
+  `);
+  global.window = window;
+  global.document = document;
+  global.HTMLElement = HTMLElement;
+  global.Node = Node;
+  global.DOMParser = DOMParser;
+
+  const { ChatGPTParser } = await import("../ai/chatgpt.js");
+  const parser = new ChatGPTParser();
+
+  const messages = parser.extractMountedMessages();
+  assert.equal(
+    messages.length,
+    2,
+    "Should only extract the 2 real messages, ignoring recovery placeholder",
+  );
+  assert.equal(messages[0].role, "User");
+  assert.equal(messages[0].content, "Hello");
+  assert.equal(messages[1].role, "ChatGPT");
+  assert.equal(messages[1].content, "Real response");
+});

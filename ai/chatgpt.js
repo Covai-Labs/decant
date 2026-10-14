@@ -1069,7 +1069,7 @@ export class ChatGPTParser extends ChatParser {
             document.querySelectorAll(
               "article, [data-message-author-role], [data-message-role]",
             ),
-          );
+          ).filter((el) => !el.matches?.("[data-conversation-recovery]"));
 
     return containers
       .map((container) => this.extractMessage(container))
