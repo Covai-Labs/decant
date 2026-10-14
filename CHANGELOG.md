@@ -49,6 +49,19 @@
 
 * **parser:** add Duck.ai parser and platform detection ([9701c2a](https://github.com/Covai-Labs/decant/commit/9701c2a31fd649654fb50ecf3c14d70edee77171))
 
+## [1.17.0](https://github.com/Covai-Labs/decant/compare/v1.16.0...v1.17.0) (2026-10-14)
+
+
+### Features
+
+* **ci:** migrate from semantic-release to release-please ([#44](https://github.com/Covai-Labs/decant/issues/44)) ([829bfe1](https://github.com/Covai-Labs/decant/commit/829bfe1a175484b0ffa9c2ab0c4bfc2c3e254c3d))
+
+
+### Bug Fixes
+
+* **chatgpt:** ignore conversation recovery placeholders ([#51](https://github.com/Covai-Labs/decant/issues/51)) ([c4d51a9](https://github.com/Covai-Labs/decant/commit/c4d51a9532f37f76472c27867cb38fdd6bfaaa9b))
+* **chatgpt:** support anonymous session DOM structure ([#50](https://github.com/Covai-Labs/decant/issues/50)) ([a2c7876](https://github.com/Covai-Labs/decant/commit/a2c7876f70a5f239ab70ef7c4d19c4a4d61095ad))
+
 ## [1.10.1](https://github.com/Covai-Labs/decant-core/compare/v1.10.0...v1.10.1) (2026-09-16)
 
 
