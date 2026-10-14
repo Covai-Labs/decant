@@ -783,19 +783,35 @@ export class ChatGPTParser extends ChatParser {
   }
 
   getRoleElement(container) {
-    if (container.matches?.("[data-message-author-role]")) return container;
-    return container.querySelector?.("[data-message-author-role]") || null;
+    if (
+      container.matches?.("[data-message-author-role], [data-message-role]")
+    ) {
+      return container;
+    }
+    return (
+      container.querySelector?.(
+        "[data-message-author-role], [data-message-role]",
+      ) || null
+    );
   }
 
   getRoleElements(container) {
-    if (container.matches?.("[data-message-author-role]")) return [container];
+    if (
+      container.matches?.("[data-message-author-role], [data-message-role]")
+    ) {
+      return [container];
+    }
     return Array.from(
-      container.querySelectorAll?.("[data-message-author-role]") || [],
+      container.querySelectorAll?.(
+        "[data-message-author-role], [data-message-role]",
+      ) || [],
     );
   }
 
   getMessageRole(container, roleElement) {
-    const roleAttr = roleElement?.getAttribute("data-message-author-role");
+    const roleAttr =
+      roleElement?.getAttribute("data-message-author-role") ||
+      roleElement?.getAttribute("data-message-role");
     if (roleAttr) return roleAttr === "user" ? "User" : "ChatGPT";
 
     const text = container.innerText || "";
@@ -805,11 +821,25 @@ export class ChatGPTParser extends ChatParser {
   }
 
   getContentElement(container, roleElement) {
-    if (roleElement?.getAttribute("data-message-author-role") === "user") {
+    const role =
+      roleElement?.getAttribute("data-message-author-role") ||
+      roleElement?.getAttribute("data-message-role");
+
+    if (role === "user") {
+      const bubble = container.querySelector?.(
+        "[data-user-message-bubble], [data-user-message-copy]",
+      );
+      if (bubble) return bubble;
       return roleElement;
     }
 
-    const selectors = [".markdown", ".prose", ".whitespace-pre-wrap"];
+    const selectors = [
+      "[data-assistant-markdown]",
+      "[data-assistant-markdown-root]",
+      ".markdown",
+      ".prose",
+      ".whitespace-pre-wrap",
+    ];
     for (const selector of selectors) {
       const contentElement = container.querySelector?.(selector);
       if (contentElement) return contentElement;
@@ -845,6 +875,9 @@ export class ChatGPTParser extends ChatParser {
       container.querySelector?.("[data-message-id]");
     const messageId = idElement?.getAttribute("data-message-id");
     if (messageId) return messageId;
+
+    const containerId = container.getAttribute?.("id");
+    if (containerId) return `${containerId}:${role}`;
 
     const turnId = container.getAttribute?.("data-testid");
     if (turnId) return `${turnId}:${role}`;
@@ -956,6 +989,7 @@ export class ChatGPTParser extends ChatParser {
       "[data-input-selector-variable]",
       '[role="slider"]',
       ".AxvpHG_visualizationLayer",
+      "[data-message-attribution]",
     ];
     const contentParts = contentElements
       .map((contentElement) => {
@@ -1032,7 +1066,9 @@ export class ChatGPTParser extends ChatParser {
       turns.length > 0
         ? turns
         : Array.from(
-            document.querySelectorAll("article, [data-message-author-role]"),
+            document.querySelectorAll(
+              "article, [data-message-author-role], [data-message-role]",
+            ),
           );
 
     return containers

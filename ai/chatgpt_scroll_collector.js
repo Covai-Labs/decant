@@ -1,5 +1,5 @@
 const TURN_SELECTOR =
-  'article, [data-testid^="conversation-turn-"], section[data-turn-id], [data-message-author-role]';
+  'article, [data-testid^="conversation-turn-"], section[data-turn-id], [data-message-author-role], [data-message-role]';
 const DEFAULT_RENDER_WAIT_MS = 160;
 
 function delay(ms) {
