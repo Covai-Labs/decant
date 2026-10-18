@@ -78,7 +78,14 @@ export function formatDeepSeekFileAttachment(file) {
   return `\n\n### Attachment: ${name}${metaSuffix}\n\n`;
 }
 
-export function extractDeepSeekMessageContent(msgNode) {
+function formatDeepSeekFileNote(file) {
+  if (!file) return "";
+  const sizeLabel = formatFileSize(file.file_size);
+  const suffix = sizeLabel ? ` _(${sizeLabel})_` : "";
+  return `\n\n**Attachment: ${file.file_name || "file"}**${suffix}\n\n`;
+}
+
+export function extractDeepSeekMessageContent(msgNode, includeAttachments = true) {
   if (!msgNode) return "";
   // Current API shape: content lives in fragments[] ({type, content}).
   // REQUEST = user prompt, RESPONSE = final assistant answer.
@@ -101,7 +108,9 @@ export function extractDeepSeekMessageContent(msgNode) {
       );
       for (const f of fileFragments) {
         for (const file of f.files) {
-          const formatted = formatDeepSeekFileAttachment(file);
+          const formatted = includeAttachments
+            ? formatDeepSeekFileAttachment(file)
+            : formatDeepSeekFileNote(file);
           if (formatted) {
             attachmentsText += formatted;
           }
@@ -119,7 +128,12 @@ export function extractDeepSeekMessageContent(msgNode) {
 
     const wanted = isUser ? "REQUEST" : "RESPONSE";
     const picked = msgNode.fragments.filter((f) => f && f.type === wanted);
-    const fallback = picked.length > 0 ? picked : msgNode.fragments;
+    const fallback =
+      picked.length > 0
+        ? picked
+        : includeAttachments || !isUser
+          ? msgNode.fragments
+          : msgNode.fragments.filter((f) => f && f.type !== "FILE");
     const text = fallback
       .map((f) => (typeof f.content === "string" ? f.content : ""))
       .join("\n\n")
@@ -129,6 +143,27 @@ export function extractDeepSeekMessageContent(msgNode) {
   // Legacy shape: top-level content/text fields.
   const legacy = msgNode.content || msgNode.text || "";
   return typeof legacy === "string" ? legacy.trim() : "";
+}
+
+function isDeepSeekTextFile(file, response) {
+  const name = file.file_name || "";
+  if (
+    /\.(?:pdf|docx?|xlsx?|pptx?|zip|rar|7z|gz|tar|mp3|mp4|mov|avi)$/i.test(
+      name,
+    )
+  ) {
+    return false;
+  }
+  const contentType = response.headers?.get?.("content-type")?.toLowerCase() || "";
+  if (
+    contentType.startsWith("text/") ||
+    /json|javascript|xml|csv|yaml/.test(contentType)
+  ) {
+    return true;
+  }
+  return /\.(?:txt|md|markdown|csv|json|xml|html?|css|js|jsx|ts|tsx|yaml|yml|log)$/i.test(
+    name,
+  );
 }
 
 async function fetchDeepSeekFileContent(file) {
@@ -151,7 +186,7 @@ async function fetchDeepSeekFileContent(file) {
         ? AbortSignal.timeout(10000)
         : undefined;
     const res = await fetch(url, { signal });
-    if (res.ok) {
+    if (res.ok && isDeepSeekTextFile(file, res)) {
       return await res.text();
     }
   } catch (err) {
@@ -177,7 +212,11 @@ function getConversationId() {
   }
 }
 
-async function fetchDeepSeekConversation(sessionId, token) {
+async function fetchDeepSeekConversation(
+  sessionId,
+  token,
+  includeAttachments = true,
+) {
   const url = `https://chat.deepseek.com/api/v0/chat/history_messages?chat_session_id=${sessionId}&cache_version=0`;
   const response = await fetch(url, {
     method: "GET",
@@ -219,23 +258,25 @@ async function fetchDeepSeekConversation(sessionId, token) {
   branch.reverse();
 
   const fileFetches = [];
-  for (const msgNode of branch) {
-    if (Array.isArray(msgNode?.fragments)) {
-      for (const frag of msgNode.fragments) {
-        if (frag?.type === "FILE" && Array.isArray(frag.files)) {
-          for (const file of frag.files) {
-            if (
-              !file.is_image &&
-              file.signed_path &&
-              typeof file.extracted_content !== "string"
-            ) {
-              fileFetches.push(
-                fetchDeepSeekFileContent(file).then((content) => {
-                  if (content !== null) {
-                    file.extracted_content = content;
-                  }
-                }),
-              );
+  if (includeAttachments) {
+    for (const msgNode of branch) {
+      if (Array.isArray(msgNode?.fragments)) {
+        for (const frag of msgNode.fragments) {
+          if (frag?.type === "FILE" && Array.isArray(frag.files)) {
+            for (const file of frag.files) {
+              if (
+                !file.is_image &&
+                file.signed_path &&
+                typeof file.extracted_content !== "string"
+              ) {
+                fileFetches.push(
+                  fetchDeepSeekFileContent(file).then((content) => {
+                    if (content !== null) {
+                      file.extracted_content = content;
+                    }
+                  }),
+                );
+              }
             }
           }
         }
@@ -250,7 +291,7 @@ async function fetchDeepSeekConversation(sessionId, token) {
     .map((msgNode) => {
       const isUser = msgNode.role === "USER" || msgNode.role === "user";
       const role = isUser ? "User" : "DeepSeek";
-      const content = extractDeepSeekMessageContent(msgNode);
+      const content = extractDeepSeekMessageContent(msgNode, includeAttachments);
       let thinking = "";
       if (!isUser && Array.isArray(msgNode.fragments)) {
         const thinkFragments = msgNode.fragments.filter(
@@ -290,7 +331,8 @@ export class DeepSeekParser extends ChatParser {
     return url.includes("chat.deepseek.com");
   }
 
-  async parse() {
+  async parse(options = {}) {
+    const includeAttachments = options.includeAttachments !== false;
     const title = document.title || "DeepSeek Chat";
 
     const currentUrl =
@@ -308,7 +350,11 @@ export class DeepSeekParser extends ChatParser {
       const token = getUserToken();
       const sessionId = getConversationId();
       if (token && sessionId) {
-        const apiMessages = await fetchDeepSeekConversation(sessionId, token);
+        const apiMessages = await fetchDeepSeekConversation(
+          sessionId,
+          token,
+          includeAttachments,
+        );
         if (apiMessages && apiMessages.length > 0) {
           return {
             title,
