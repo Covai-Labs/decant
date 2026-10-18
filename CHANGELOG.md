@@ -49,6 +49,13 @@
 
 * **parser:** add Duck.ai parser and platform detection ([9701c2a](https://github.com/Covai-Labs/decant/commit/9701c2a31fd649654fb50ecf3c14d70edee77171))
 
+## [1.17.1](https://github.com/Covai-Labs/decant/compare/v1.17.0...v1.17.1) (2026-10-18)
+
+
+### Bug Fixes
+
+* **deepseek:** support file and text attachments ([#56](https://github.com/Covai-Labs/decant/issues/56)) ([6b94ef9](https://github.com/Covai-Labs/decant/commit/6b94ef9e0ffb58952df4341f36f2a178bc5d92d1))
+
 ## [1.17.0](https://github.com/Covai-Labs/decant/compare/v1.16.0...v1.17.0) (2026-10-14)
 
 
