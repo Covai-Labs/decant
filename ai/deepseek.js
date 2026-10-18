@@ -113,7 +113,7 @@ function isTextFile(fileName) {
 
 function escapeMarkdownLinkText(text) {
   if (!text || typeof text !== "string") return "";
-  return text.replace(/[[\]]/g, "\\$&");
+  return text.replace(/\\/g, "\\\\").replace(/[[\]]/g, "\\$&");
 }
 
 export function formatDeepSeekFileAttachment(file) {
