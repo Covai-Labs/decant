@@ -18,13 +18,175 @@ function getUserToken() {
   }
 }
 
+export function formatFileSize(bytes) {
+  if (typeof bytes !== "number" || !Number.isFinite(bytes) || bytes < 0) {
+    return "";
+  }
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+export function buildDeepSeekFileUrl(signedPath, mode = "r") {
+  if (!signedPath) return "";
+  const filesHost = "files.deepseeksvc.com";
+  let url = signedPath;
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = `https://${filesHost}/api${signedPath.startsWith("/") ? "" : "/"}${signedPath}`;
+  }
+  try {
+    const parsed = new URL(url);
+    if (!parsed.searchParams.has("ty")) {
+      parsed.searchParams.set("ty", mode);
+    }
+    return parsed.toString();
+  } catch {
+    const sep = signedPath.includes("?") ? "&" : "?";
+    return signedPath.includes("ty=")
+      ? signedPath
+      : `${signedPath}${sep}ty=${mode}`;
+  }
+}
+
+function isTextFile(fileName) {
+  if (!fileName || typeof fileName !== "string") return false;
+  const match = fileName.match(/\.([a-zA-Z0-9_-]+)$/);
+  if (!match) return false;
+  const ext = match[1].toLowerCase();
+  const textExtensions = new Set([
+    "txt",
+    "md",
+    "markdown",
+    "csv",
+    "tsv",
+    "json",
+    "jsonl",
+    "xml",
+    "yaml",
+    "yml",
+    "toml",
+    "ini",
+    "conf",
+    "log",
+    "sql",
+    "html",
+    "htm",
+    "css",
+    "scss",
+    "less",
+    "js",
+    "jsx",
+    "mjs",
+    "cjs",
+    "ts",
+    "tsx",
+    "py",
+    "rb",
+    "java",
+    "c",
+    "cpp",
+    "h",
+    "hpp",
+    "cs",
+    "go",
+    "rs",
+    "php",
+    "sh",
+    "bash",
+    "zsh",
+    "bat",
+    "ps1",
+    "r",
+    "swift",
+    "kt",
+    "kts",
+    "scala",
+    "lua",
+    "pl",
+    "pm",
+    "dart",
+    "diff",
+    "patch",
+  ]);
+  return textExtensions.has(ext);
+}
+
+function escapeMarkdownLinkText(text) {
+  if (!text || typeof text !== "string") return "";
+  return text
+    .replace(/\\/g, "\\\\")
+    .replace(/[[\]]/g, "\\$&")
+    .replace(/[*_~`]/g, "\\$&");
+}
+
+export function formatDeepSeekFileAttachment(file) {
+  if (!file) return "";
+  const sizeLabel = formatFileSize(file.file_size);
+  const name = file.file_name || "file";
+  const safeName = escapeMarkdownLinkText(name);
+
+  if (file.is_image) {
+    const url = buildDeepSeekFileUrl(file.signed_path, "p");
+    return `\n\n**Attachment: ${safeName}**\n\n![${safeName}](${url})\n\n`;
+  }
+
+  if (typeof file.extracted_content === "string") {
+    const metaSuffix = sizeLabel ? ` _(${sizeLabel})_` : "";
+    if (file.file_name) {
+      return `\n\n### Attachment: ${file.file_name}${metaSuffix}\n\`\`\`\`\n${file.extracted_content}\n\`\`\`\`\n\n`;
+    }
+    return `\n\n### Pasted content${metaSuffix}\n\`\`\`\`\n${file.extracted_content}\n\`\`\`\`\n\n`;
+  }
+
+  // Fallback when content was not downloaded
+  const url = buildDeepSeekFileUrl(file.signed_path, "r");
+  if (url) {
+    const metaSuffix = sizeLabel ? ` · ${sizeLabel}` : "";
+    return `\n\n**Attachment: [${safeName}](${url})** _(document${metaSuffix})_\n\n`;
+  }
+  const metaSuffix = sizeLabel ? ` _(${sizeLabel})_` : "";
+  return `\n\n### Attachment: ${name}${metaSuffix}\n\n`;
+}
+
 export function extractDeepSeekMessageContent(msgNode) {
   if (!msgNode) return "";
   // Current API shape: content lives in fragments[] ({type, content}).
   // REQUEST = user prompt, RESPONSE = final assistant answer.
+  // FILE = attached file or pasted long text.
   // THINK / TOOL_* fragments are intermediate reasoning/tool output.
   if (Array.isArray(msgNode.fragments) && msgNode.fragments.length > 0) {
     const isUser = msgNode.role === "USER" || msgNode.role === "user";
+    if (isUser) {
+      const promptFragments = msgNode.fragments.filter(
+        (f) => f && f.type === "REQUEST" && typeof f.content === "string",
+      );
+      const promptText = promptFragments
+        .map((f) => f.content.trim())
+        .filter(Boolean)
+        .join("\n\n");
+
+      let attachmentsText = "";
+      const fileFragments = msgNode.fragments.filter(
+        (f) => f && f.type === "FILE" && Array.isArray(f.files),
+      );
+      for (const f of fileFragments) {
+        for (const file of f.files) {
+          const formatted = formatDeepSeekFileAttachment(file);
+          if (formatted) {
+            attachmentsText += formatted;
+          }
+        }
+      }
+
+      let combined = promptText;
+      if (attachmentsText) {
+        combined = combined
+          ? `${combined.trim()}\n\n${attachmentsText.trim()}`
+          : attachmentsText.trim();
+      }
+      if (combined) return combined;
+    }
+
     const wanted = isUser ? "REQUEST" : "RESPONSE";
     const picked = msgNode.fragments.filter((f) => f && f.type === wanted);
     const fallback = picked.length > 0 ? picked : msgNode.fragments;
@@ -37,6 +199,44 @@ export function extractDeepSeekMessageContent(msgNode) {
   // Legacy shape: top-level content/text fields.
   const legacy = msgNode.content || msgNode.text || "";
   return typeof legacy === "string" ? legacy.trim() : "";
+}
+
+async function fetchDeepSeekFileContent(file) {
+  if (!file || !file.signed_path || file.is_image) return null;
+  if (file.file_name && !isTextFile(file.file_name)) return null;
+
+  const url = buildDeepSeekFileUrl(file.signed_path, "r");
+  if (!url) return null;
+
+  let timeoutId = null;
+  let signal;
+  if (
+    typeof AbortSignal !== "undefined" &&
+    typeof AbortSignal.timeout === "function"
+  ) {
+    signal = AbortSignal.timeout(10000);
+  } else if (typeof AbortController !== "undefined") {
+    const controller = new AbortController();
+    timeoutId = setTimeout(() => controller.abort(), 10000);
+    signal = controller.signal;
+  }
+
+  try {
+    const res = await fetch(url, { signal });
+    if (res.ok) {
+      return await res.text();
+    }
+  } catch (err) {
+    console.warn(
+      `[AI Exporter] Failed to fetch DeepSeek attachment "${file.file_name}":`,
+      err,
+    );
+  } finally {
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+    }
+  }
+  return null;
 }
 
 function getConversationId() {
@@ -93,6 +293,43 @@ async function fetchDeepSeekConversation(sessionId, token) {
   }
 
   branch.reverse();
+
+  const filesToFetch = [];
+  for (const msgNode of branch) {
+    if (Array.isArray(msgNode?.fragments)) {
+      for (const frag of msgNode.fragments) {
+        if (frag?.type === "FILE" && Array.isArray(frag.files)) {
+          for (const file of frag.files) {
+            if (
+              !file.is_image &&
+              file.signed_path &&
+              typeof file.extracted_content !== "string" &&
+              (!file.file_name || isTextFile(file.file_name))
+            ) {
+              filesToFetch.push(file);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const CONCURRENCY_LIMIT = 5;
+  const deadline = Date.now() + 20000;
+  for (let i = 0; i < filesToFetch.length; i += CONCURRENCY_LIMIT) {
+    if (Date.now() >= deadline) {
+      break;
+    }
+    const chunk = filesToFetch.slice(i, i + CONCURRENCY_LIMIT);
+    await Promise.all(
+      chunk.map(async (file) => {
+        const content = await fetchDeepSeekFileContent(file);
+        if (content !== null) {
+          file.extracted_content = content;
+        }
+      }),
+    );
+  }
 
   return branch
     .map((msgNode) => {
