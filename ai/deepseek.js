@@ -113,7 +113,10 @@ function isTextFile(fileName) {
 
 function escapeMarkdownLinkText(text) {
   if (!text || typeof text !== "string") return "";
-  return text.replace(/\\/g, "\\\\").replace(/[[\]]/g, "\\$&");
+  return text
+    .replace(/\\/g, "\\\\")
+    .replace(/[[\]]/g, "\\$&")
+    .replace(/[*_~`]/g, "\\$&");
 }
 
 export function formatDeepSeekFileAttachment(file) {
@@ -312,7 +315,11 @@ async function fetchDeepSeekConversation(sessionId, token) {
   }
 
   const CONCURRENCY_LIMIT = 5;
+  const deadline = Date.now() + 20000;
   for (let i = 0; i < filesToFetch.length; i += CONCURRENCY_LIMIT) {
+    if (Date.now() >= deadline) {
+      break;
+    }
     const chunk = filesToFetch.slice(i, i + CONCURRENCY_LIMIT);
     await Promise.all(
       chunk.map(async (file) => {
