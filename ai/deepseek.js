@@ -27,26 +27,104 @@ export function formatFileSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+export function buildDeepSeekFileUrl(signedPath, mode = "r") {
+  if (!signedPath) return "";
+  const filesHost = "files.deepseeksvc.com";
+  let url = signedPath;
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = `https://${filesHost}/api${signedPath.startsWith("/") ? "" : "/"}${signedPath}`;
+  }
+  try {
+    const parsed = new URL(url);
+    if (!parsed.searchParams.has("ty")) {
+      parsed.searchParams.set("ty", mode);
+    }
+    return parsed.toString();
+  } catch {
+    const sep = signedPath.includes("?") ? "&" : "?";
+    return signedPath.includes("ty=")
+      ? signedPath
+      : `${signedPath}${sep}ty=${mode}`;
+  }
+}
+
+function isTextFile(fileName) {
+  if (!fileName || typeof fileName !== "string") return false;
+  const match = fileName.match(/\.([a-zA-Z0-9_-]+)$/);
+  if (!match) return false;
+  const ext = match[1].toLowerCase();
+  const textExtensions = new Set([
+    "txt",
+    "md",
+    "markdown",
+    "csv",
+    "tsv",
+    "json",
+    "jsonl",
+    "xml",
+    "yaml",
+    "yml",
+    "toml",
+    "ini",
+    "conf",
+    "log",
+    "sql",
+    "html",
+    "htm",
+    "css",
+    "scss",
+    "less",
+    "js",
+    "jsx",
+    "mjs",
+    "cjs",
+    "ts",
+    "tsx",
+    "py",
+    "rb",
+    "java",
+    "c",
+    "cpp",
+    "h",
+    "hpp",
+    "cs",
+    "go",
+    "rs",
+    "php",
+    "sh",
+    "bash",
+    "zsh",
+    "bat",
+    "ps1",
+    "r",
+    "swift",
+    "kt",
+    "kts",
+    "scala",
+    "lua",
+    "pl",
+    "pm",
+    "dart",
+    "diff",
+    "patch",
+  ]);
+  return textExtensions.has(ext);
+}
+
+function escapeMarkdownLinkText(text) {
+  if (!text || typeof text !== "string") return "";
+  return text.replace(/[[\]]/g, "\\$&");
+}
+
 export function formatDeepSeekFileAttachment(file) {
   if (!file) return "";
-  const filesHost = "files.deepseeksvc.com";
   const sizeLabel = formatFileSize(file.file_size);
   const name = file.file_name || "file";
+  const safeName = escapeMarkdownLinkText(name);
 
   if (file.is_image) {
-    let signedPath = file.signed_path || "";
-    let url = "";
-    if (signedPath.startsWith("http://") || signedPath.startsWith("https://")) {
-      url = signedPath;
-    } else if (signedPath) {
-      const query = signedPath.includes("ty=")
-        ? ""
-        : signedPath.includes("?")
-          ? "&ty=p"
-          : "?ty=p";
-      url = `https://${filesHost}/api${signedPath}${query}`;
-    }
-    return `\n\n**Attachment: ${name}**\n\n![${name}](${url})\n\n`;
+    const url = buildDeepSeekFileUrl(file.signed_path, "p");
+    return `\n\n**Attachment: ${safeName}**\n\n![${safeName}](${url})\n\n`;
   }
 
   if (typeof file.extracted_content === "string") {
@@ -58,21 +136,10 @@ export function formatDeepSeekFileAttachment(file) {
   }
 
   // Fallback when content was not downloaded
-  let signedPath = file.signed_path || "";
-  let url = "";
-  if (signedPath.startsWith("http://") || signedPath.startsWith("https://")) {
-    url = signedPath;
-  } else if (signedPath) {
-    const query = signedPath.includes("ty=")
-      ? ""
-      : signedPath.includes("?")
-        ? "&ty=r"
-        : "?ty=r";
-    url = `https://${filesHost}/api${signedPath}${query}`;
-  }
+  const url = buildDeepSeekFileUrl(file.signed_path, "r");
   if (url) {
     const metaSuffix = sizeLabel ? ` · ${sizeLabel}` : "";
-    return `\n\n**Attachment: [${name}](${url})** _(document${metaSuffix})_\n\n`;
+    return `\n\n**Attachment: [${safeName}](${url})** _(document${metaSuffix})_\n\n`;
   }
   const metaSuffix = sizeLabel ? ` _(${sizeLabel})_` : "";
   return `\n\n### Attachment: ${name}${metaSuffix}\n\n`;
@@ -133,23 +200,25 @@ export function extractDeepSeekMessageContent(msgNode) {
 
 async function fetchDeepSeekFileContent(file) {
   if (!file || !file.signed_path || file.is_image) return null;
-  const filesHost = "files.deepseeksvc.com";
-  const signedPath = file.signed_path;
-  const query = signedPath.includes("ty=")
-    ? ""
-    : signedPath.includes("?")
-      ? "&ty=r"
-      : "?ty=r";
-  const url =
-    signedPath.startsWith("http://") || signedPath.startsWith("https://")
-      ? signedPath
-      : `https://${filesHost}/api${signedPath}${query}`;
+  if (file.file_name && !isTextFile(file.file_name)) return null;
+
+  const url = buildDeepSeekFileUrl(file.signed_path, "r");
+  if (!url) return null;
+
+  let timeoutId = null;
+  let signal;
+  if (
+    typeof AbortSignal !== "undefined" &&
+    typeof AbortSignal.timeout === "function"
+  ) {
+    signal = AbortSignal.timeout(10000);
+  } else if (typeof AbortController !== "undefined") {
+    const controller = new AbortController();
+    timeoutId = setTimeout(() => controller.abort(), 10000);
+    signal = controller.signal;
+  }
+
   try {
-    const signal =
-      typeof AbortSignal !== "undefined" &&
-      typeof AbortSignal.timeout === "function"
-        ? AbortSignal.timeout(10000)
-        : undefined;
     const res = await fetch(url, { signal });
     if (res.ok) {
       return await res.text();
@@ -159,6 +228,10 @@ async function fetchDeepSeekFileContent(file) {
       `[AI Exporter] Failed to fetch DeepSeek attachment "${file.file_name}":`,
       err,
     );
+  } finally {
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+    }
   }
   return null;
 }
@@ -218,7 +291,7 @@ async function fetchDeepSeekConversation(sessionId, token) {
 
   branch.reverse();
 
-  const fileFetches = [];
+  const filesToFetch = [];
   for (const msgNode of branch) {
     if (Array.isArray(msgNode?.fragments)) {
       for (const frag of msgNode.fragments) {
@@ -227,23 +300,28 @@ async function fetchDeepSeekConversation(sessionId, token) {
             if (
               !file.is_image &&
               file.signed_path &&
-              typeof file.extracted_content !== "string"
+              typeof file.extracted_content !== "string" &&
+              (!file.file_name || isTextFile(file.file_name))
             ) {
-              fileFetches.push(
-                fetchDeepSeekFileContent(file).then((content) => {
-                  if (content !== null) {
-                    file.extracted_content = content;
-                  }
-                }),
-              );
+              filesToFetch.push(file);
             }
           }
         }
       }
     }
   }
-  if (fileFetches.length > 0) {
-    await Promise.all(fileFetches);
+
+  const CONCURRENCY_LIMIT = 5;
+  for (let i = 0; i < filesToFetch.length; i += CONCURRENCY_LIMIT) {
+    const chunk = filesToFetch.slice(i, i + CONCURRENCY_LIMIT);
+    await Promise.all(
+      chunk.map(async (file) => {
+        const content = await fetchDeepSeekFileContent(file);
+        if (content !== null) {
+          file.extracted_content = content;
+        }
+      }),
+    );
   }
 
   return branch

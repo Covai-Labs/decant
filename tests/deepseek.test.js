@@ -9,6 +9,7 @@ import {
   extractDeepSeekMessageContent,
   formatFileSize,
   formatDeepSeekFileAttachment,
+  buildDeepSeekFileUrl,
 } from "../ai/deepseek.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -157,18 +158,37 @@ test("formatFileSize formats bytes, KB, and MB accurately", () => {
   assert.equal(formatFileSize(NaN), "");
 });
 
+test("buildDeepSeekFileUrl normalizes relative and absolute URLs with ty parameter", () => {
+  assert.equal(buildDeepSeekFileUrl(""), "");
+  assert.equal(
+    buildDeepSeekFileUrl("/file?file_id=123", "p"),
+    "https://files.deepseeksvc.com/api/file?file_id=123&ty=p",
+  );
+  assert.equal(
+    buildDeepSeekFileUrl("/file?file_id=123&ty=r", "p"),
+    "https://files.deepseeksvc.com/api/file?file_id=123&ty=r",
+  );
+  assert.equal(
+    buildDeepSeekFileUrl(
+      "https://files.deepseeksvc.com/api/file?file_id=123",
+      "r",
+    ),
+    "https://files.deepseeksvc.com/api/file?file_id=123&ty=r",
+  );
+});
+
 test("formatDeepSeekFileAttachment formats image and text attachment cards", () => {
   const imgFile = {
-    file_name: "diagram.png",
+    file_name: "diagram [final].png",
     is_image: true,
     file_size: 2048,
     signed_path: "/file?file_id=img1&state=abc",
   };
   const imgOutput = formatDeepSeekFileAttachment(imgFile);
-  assert.ok(imgOutput.includes("**Attachment: diagram.png**"));
+  assert.ok(imgOutput.includes("**Attachment: diagram \\[final\\].png**"));
   assert.ok(
     imgOutput.includes(
-      "![diagram.png](https://files.deepseeksvc.com/api/file?file_id=img1&state=abc&ty=p)",
+      "![diagram \\[final\\].png](https://files.deepseeksvc.com/api/file?file_id=img1&state=abc&ty=p)",
     ),
   );
 
@@ -183,7 +203,7 @@ test("formatDeepSeekFileAttachment formats image and text attachment cards", () 
   assert.ok(txtOutput.includes("````\nHello world!\n````"));
 
   const docFallback = {
-    file_name: "spec.pdf",
+    file_name: "spec [v1].pdf",
     is_image: false,
     file_size: 2048,
     signed_path: "/file?file_id=doc1&state=def",
@@ -191,7 +211,7 @@ test("formatDeepSeekFileAttachment formats image and text attachment cards", () 
   const docOutput = formatDeepSeekFileAttachment(docFallback);
   assert.ok(
     docOutput.includes(
-      "**Attachment: [spec.pdf](https://files.deepseeksvc.com/api/file?file_id=doc1&state=def&ty=r)** _(document · 2.0 KB)_",
+      "**Attachment: [spec \\[v1\\].pdf](https://files.deepseeksvc.com/api/file?file_id=doc1&state=def&ty=r)** _(document · 2.0 KB)_",
     ),
   );
 });
@@ -332,6 +352,94 @@ test("DeepSeekParser API path degrades gracefully if file download fails", async
         "**Attachment: [# Exploring Ilaiyaraaja's How to Name It.txt]",
       ),
     );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("DeepSeekParser API path skips downloading binary files as text", async () => {
+  const binaryAttachmentData = {
+    data: {
+      biz_data: {
+        chat_session: { current_message_id: 2 },
+        chat_messages: [
+          {
+            message_id: 1,
+            parent_id: null,
+            role: "USER",
+            fragments: [
+              {
+                id: 1,
+                type: "FILE",
+                files: [
+                  {
+                    id: "pdf-123",
+                    file_name: "document.pdf",
+                    file_size: 50000,
+                    signed_path: "/file?file_id=pdf123",
+                    is_image: false,
+                  },
+                ],
+              },
+              {
+                id: 2,
+                type: "REQUEST",
+                content: "Summarize this PDF.",
+              },
+            ],
+          },
+          {
+            message_id: 2,
+            parent_id: 1,
+            role: "ASSISTANT",
+            fragments: [
+              {
+                id: 3,
+                type: "RESPONSE",
+                content: "PDF summary.",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  };
+
+  const sessionId = "0b638a82-c91f-43c7-8a8a-67cf93e94799";
+  const url = `https://chat.deepseek.com/a/chat/s/${sessionId}`;
+  setupDom("deepseek-chat.html", url);
+  globalThis.localStorage = {
+    getItem: () => JSON.stringify({ value: "test-token" }),
+  };
+
+  let fileFetchCalled = false;
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (fetchUrl) => {
+    if (fetchUrl.includes("/chat/history_messages")) {
+      return { ok: true, json: async () => binaryAttachmentData };
+    }
+    if (fetchUrl.includes("files.deepseeksvc.com/api/file")) {
+      fileFetchCalled = true;
+      return { ok: true, text: async () => "%PDF-1.4 raw binary" };
+    }
+    throw new Error(`Unexpected fetch URL: ${fetchUrl}`);
+  };
+
+  try {
+    const parser = new DeepSeekParser();
+    const result = await parser.parse();
+    assert.equal(
+      fileFetchCalled,
+      false,
+      "Should not attempt to fetch binary file as text",
+    );
+    const userMsg = result.messages[0];
+    assert.ok(
+      userMsg.content.includes(
+        "**Attachment: [document.pdf](https://files.deepseeksvc.com/api/file?file_id=pdf123&ty=r)** _(document · 48.8 KB)_",
+      ),
+    );
+    assert.ok(!userMsg.content.includes("%PDF-1.4"));
   } finally {
     globalThis.fetch = originalFetch;
   }
