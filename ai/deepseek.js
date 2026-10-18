@@ -18,13 +18,105 @@ function getUserToken() {
   }
 }
 
+export function formatFileSize(bytes) {
+  if (typeof bytes !== "number" || !Number.isFinite(bytes) || bytes < 0) {
+    return "";
+  }
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+export function formatDeepSeekFileAttachment(file) {
+  if (!file) return "";
+  const filesHost = "files.deepseeksvc.com";
+  const sizeLabel = formatFileSize(file.file_size);
+  const name = file.file_name || "file";
+
+  if (file.is_image) {
+    let signedPath = file.signed_path || "";
+    let url = "";
+    if (signedPath.startsWith("http://") || signedPath.startsWith("https://")) {
+      url = signedPath;
+    } else if (signedPath) {
+      const query = signedPath.includes("ty=")
+        ? ""
+        : signedPath.includes("?")
+          ? "&ty=p"
+          : "?ty=p";
+      url = `https://${filesHost}/api${signedPath}${query}`;
+    }
+    return `\n\n**Attachment: ${name}**\n\n![${name}](${url})\n\n`;
+  }
+
+  if (typeof file.extracted_content === "string") {
+    const metaSuffix = sizeLabel ? ` _(${sizeLabel})_` : "";
+    if (file.file_name) {
+      return `\n\n### Attachment: ${file.file_name}${metaSuffix}\n\`\`\`\`\n${file.extracted_content}\n\`\`\`\`\n\n`;
+    }
+    return `\n\n### Pasted content${metaSuffix}\n\`\`\`\`\n${file.extracted_content}\n\`\`\`\`\n\n`;
+  }
+
+  // Fallback when content was not downloaded
+  let signedPath = file.signed_path || "";
+  let url = "";
+  if (signedPath.startsWith("http://") || signedPath.startsWith("https://")) {
+    url = signedPath;
+  } else if (signedPath) {
+    const query = signedPath.includes("ty=")
+      ? ""
+      : signedPath.includes("?")
+        ? "&ty=r"
+        : "?ty=r";
+    url = `https://${filesHost}/api${signedPath}${query}`;
+  }
+  if (url) {
+    const metaSuffix = sizeLabel ? ` · ${sizeLabel}` : "";
+    return `\n\n**Attachment: [${name}](${url})** _(document${metaSuffix})_\n\n`;
+  }
+  const metaSuffix = sizeLabel ? ` _(${sizeLabel})_` : "";
+  return `\n\n### Attachment: ${name}${metaSuffix}\n\n`;
+}
+
 export function extractDeepSeekMessageContent(msgNode) {
   if (!msgNode) return "";
   // Current API shape: content lives in fragments[] ({type, content}).
   // REQUEST = user prompt, RESPONSE = final assistant answer.
+  // FILE = attached file or pasted long text.
   // THINK / TOOL_* fragments are intermediate reasoning/tool output.
   if (Array.isArray(msgNode.fragments) && msgNode.fragments.length > 0) {
     const isUser = msgNode.role === "USER" || msgNode.role === "user";
+    if (isUser) {
+      const promptFragments = msgNode.fragments.filter(
+        (f) => f && f.type === "REQUEST" && typeof f.content === "string",
+      );
+      const promptText = promptFragments
+        .map((f) => f.content.trim())
+        .filter(Boolean)
+        .join("\n\n");
+
+      let attachmentsText = "";
+      const fileFragments = msgNode.fragments.filter(
+        (f) => f && f.type === "FILE" && Array.isArray(f.files),
+      );
+      for (const f of fileFragments) {
+        for (const file of f.files) {
+          const formatted = formatDeepSeekFileAttachment(file);
+          if (formatted) {
+            attachmentsText += formatted;
+          }
+        }
+      }
+
+      let combined = promptText;
+      if (attachmentsText) {
+        combined = combined
+          ? `${combined.trim()}\n\n${attachmentsText.trim()}`
+          : attachmentsText.trim();
+      }
+      if (combined) return combined;
+    }
+
     const wanted = isUser ? "REQUEST" : "RESPONSE";
     const picked = msgNode.fragments.filter((f) => f && f.type === wanted);
     const fallback = picked.length > 0 ? picked : msgNode.fragments;
@@ -37,6 +129,38 @@ export function extractDeepSeekMessageContent(msgNode) {
   // Legacy shape: top-level content/text fields.
   const legacy = msgNode.content || msgNode.text || "";
   return typeof legacy === "string" ? legacy.trim() : "";
+}
+
+async function fetchDeepSeekFileContent(file) {
+  if (!file || !file.signed_path || file.is_image) return null;
+  const filesHost = "files.deepseeksvc.com";
+  const signedPath = file.signed_path;
+  const query = signedPath.includes("ty=")
+    ? ""
+    : signedPath.includes("?")
+      ? "&ty=r"
+      : "?ty=r";
+  const url =
+    signedPath.startsWith("http://") || signedPath.startsWith("https://")
+      ? signedPath
+      : `https://${filesHost}/api${signedPath}${query}`;
+  try {
+    const signal =
+      typeof AbortSignal !== "undefined" &&
+      typeof AbortSignal.timeout === "function"
+        ? AbortSignal.timeout(10000)
+        : undefined;
+    const res = await fetch(url, { signal });
+    if (res.ok) {
+      return await res.text();
+    }
+  } catch (err) {
+    console.warn(
+      `[AI Exporter] Failed to fetch DeepSeek attachment "${file.file_name}":`,
+      err,
+    );
+  }
+  return null;
 }
 
 function getConversationId() {
@@ -93,6 +217,34 @@ async function fetchDeepSeekConversation(sessionId, token) {
   }
 
   branch.reverse();
+
+  const fileFetches = [];
+  for (const msgNode of branch) {
+    if (Array.isArray(msgNode?.fragments)) {
+      for (const frag of msgNode.fragments) {
+        if (frag?.type === "FILE" && Array.isArray(frag.files)) {
+          for (const file of frag.files) {
+            if (
+              !file.is_image &&
+              file.signed_path &&
+              typeof file.extracted_content !== "string"
+            ) {
+              fileFetches.push(
+                fetchDeepSeekFileContent(file).then((content) => {
+                  if (content !== null) {
+                    file.extracted_content = content;
+                  }
+                }),
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+  if (fileFetches.length > 0) {
+    await Promise.all(fileFetches);
+  }
 
   return branch
     .map((msgNode) => {

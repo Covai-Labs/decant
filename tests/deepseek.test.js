@@ -7,6 +7,8 @@ import { parseHTML } from "linkedom";
 import {
   DeepSeekParser,
   extractDeepSeekMessageContent,
+  formatFileSize,
+  formatDeepSeekFileAttachment,
 } from "../ai/deepseek.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -143,4 +145,194 @@ test("DeepSeekParser DOM fallback selector extracts thinking without mutating li
   // A second parse extracts identical thinking
   const result2 = await parser.parse({ parserMode: "prefer_dom" });
   assert.equal(result2.messages[1].thinking, "Thinking about greeting");
+});
+
+test("formatFileSize formats bytes, KB, and MB accurately", () => {
+  assert.equal(formatFileSize(0), "0 B");
+  assert.equal(formatFileSize(500), "500 B");
+  assert.equal(formatFileSize(1024), "1.0 KB");
+  assert.equal(formatFileSize(9247), "9.0 KB");
+  assert.equal(formatFileSize(1048576), "1.0 MB");
+  assert.equal(formatFileSize(-1), "");
+  assert.equal(formatFileSize(NaN), "");
+});
+
+test("formatDeepSeekFileAttachment formats image and text attachment cards", () => {
+  const imgFile = {
+    file_name: "diagram.png",
+    is_image: true,
+    file_size: 2048,
+    signed_path: "/file?file_id=img1&state=abc",
+  };
+  const imgOutput = formatDeepSeekFileAttachment(imgFile);
+  assert.ok(imgOutput.includes("**Attachment: diagram.png**"));
+  assert.ok(
+    imgOutput.includes(
+      "![diagram.png](https://files.deepseeksvc.com/api/file?file_id=img1&state=abc&ty=p)",
+    ),
+  );
+
+  const txtFileWithContent = {
+    file_name: "notes.txt",
+    is_image: false,
+    file_size: 1024,
+    extracted_content: "Hello world!",
+  };
+  const txtOutput = formatDeepSeekFileAttachment(txtFileWithContent);
+  assert.ok(txtOutput.includes("### Attachment: notes.txt _(1.0 KB)_"));
+  assert.ok(txtOutput.includes("````\nHello world!\n````"));
+
+  const docFallback = {
+    file_name: "spec.pdf",
+    is_image: false,
+    file_size: 2048,
+    signed_path: "/file?file_id=doc1&state=def",
+  };
+  const docOutput = formatDeepSeekFileAttachment(docFallback);
+  assert.ok(
+    docOutput.includes(
+      "**Attachment: [spec.pdf](https://files.deepseeksvc.com/api/file?file_id=doc1&state=def&ty=r)** _(document · 2.0 KB)_",
+    ),
+  );
+});
+
+test("extractDeepSeekMessageContent orders prompt before attachments", () => {
+  const msg = {
+    role: "USER",
+    fragments: [
+      {
+        type: "FILE",
+        files: [
+          {
+            file_name: "data.txt",
+            file_size: 1024,
+            is_image: false,
+            extracted_content: "sample file content",
+          },
+        ],
+      },
+      {
+        type: "REQUEST",
+        content: "What do you think of this data?",
+      },
+    ],
+  };
+
+  const output = extractDeepSeekMessageContent(msg);
+  assert.ok(output.startsWith("What do you think of this data?"));
+  assert.ok(output.includes("### Attachment: data.txt _(1.0 KB)_"));
+  assert.ok(output.includes("````\nsample file content\n````"));
+  assert.ok(
+    output.indexOf("What do you think") <
+      output.indexOf("### Attachment: data.txt"),
+  );
+});
+
+test("DeepSeekParser API path downloads and inlines text attachments", async () => {
+  const attachmentData = JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, "fixtures", "deepseek-attachment-api-response.json"),
+      "utf-8",
+    ),
+  );
+  const fileContent = fs.readFileSync(
+    path.join(__dirname, "fixtures", "deepseek-attachment-file.txt"),
+    "utf-8",
+  );
+
+  const sessionId = "0b638a82-c91f-43c7-8a8a-67cf93e94799";
+  const url = `https://chat.deepseek.com/a/chat/s/${sessionId}`;
+  setupDom("deepseek-chat.html", url);
+  globalThis.localStorage = {
+    getItem: () => JSON.stringify({ value: "test-token" }),
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (fetchUrl) => {
+    if (fetchUrl.includes("/chat/history_messages")) {
+      return { ok: true, json: async () => attachmentData };
+    }
+    if (fetchUrl.includes("files.deepseeksvc.com/api/file")) {
+      return { ok: true, text: async () => fileContent };
+    }
+    throw new Error(`Unexpected fetch URL: ${fetchUrl}`);
+  };
+
+  try {
+    const parser = new DeepSeekParser();
+    const result = await parser.parse();
+    assert.equal(result.metadata.Method, "API");
+    assert.equal(result.messages.length, 10);
+
+    // Message 5 (index 4) has the file attachment
+    const userMsgWithFile = result.messages[4];
+    assert.equal(userMsgWithFile.role, "User");
+    assert.ok(
+      userMsgWithFile.content.includes("Your thought on pasted content. ?"),
+    );
+    assert.ok(
+      userMsgWithFile.content.includes(
+        "### Attachment: # Exploring Ilaiyaraaja's How to Name It.txt _(9.0 KB)_",
+      ),
+    );
+    assert.ok(userMsgWithFile.content.includes("How to Name It?"));
+    assert.ok(userMsgWithFile.content.includes("An absolute masterpiece."));
+    // Ensure prompt comes before the attachment block
+    assert.ok(
+      userMsgWithFile.content.indexOf("Your thought on pasted content") <
+        userMsgWithFile.content.indexOf(
+          "### Attachment: # Exploring Ilaiyaraaja's How to Name It.txt",
+        ),
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("DeepSeekParser API path degrades gracefully if file download fails", async () => {
+  const attachmentData = JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, "fixtures", "deepseek-attachment-api-response.json"),
+      "utf-8",
+    ),
+  );
+
+  const sessionId = "0b638a82-c91f-43c7-8a8a-67cf93e94799";
+  const url = `https://chat.deepseek.com/a/chat/s/${sessionId}`;
+  setupDom("deepseek-chat.html", url);
+  globalThis.localStorage = {
+    getItem: () => JSON.stringify({ value: "test-token" }),
+  };
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (fetchUrl) => {
+    if (fetchUrl.includes("/chat/history_messages")) {
+      return { ok: true, json: async () => attachmentData };
+    }
+    if (fetchUrl.includes("files.deepseeksvc.com/api/file")) {
+      return { ok: false, status: 500 };
+    }
+    throw new Error(`Unexpected fetch URL: ${fetchUrl}`);
+  };
+
+  try {
+    const parser = new DeepSeekParser();
+    const result = await parser.parse();
+    assert.equal(result.metadata.Method, "API");
+    assert.equal(result.messages.length, 10);
+
+    const userMsgWithFile = result.messages[4];
+    assert.equal(userMsgWithFile.role, "User");
+    assert.ok(
+      userMsgWithFile.content.includes("Your thought on pasted content. ?"),
+    );
+    // Degrades to document link card instead of crashing
+    assert.ok(
+      userMsgWithFile.content.includes(
+        "**Attachment: [# Exploring Ilaiyaraaja's How to Name It.txt]",
+      ),
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
