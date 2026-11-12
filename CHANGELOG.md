@@ -49,6 +49,14 @@
 
 * **parser:** add Duck.ai parser and platform detection ([9701c2a](https://github.com/Covai-Labs/decant/commit/9701c2a31fd649654fb50ecf3c14d70edee77171))
 
+## [1.17.2](https://github.com/Covai-Labs/decant/compare/v1.17.1...v1.17.2) (2026-11-12)
+
+
+### Bug Fixes
+
+* **decant:** synchronize standalone lockfile, format core files, and fix sync release convention ([#186](https://github.com/Covai-Labs/decant/issues/186)) ([4b03a77](https://github.com/Covai-Labs/decant/commit/4b03a7757c823d6cc11a143b80a1ea7b2b03c9ef))
+* **legal:** split FOSS linking exception from LICENSE for SPDX detection ([#188](https://github.com/Covai-Labs/decant/issues/188)) ([0718d17](https://github.com/Covai-Labs/decant/commit/0718d17b50b71e288a9ddb0c5f368186e3ea2fdd))
+
 ## [1.17.1](https://github.com/Covai-Labs/decant/compare/v1.17.0...v1.17.1) (2026-10-18)
 
 
