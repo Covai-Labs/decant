@@ -49,13 +49,6 @@
 
 * **parser:** add Duck.ai parser and platform detection ([9701c2a](https://github.com/Covai-Labs/decant/commit/9701c2a31fd649654fb50ecf3c14d70edee77171))
 
-## [1.17.2](https://github.com/Covai-Labs/decant/compare/v1.17.1...v1.17.2) (2026-11-11)
-
-
-### Bug Fixes
-
-* **decant:** synchronize standalone lockfile, format core files, and fix sync release convention ([#186](https://github.com/Covai-Labs/decant/issues/186)) ([4b03a77](https://github.com/Covai-Labs/decant/commit/4b03a7757c823d6cc11a143b80a1ea7b2b03c9ef))
-
 ## [1.17.1](https://github.com/Covai-Labs/decant/compare/v1.17.0...v1.17.1) (2026-10-18)
 
 
